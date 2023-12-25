@@ -5,5 +5,7 @@ Translates DirectInput to XInput , making it possible to use with virtually any 
 ## Does Not Support
 
   Rumble
+  
   Light Bar Adjustments
+  
   Battery Checking
