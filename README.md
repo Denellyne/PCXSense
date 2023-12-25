@@ -1,0 +1,1 @@
+# Translates DirectInput to Xinput
