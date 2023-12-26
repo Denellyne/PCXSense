@@ -8,4 +8,3 @@ Translates DirectInput to XInput , making it possible to use with virtually any 
   
   Light Bar Adjustments
   
-  Battery Checking
