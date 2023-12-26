@@ -1,65 +1,5 @@
-#define DIRECTINPUT_VERSION 0x0800
-
-#include <iostream>
-#include <string>
-#include <windows.h>
-#include <DInput8.h>
-#include <Xinput.h>
-#include "Include/ViGEm/Client.h"
+#include "util.h"
 #include <thread>
-
-#define DEBUG(x) do { std::cout << x << '\n'; } while (0)
-
-void asyncDataReport(LPDIRECTINPUTDEVICE8& controllerInterface) {
-
-	while (true) {
-		HRESULT result = controllerInterface->Poll();
-
-		DIJOYSTATE2 joystick{};
-
-		result = controllerInterface->GetDeviceState(sizeof(DIJOYSTATE2), &joystick);
-
-		if (joystick.rgbButtons[0]) DEBUG("Square Button\n");
-
-		if (joystick.rgbButtons[1]) DEBUG("X Button\n");
-
-		if (joystick.rgbButtons[2]) DEBUG("Circle Button\n");
-
-		if (joystick.rgbButtons[3]) DEBUG("Triangle Button\n");
-
-		if (joystick.rgbButtons[4]) DEBUG("L1 Button\n");
-
-		if (joystick.rgbButtons[5]) DEBUG("R1 Button\n");
-
-		if (joystick.rgbButtons[8]) DEBUG("Select Button\n");
-
-		if (joystick.rgbButtons[9]) DEBUG("Start Button\n");
-
-		if (joystick.rgbButtons[10]) DEBUG("L3 Button\n");
-
-		if (joystick.rgbButtons[11]) DEBUG("R3 Button\n");
-
-		if (joystick.rgbButtons[12]) DEBUG("Sony/Home Button\n");
-
-		if (joystick.rgbButtons[13]) DEBUG("Toutchpad Click\n");
-
-		if (joystick.rgbButtons[14]) DEBUG("Microphone Button\n");
-
-		if (controllerInterface->GetDeviceState(sizeof(DIJOYSTATE2), &joystick) == DI_OK) {
-			std::cout << "LeftJoystick Horizontal Value: " << joystick.lX << '\n';
-			std::cout << "LeftJoystick Vertical Value: " << joystick.lY << '\n';
-			std::cout << "RightJoystick Horizontal Value: " << joystick.lZ << '\n';
-			std::cout << "RightJoystick Horizontal Value: " << joystick.lRz << '\n';
-			std::cout << "Left Trigger Value: " << joystick.lRx / 257 << '\n';
-			std::cout << "Right Trigger Value: " << joystick.lRy / 257 << '\n';
-
-			Sleep(1);
-			system("cls"); //Clear console
-		}
-
-	}
-
-}
 
 
 int main() {
@@ -70,45 +10,11 @@ int main() {
 	IDirectInput8* ptrDirectInput = nullptr;
 	LPDIRECTINPUTDEVICE8 controllerInterface;
 	XINPUT_STATE ControllerState;
+	PVIGEM_TARGET emulateX360;
+	VIGEM_ERROR target;
+	PVIGEM_CLIENT client = vigem_alloc();
 
-	const auto client = vigem_alloc();
-	if (client == nullptr)
-	{
-		std::cerr << "Uh, not enough memory to do that?!" << std::endl;
-		return -1;
-	}
-
-	const auto retval = vigem_connect(client);
-
-	if (!VIGEM_SUCCESS(retval))
-	{
-		std::cerr << "ViGEm Bus connection failed with error code: 0x" << std::hex << retval << std::endl;
-		return -1;
-	}
-	
-	const auto emulateX360 = vigem_target_x360_alloc();
-
-	const auto target = vigem_target_add(client, emulateX360);
-
-	if (DirectInput8Create(appHandle, DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)&ptrDirectInput, NULL) != DI_OK) {
-		std::cout << "Failed to create DI8 Device\n";
-		return -1;
-	}
-	if (ptrDirectInput->CreateDevice(GUID_Joystick, &controllerInterface, NULL) != DI_OK) {
-		ptrDirectInput->Release();
-		std::cout << "Failed to create Device\n";
-		return -1;
-	}	
-	if(controllerInterface->SetDataFormat(&c_dfDIJoystick2) != DI_OK){
-		ptrDirectInput->Release();
-		std::cout << "Failed to set Data Format\n";
-		return -1;
-	}
-	if (controllerInterface->Acquire() != DI_OK) {
-		ptrDirectInput->Release();
-		std::cout << "Failed to acquire Device\n";
-		return -1;
-	}
+	if (initializeFakeController(appHandle, ptrDirectInput, controllerInterface, ControllerState, emulateX360, target, client) != 0) return -1;
 
 	std::thread(asyncDataReport, std::ref(controllerInterface)).detach(); // Displays controller info
 
@@ -122,20 +28,9 @@ int main() {
 
 		DIJOYSTATE2 joystick{};	
 
-		if (controllerInterface->GetDeviceState(sizeof(DIJOYSTATE2), &joystick) != DI_OK) { //Checks if controller is plugged in ,if not then tries to reconnect
-			while (controllerInterface->Acquire() != DI_OK) {
-				std::cout << "Failed to get Device State\n";
-				std::cout << "Reconnecting";
-				Sleep(500);
-				std::cout << '.';
-				Sleep(500);
-				std::cout << '.';
-				Sleep(500);
-				std::cout << '.';
-				Sleep(500);
-				system("cls");
-			}
-		}
+		if (controllerInterface->GetDeviceState(sizeof(DIJOYSTATE2), &joystick) != DI_OK)  //Checks if controller is plugged in ,if not then tries to reconnect
+			while (controllerInterface->Acquire() != DI_OK) 
+
 
 		result = controllerInterface->GetDeviceState(sizeof(DIJOYSTATE2), &joystick);
 
@@ -202,6 +97,7 @@ int main() {
 	vigem_target_free(emulateX360);
 	vigem_disconnect(client);
 	vigem_free(client);
+
 
 	return 0;
 }
