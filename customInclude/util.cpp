@@ -1,5 +1,6 @@
 #pragma once
 #include "util.h"
+
 #define DIRECTINPUT_VERSION 0x0800
 #define DS_STATUS_BATTERY_CAPACITY 0xF
 #define DS_STATUS_CHARGING 0xF0
@@ -11,26 +12,70 @@
 void asyncDataReport(LPDIRECTINPUTDEVICE8& controllerInterface) {
 
 	hid_device_info* deviceInfo = hid_enumerate(DS_VENDOR_ID, DS_PRODUCT_ID);
-
+	bool bluetooth = deviceInfo->interface_number == -1;
 	hid_device* dualsense = hid_open(DS_VENDOR_ID, DS_PRODUCT_ID, deviceInfo->serial_number);
 	hid_free_enumeration(deviceInfo);
-	unsigned char buffer[78];
-	memset(buffer, 0, sizeof(buffer[0]));
+	int bufferSize;
 
-	buffer[0] = 0x31;
+	if (bluetooth) bufferSize = 78;
+	
+	else bufferSize = 64;
+	
+	unsigned char* buffer = new unsigned char[bufferSize];
 
+	std::cout << bluetooth << '\n';
+	if (bluetooth) buffer[0] = 0x31;
+
+	else buffer[0] = 0x01;
+	
 	while (true) {
-
-		hid_get_input_report(dualsense, buffer, 78);
+		
+		if (bluetooth) hid_get_input_report(dualsense, buffer, bufferSize);
+		else hid_read(dualsense, buffer, bufferSize);
+		
 		Sleep(1);
 		system("cls"); //Clear console
-		int batteryLevel = (buffer[0x36] & 0x0F) * 12.5;
+		int batteryLevel = (buffer[0x35 + bluetooth] & 0x0F)*12.5; // Hex 0x35 for USB to get Battery/Hex 0x36 for Bluetooth to get Battery , because if bluetooth == true then bluetooth == 1 then we can just add bluetooth to the hex of USB
 
 		HRESULT result = controllerInterface->Poll();
 
 		DIJOYSTATE2 joystick{};
 
 		result = controllerInterface->GetDeviceState(sizeof(DIJOYSTATE2), &joystick);
+
+		switch (joystick.rgdwPOV[0]) {
+		case 0:
+			DEBUG("Dpad Up");
+			break;
+
+		case 31500:
+			DEBUG("Dpad Up and Dpad Left");
+			break;
+
+		case 4500:
+			DEBUG("Dpad Up and Dpad Right");
+			break;
+
+		case 27000:
+			DEBUG("Dpad Left");
+			break;
+
+		case 9000:
+			DEBUG("Dpad Right");
+			break;
+
+		case 18000:
+			DEBUG("Dpad Down");
+			break;
+
+		case 22500:
+			DEBUG("Dpad Down and Dpad Left");
+			break;
+
+		case 13500:
+			DEBUG("Dpad Down and Dpad Right");
+			break;
+		}
 
 		if (joystick.rgbButtons[0]) DEBUG("Square Button\n");
 
@@ -72,7 +117,7 @@ void asyncDataReport(LPDIRECTINPUTDEVICE8& controllerInterface) {
 				system("cls");
 			}	
 		}
-		std::cout << "LeftJoystick Horizontal Value: " << joystick.lX << '\n';
+		std::cout << "\nLeftJoystick Horizontal Value: " << joystick.lX << '\n';
 		std::cout << "LeftJoystick Vertical Value: " << joystick.lY << '\n';
 		std::cout << "RightJoystick Horizontal Value: " << joystick.lZ << '\n';
 		std::cout << "RightJoystick Horizontal Value: " << joystick.lRz << '\n';
@@ -81,6 +126,7 @@ void asyncDataReport(LPDIRECTINPUTDEVICE8& controllerInterface) {
 		std::cout << "Battery Level: " << batteryLevel << "%\n";
 
 	}
+	delete[] buffer;
 	hid_close(dualsense);
 
 }

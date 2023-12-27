@@ -1,5 +1,36 @@
 #include "util.h"
 #include <thread>
+#define DS_VENDOR_ID 0x054c
+#define DS_PRODUCT_ID 0x0ce6
+
+VOID CALLBACK notification(
+	PVIGEM_CLIENT Client,
+	PVIGEM_TARGET Target,
+	UCHAR LargeMotor,
+	UCHAR SmallMotor,
+	UCHAR LedNumber,
+	LPVOID UserData
+)
+{
+	hid_device_info* deviceInfo = hid_enumerate(DS_VENDOR_ID, DS_PRODUCT_ID);
+
+	hid_device* dualsense = hid_open(DS_VENDOR_ID, DS_PRODUCT_ID, deviceInfo->serial_number);
+	hid_free_enumeration(deviceInfo);
+
+	unsigned char outputHID[48]{};
+	outputHID[0] = 0x02;
+	outputHID[1] = 0x02 | 0x01;
+	outputHID[2] = 0x04;
+	
+	outputHID[45] = 90; //Red
+	outputHID[46] = 0; //Green
+	outputHID[47] = 229; //Blue
+
+	outputHID[3] = SmallMotor; //Low Rumble
+	outputHID[4] = LargeMotor; //High Rumble
+	hid_write(dualsense, outputHID, 48);
+	
+}
 
 
 int main() {
@@ -87,6 +118,7 @@ int main() {
 		ControllerState.Gamepad.sThumbRX = joystick.lZ - 32768;
 		ControllerState.Gamepad.sThumbRY = 32767 - joystick.lRz;
 
+		vigem_target_x360_register_notification(client, emulateX360, &notification, nullptr);
 		vigem_target_x360_update(client, emulateX360, *reinterpret_cast<XUSB_REPORT*>(&ControllerState.Gamepad));
 	}
 
