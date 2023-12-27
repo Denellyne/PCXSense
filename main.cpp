@@ -32,9 +32,13 @@ VOID CALLBACK notification(
 	
 }
 
-
+typedef DWORD(WINAPI* XInputGetStateExProc)(DWORD dwUserIndex, XINPUT_STATE* pState);
 int main() {
 
+	HMODULE xinput_lib = LoadLibraryA("xinput1_3.dll");
+	XInputGetStateExProc XInputGetStateEx{};
+	int XInputGetStateExOrdinal = 100;
+	XInputGetStateEx = (XInputGetStateExProc)GetProcAddress(xinput_lib, (LPCSTR)XInputGetStateExOrdinal);
 	//Initialize Fake Controller
 
 	HINSTANCE appHandle = GetModuleHandle(NULL);
@@ -50,8 +54,7 @@ int main() {
 	std::thread(asyncDataReport, std::ref(controllerInterface)).detach(); // Displays controller info
 
 	while (true) {
-
-		XInputGetState(0, &ControllerState);
+		XInputGetStateEx(0, &ControllerState);
 
 		HWND foregroundAppHandle = GetForegroundWindow();
 
@@ -75,7 +78,7 @@ int main() {
 		ControllerState.Gamepad.wButtons += joystick.rgbButtons[9] ? XINPUT_GAMEPAD_START : 0;
 		ControllerState.Gamepad.wButtons += joystick.rgbButtons[10] ? XINPUT_GAMEPAD_LEFT_THUMB : 0;
 		ControllerState.Gamepad.wButtons += joystick.rgbButtons[11] ? XINPUT_GAMEPAD_RIGHT_THUMB : 0;
-		//ControllerState.Gamepad.wButtons += joystick.rgbButtons[11] ? 0x20U << 8U : 0;
+		ControllerState.Gamepad.wButtons += joystick.rgbButtons[12] ? 0x0400 : 0;
 
 		switch (joystick.rgdwPOV[0]) {
 		case 0:

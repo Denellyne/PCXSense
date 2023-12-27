@@ -165,3 +165,7 @@ x64/Release/DualSenseToXInput.pdb
 x64/Release/vc143.pdb
 *.pdb
 *.tlog
+.vs/DualSenseToXInput/FileContentIndex/a01d4a7c-b213-42bf-84ac-6d9eda6e4ba4.vsidx
+.vs/DualSenseToXInput/v17/ipch/AutoPCH/84df7d2b73eb2035/UTIL.ipch
+.vs/DualSenseToXInput/v17/ipch/AutoPCH/ce9fe2df2d6da513/MAIN.ipch
+.vs/DualSenseToXInput/v17/ipch/AutoPCH/ce9fe2df2d6da513/MAIN.ipch
