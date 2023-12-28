@@ -1,110 +1,278 @@
 #pragma once
 #include "util.h"
 
-#define DIRECTINPUT_VERSION 0x0800
 #define DS_STATUS_BATTERY_CAPACITY 0xF
 #define DS_STATUS_CHARGING 0xF0
 #define DS_STATUS_CHARGING_SHIFT 4
 #define DS_VENDOR_ID 0x054c
 #define DS_PRODUCT_ID 0x0ce6
 
+uint32_t computeCRC32(unsigned char* buffer, size_t len)
+{
+	UINT32 result = crcSeed;
+	for (size_t i = 0; i < len; i++)
+		// Compute crc
+		result = hashTable[((unsigned char)result) ^ ((unsigned char)buffer[i])] ^ (result >> 8);
 
-void asyncDataReport(LPDIRECTINPUTDEVICE8& controllerInterface) {
+	// Return result
+	return result;
+}
+
+void asyncSendOutputReport(inputReport& inputReport) {
+	hid_device_info* deviceInfo = hid_enumerate(DS_VENDOR_ID, DS_PRODUCT_ID);
+
+	HANDLE dualsense = CreateFileA(deviceInfo->path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
+
+	hid_free_enumeration(deviceInfo);
+
+	unsigned char outputHID[547]{};
+	while(true){
+		if (inputReport.bluetooth) {
+			ZeroMemory(outputHID, 547);
+
+			outputHID[0] = 0x31;
+			outputHID[1] = 0x02;
+			outputHID[2] = 0x03;
+			outputHID[3] = 0x55;
+
+			outputHID[4] = rumble[0]; //Low Rumble
+			outputHID[5] = rumble[1]; //High Rumble
+
+			outputHID[10] = 0x00;
+			outputHID[40] = 0x02;
+			outputHID[43] = 0x02;
+			outputHID[44] = 0x02;
+
+			switch (inputReport.batteryLevel) {
+			case 0:
+				outputHID[10] = 0x02;
+				outputHID[46] = 255; //Red
+				break;
+			case 12:
+				outputHID[10] = 0x01;
+				outputHID[46] = 200; //Red
+				outputHID[47] = 0; //Green
+				outputHID[48] = 55; //Blue
+				break;
+			case 27:
+				outputHID[46] = 230; //Red
+				outputHID[47] = 90; //Green
+				outputHID[48] = 0; //Blue
+				break;
+			case 37:
+				outputHID[46] = 230; //Red
+				outputHID[47] = 130; //Green
+				outputHID[48] = 0; //Blue
+				break;
+			case 50:
+				outputHID[46] = 140; //Red
+				outputHID[47] = 30; //Green
+				outputHID[48] = 90; //Blue
+				break;
+			case 67:
+				outputHID[46] = 90; //Red
+				outputHID[47] = 0; //Green
+				outputHID[48] = 140; //Blue
+				break;
+			case 75:
+				outputHID[46] = 90; //Red
+				outputHID[47] = 0; //Green
+				outputHID[48] = 80; //Blue
+				break;
+			case 100:
+				outputHID[46] = 200; //Red
+				outputHID[47] = 0; //Green
+				outputHID[48] = 229; //Blue
+				break;
+			default:
+				outputHID[46] = 255; //Red
+				outputHID[47] = 140; //Green
+				outputHID[48] = 0; //Blue
+				break;
+			}
+			if (inputReport.gamecube) {
+				outputHID[12] = 0x2; //Mode Motor Right
+				outputHID[13] = 0x90; //right trigger start of resistance section
+				outputHID[14] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+				outputHID[15] = 0xFF; //right trigger force exerted in range (mode2)
+				outputHID[16] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
+				outputHID[17] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
+				outputHID[18] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
+				outputHID[21] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+
+
+				outputHID[23] = 0x2; //Mode Motor Right
+				outputHID[24] = 0x90; //right trigger start of resistance section
+				outputHID[25] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+				outputHID[26] = 0xFF; //right trigger force exerted in range (mode2)
+				outputHID[27] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
+				outputHID[28] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
+				outputHID[29] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
+				outputHID[32] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+			}
+
+			const UINT32 crc = computeCRC32(outputHID, 74);
+
+			outputHID[74] = (crc & 0x000000FF);
+			outputHID[75] = ((crc & 0x0000FF00) >> 8UL);
+			outputHID[76] = ((crc & 0x00FF0000) >> 16UL);
+			outputHID[77] = ((crc & 0xFF000000) >> 24UL);
+
+
+			if (!(WriteFile(dualsense, outputHID, 547, NULL, NULL))) std::cout << GetLastError() << '\n';
+		}
+		else {
+			ZeroMemory(outputHID, 64);
+
+
+			outputHID[0] = 0x02;
+			outputHID[1] = 0x03 | 0x04 | 0x08;
+			outputHID[2] = 0x55;
+
+			outputHID[3] = rumble[0]; //Low Rumble
+			outputHID[4] = rumble[1]; //High Rumble
+
+			outputHID[9] = 0x00;
+			outputHID[39] = 0x02;
+			outputHID[42] = 0x02;
+			outputHID[43] = 0x02;
+
+			switch (inputReport.batteryLevel) {
+				case 70:
+					outputHID[45] = 20; //Red
+					outputHID[46] = 170; //Green
+					outputHID[47] = 150; //Blue
+					break;
+				case 100:
+					outputHID[45] = 130; //Red
+					outputHID[46] = 30; //Green
+					outputHID[47] = 255; //Blue
+					break;
+				default:
+					outputHID[45] = 255; //Red
+					outputHID[46] = 140; //Green
+					outputHID[47] = 0; //Blue
+					break;
+			}
+
+			if (inputReport.gamecube) {
+				outputHID[11] = 0x2; //Mode Motor Right
+				outputHID[12] = 0x90; //right trigger start of resistance section
+				outputHID[13] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+				outputHID[14] = 0xFF; //right trigger force exerted in range (mode2)
+				outputHID[15] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
+				outputHID[16] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
+				outputHID[17] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
+				outputHID[20] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+
+
+				outputHID[22] = 0x2; //Mode Motor Right
+				outputHID[23] = 0x90; //right trigger start of resistance section
+				outputHID[24] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+				outputHID[25] = 0xFF; //right trigger force exerted in range (mode2)
+				outputHID[26] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
+				outputHID[27] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
+				outputHID[28] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
+				outputHID[31] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+			}
+			if (!(WriteFile(dualsense, outputHID, 64, NULL, NULL))) std::cout << GetLastError() << '\n';
+		}
+	}
+	CloseHandle(dualsense);
+}
+void asyncGetInputReport(inputReport& inputReport){
 
 	hid_device_info* deviceInfo = hid_enumerate(DS_VENDOR_ID, DS_PRODUCT_ID);
-	bool bluetooth = deviceInfo->interface_number == -1;
+	inputReport.bluetooth = deviceInfo->interface_number == -1;
 	hid_device* dualsense = hid_open(DS_VENDOR_ID, DS_PRODUCT_ID, deviceInfo->serial_number);
 	hid_free_enumeration(deviceInfo);
-	int bufferSize;
 
-	if (bluetooth) bufferSize = 78;
-	
-	else bufferSize = 64;
-	
-	unsigned char* buffer = new unsigned char[bufferSize];
+	if (inputReport.bluetooth) {
+		inputReport.bufferSize = 78;
+		inputReport.inputBuffer[0] = 0x31;
+		hid_get_input_report(dualsense, inputReport.inputBuffer, inputReport.bufferSize);
+	}
+	else {
+		inputReport.bufferSize = 64;
+		inputReport.inputBuffer[0] = 0x01;
+		hid_read(dualsense, inputReport.inputBuffer, inputReport.bufferSize);
+	}
+	inputReport.batteryLevel = (inputReport.inputBuffer[0x35 + inputReport.bluetooth] & 0x0F) * 12.5;
 
-	std::cout << bluetooth << '\n';
-	if (bluetooth) buffer[0] = 0x31;
-
-	else buffer[0] = 0x01;
-	
 	while (true) {
-		
-		if (bluetooth) hid_get_input_report(dualsense, buffer, bufferSize);
-		else hid_read(dualsense, buffer, bufferSize);
+		if (inputReport.bluetooth) hid_get_input_report(dualsense, inputReport.inputBuffer, inputReport.bufferSize);
+		else hid_read(dualsense, inputReport.inputBuffer, inputReport.bufferSize);
+	}
+	hid_close(dualsense);
+}
+
+void asyncDataReport(inputReport &inputReport) {
+
+	while (true) {
 		
 		Sleep(1);
 		system("cls"); //Clear console
-		int batteryLevel = (buffer[0x35 + bluetooth] & 0x0F)*12.5; // Hex 0x35 for USB to get Battery/Hex 0x36 for Bluetooth to get Battery , because if bluetooth == true then bluetooth == 1 then we can just add bluetooth to the hex of USB
 
-		HRESULT result = controllerInterface->Poll();
-
-		DIJOYSTATE2 joystick{};
-
-		result = controllerInterface->GetDeviceState(sizeof(DIJOYSTATE2), &joystick);
-
-		switch (joystick.rgdwPOV[0]) {
+		switch ((int)(inputReport.inputBuffer[8 + inputReport.bluetooth] & 0x0f)) {
 		case 0:
 			DEBUG("Dpad Up");
 			break;
 
-		case 31500:
-			DEBUG("Dpad Up and Dpad Left");
-			break;
-
-		case 4500:
+		case 1:
 			DEBUG("Dpad Up and Dpad Right");
 			break;
 
-		case 27000:
-			DEBUG("Dpad Left");
-			break;
-
-		case 9000:
+		case 2:
 			DEBUG("Dpad Right");
 			break;
 
-		case 18000:
+		case 3:
+			DEBUG("Dpad Down and Dpad Right");
+			break;
+
+		case 4:
 			DEBUG("Dpad Down");
 			break;
 
-		case 22500:
+		case 5:
 			DEBUG("Dpad Down and Dpad Left");
 			break;
 
-		case 13500:
-			DEBUG("Dpad Down and Dpad Right");
+		case 6:
+			DEBUG("Dpad Left");
+			break;
+
+		case 7:
+			DEBUG("Dpad Up and Dpad Left");
 			break;
 		}
 
-		if (joystick.rgbButtons[0]) DEBUG("Square Button\n");
+		if ((bool)(inputReport.inputBuffer[8 + inputReport.bluetooth] & (1 << 4))) DEBUG("Square Button\n");
 
-		if (joystick.rgbButtons[1]) DEBUG("X Button\n");
+		if ((bool)(inputReport.inputBuffer[8 + inputReport.bluetooth] & (1 << 5))) DEBUG("X Button\n");
 
-		if (joystick.rgbButtons[2]) DEBUG("Circle Button\n");
+		if ((bool)(inputReport.inputBuffer[8 + inputReport.bluetooth] & (1 << 6))) DEBUG("Circle Button\n");
 
-		if (joystick.rgbButtons[3]) DEBUG("Triangle Button\n");
+		if ((bool)(inputReport.inputBuffer[8 + inputReport.bluetooth] & (1 << 7))) DEBUG("Triangle Button\n");
 
-		if (joystick.rgbButtons[4]) DEBUG("L1 Button\n");
+		if ((bool)(inputReport.inputBuffer[9 + inputReport.bluetooth] & (1 << 0))) DEBUG("L1 Button\n");
 
-		if (joystick.rgbButtons[5]) DEBUG("R1 Button\n");
+		if ((bool)(inputReport.inputBuffer[9 + inputReport.bluetooth] & (1 << 1))) DEBUG("R1 Button\n");
 
-		if (joystick.rgbButtons[8]) DEBUG("Select Button\n");
+		if ((bool)(inputReport.inputBuffer[9 + inputReport.bluetooth] & (1 << 4))) DEBUG("Select Button\n");
 
-		if (joystick.rgbButtons[9]) DEBUG("Start Button\n");
+		if ((bool)(inputReport.inputBuffer[9 + inputReport.bluetooth] & (1 << 5))) DEBUG("Start Button\n");
 
-		if (joystick.rgbButtons[10]) DEBUG("L3 Button\n");
+		if ((bool)(inputReport.inputBuffer[9 + inputReport.bluetooth] & (1 << 6))) DEBUG("L3 Button\n");
 
-		if (joystick.rgbButtons[11]) DEBUG("R3 Button\n");
+		if ((bool)(inputReport.inputBuffer[9 + inputReport.bluetooth] & (1 << 7))) DEBUG("R3 Button\n");
 
-		if (joystick.rgbButtons[12]) DEBUG("Sony/Home Button\n");
+		if ((bool)(inputReport.inputBuffer[10 + inputReport.bluetooth] & (1 << 0))) DEBUG("Sony/Home Button\n");
 
-		if (joystick.rgbButtons[13]) DEBUG("Toutchpad Click\n");
+		if ((bool)(inputReport.inputBuffer[10 + inputReport.bluetooth] & 0x02)) DEBUG("Toutchpad Click\n");
 
-		if (joystick.rgbButtons[14]) DEBUG("Microphone Button\n");
-
-		if (controllerInterface->GetDeviceState(sizeof(DIJOYSTATE2), &joystick) != DI_OK) {
-			while (controllerInterface->GetDeviceState(sizeof(DIJOYSTATE2), &joystick) != DI_OK) { //Controller is being acquired in the main function so we only need to check GetDeviceState is DI_OK
+		if (false) {
+			while (true) { //Controller is being acquired in the main function so we only need to check GetDeviceState is DI_OK
 				std::cout << "Failed to get Device State\n";
 				std::cout << "Reconnecting";
 				Sleep(500);
@@ -117,21 +285,19 @@ void asyncDataReport(LPDIRECTINPUTDEVICE8& controllerInterface) {
 				system("cls");
 			}	
 		}
-		std::cout << "\nLeftJoystick Horizontal Value: " << joystick.lX << '\n';
-		std::cout << "LeftJoystick Vertical Value: " << joystick.lY << '\n';
-		std::cout << "RightJoystick Horizontal Value: " << joystick.lZ << '\n';
-		std::cout << "RightJoystick Horizontal Value: " << joystick.lRz << '\n';
-		std::cout << "Left Trigger Value: " << joystick.lRx / 257 << '\n';
-		std::cout << "Right Trigger Value: " << joystick.lRy / 257 << '\n';
-		std::cout << "Battery Level: " << batteryLevel << "%\n";
+		std::cout << "\nLeftJoystick Horizontal Value: " << (int)((inputReport.inputBuffer[1 + inputReport.bluetooth] * 257) - 32768) << '\n';
+		std::cout << "LeftJoystick Vertical Value: " << (int)(32767 - (inputReport.inputBuffer[2 + inputReport.bluetooth] * 257)) << '\n';
+		std::cout << "RightJoystick Horizontal Value: " << (int)((inputReport.inputBuffer[3 + inputReport.bluetooth] * 257) - 32768) << '\n';
+		std::cout << "RightJoystick Vertical Value: " << (int)(32767 - (inputReport.inputBuffer[4 + inputReport.bluetooth] * 257)) << '\n';
+		std::cout << "Left Trigger Value: " << (int)inputReport.inputBuffer[5 + inputReport.bluetooth] << '\n';
+		std::cout << "Right Trigger Value: " << (int)inputReport.inputBuffer[6 + inputReport.bluetooth] << '\n';
+		std::cout << "Battery Level: " << inputReport.batteryLevel << "%\n";
 
 	}
-	delete[] buffer;
-	hid_close(dualsense);
-
 }
 
-int initializeFakeController(HINSTANCE& appHandle, IDirectInput8* ptrDirectInput, LPDIRECTINPUTDEVICE8& controllerInterface, XINPUT_STATE& ControllerState, PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PVIGEM_CLIENT& client) {
+int initializeFakeController(XINPUT_STATE& ControllerState, PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PVIGEM_CLIENT& client) {
+
 	if (client == nullptr)
 	{
 		std::cerr << "Uh, not enough memory to do that?!" << std::endl;
@@ -150,24 +316,5 @@ int initializeFakeController(HINSTANCE& appHandle, IDirectInput8* ptrDirectInput
 
 	target = vigem_target_add(client, emulateX360);
 
-	if (DirectInput8Create(appHandle, DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)&ptrDirectInput, NULL) != DI_OK) {
-		std::cout << "Failed to create DI8 Device\n";
-		return -1;
-	}
-	if (ptrDirectInput->CreateDevice(GUID_Joystick, &controllerInterface, NULL) != DI_OK) {
-		ptrDirectInput->Release();
-		std::cout << "Failed to create Device\n";
-		return -1;
-	}
-	if (controllerInterface->SetDataFormat(&c_dfDIJoystick2) != DI_OK) {
-		ptrDirectInput->Release();
-		std::cout << "Failed to set Data Format\n";
-		return -1;
-	}
-	if (controllerInterface->Acquire() != DI_OK) {
-		ptrDirectInput->Release();
-		std::cout << "Failed to acquire Device\n";
-		return -1;
-	}
 	return 0;
 }

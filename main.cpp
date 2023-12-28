@@ -3,7 +3,17 @@
 #define DS_VENDOR_ID 0x054c
 #define DS_PRODUCT_ID 0x0ce6
 
-VOID CALLBACK notification(
+//typedef DWORD(WINAPI* XInputGetStateExProc)(DWORD dwUserIndex, XINPUT_STATE* pState);
+
+	//HMODULE xinput_lib = LoadLibraryA("xinput1_3.dll");
+	//XInputGetStateExProc XInputGetStateEx{};
+	//int XInputGetStateExOrdinal = 100;
+//	XInputGetStateEx = (XInputGetStateExProc)GetProcAddress(xinput_lib, (LPCSTR)XInputGetStateExOrdinal);
+	
+extern UCHAR rumble[2]{};
+
+
+VOID CALLBACK getRumble(
 	PVIGEM_CLIENT Client,
 	PVIGEM_TARGET Target,
 	UCHAR LargeMotor,
@@ -12,122 +22,87 @@ VOID CALLBACK notification(
 	LPVOID UserData
 )
 {
-	hid_device_info* deviceInfo = hid_enumerate(DS_VENDOR_ID, DS_PRODUCT_ID);
-
-	hid_device* dualsense = hid_open(DS_VENDOR_ID, DS_PRODUCT_ID, deviceInfo->serial_number);
-	hid_free_enumeration(deviceInfo);
-
-	unsigned char outputHID[48]{};
-	outputHID[0] = 0x02;
-	outputHID[1] = 0x02 | 0x01;
-	outputHID[2] = 0x04;
-	
-	outputHID[45] = 90; //Red
-	outputHID[46] = 0; //Green
-	outputHID[47] = 229; //Blue
-
-	outputHID[3] = SmallMotor; //Low Rumble
-	outputHID[4] = LargeMotor; //High Rumble
-	hid_write(dualsense, outputHID, 48);
-	
+	rumble[0] = SmallMotor;
+	rumble[1] = LargeMotor;
 }
 
-typedef DWORD(WINAPI* XInputGetStateExProc)(DWORD dwUserIndex, XINPUT_STATE* pState);
+
 int main() {
 
-	HMODULE xinput_lib = LoadLibraryA("xinput1_3.dll");
-	XInputGetStateExProc XInputGetStateEx{};
-	int XInputGetStateExOrdinal = 100;
-	XInputGetStateEx = (XInputGetStateExProc)GetProcAddress(xinput_lib, (LPCSTR)XInputGetStateExOrdinal);
 	//Initialize Fake Controller
 
-	HINSTANCE appHandle = GetModuleHandle(NULL);
-	IDirectInput8* ptrDirectInput = nullptr;
-	LPDIRECTINPUTDEVICE8 controllerInterface;
 	XINPUT_STATE ControllerState;
 	PVIGEM_TARGET emulateX360;
 	VIGEM_ERROR target;
 	PVIGEM_CLIENT client = vigem_alloc();
 
-	if (initializeFakeController(appHandle, ptrDirectInput, controllerInterface, ControllerState, emulateX360, target, client) != 0) return -1;
+	inputReport inputReport{};
 
-	std::thread(asyncDataReport, std::ref(controllerInterface)).detach(); // Displays controller info
+
+	std::thread(asyncGetInputReport, std::ref(inputReport)).detach(); //Gets the Controllers Input through the HID Input Report
+	std::thread(asyncSendOutputReport, std::ref(inputReport)).detach();
+
+	std::thread(asyncDataReport,std::ref(inputReport)).detach(); // Displays controller info
+
+	if (initializeFakeController(ControllerState, emulateX360, target, client) != 0) return -1;
+	vigem_target_x360_register_notification(client, emulateX360, &getRumble, nullptr);
 
 	while (true) {
-		XInputGetStateEx(0, &ControllerState);
+		XInputGetState(0, &ControllerState);
 
-		HWND foregroundAppHandle = GetForegroundWindow();
+		ControllerState.Gamepad.wButtons =  (bool)(inputReport.inputBuffer[8 + inputReport.bluetooth]  & (1 << 4)) ? XINPUT_GAMEPAD_X : 0;
 
-		HRESULT result = controllerInterface->Poll();
+		ControllerState.Gamepad.wButtons += (bool)(inputReport.inputBuffer[8 + inputReport.bluetooth]  & (1 << 5)) ? XINPUT_GAMEPAD_A : 0;
 
-		DIJOYSTATE2 joystick{};	
+		ControllerState.Gamepad.wButtons += (bool)(inputReport.inputBuffer[8 + inputReport.bluetooth]  & (1 << 6)) ? XINPUT_GAMEPAD_B : 0;
 
-		if (controllerInterface->GetDeviceState(sizeof(DIJOYSTATE2), &joystick) != DI_OK)  //Checks if controller is plugged in ,if not then tries to reconnect
-			while (controllerInterface->Acquire() != DI_OK) 
+		ControllerState.Gamepad.wButtons += (bool)(inputReport.inputBuffer[8 + inputReport.bluetooth]  & (1 << 7)) ? XINPUT_GAMEPAD_Y : 0;
 
+		ControllerState.Gamepad.wButtons += (bool)(inputReport.inputBuffer[9 + inputReport.bluetooth] & (1 << 0)) ? XINPUT_GAMEPAD_LEFT_SHOULDER : 0;
 
-		result = controllerInterface->GetDeviceState(sizeof(DIJOYSTATE2), &joystick);
+		ControllerState.Gamepad.wButtons += (bool)(inputReport.inputBuffer[9 + inputReport.bluetooth] & (1 << 1)) ? XINPUT_GAMEPAD_RIGHT_SHOULDER : 0;
 
-		ControllerState.Gamepad.wButtons = joystick.rgbButtons[0] ? XINPUT_GAMEPAD_X : 0;
-		ControllerState.Gamepad.wButtons += joystick.rgbButtons[1] ? XINPUT_GAMEPAD_A : 0;
-		ControllerState.Gamepad.wButtons += joystick.rgbButtons[2] ? XINPUT_GAMEPAD_B : 0;
-		ControllerState.Gamepad.wButtons += joystick.rgbButtons[3] ? XINPUT_GAMEPAD_Y : 0;
-		ControllerState.Gamepad.wButtons += joystick.rgbButtons[4] ? XINPUT_GAMEPAD_LEFT_SHOULDER : 0;
-		ControllerState.Gamepad.wButtons += joystick.rgbButtons[5] ? XINPUT_GAMEPAD_RIGHT_SHOULDER : 0;		
-		ControllerState.Gamepad.wButtons += joystick.rgbButtons[8] ? XINPUT_GAMEPAD_BACK : 0;
-		ControllerState.Gamepad.wButtons += joystick.rgbButtons[9] ? XINPUT_GAMEPAD_START : 0;
-		ControllerState.Gamepad.wButtons += joystick.rgbButtons[10] ? XINPUT_GAMEPAD_LEFT_THUMB : 0;
-		ControllerState.Gamepad.wButtons += joystick.rgbButtons[11] ? XINPUT_GAMEPAD_RIGHT_THUMB : 0;
-		ControllerState.Gamepad.wButtons += joystick.rgbButtons[12] ? 0x0400 : 0;
+		ControllerState.Gamepad.wButtons += (bool)(inputReport.inputBuffer[9 + inputReport.bluetooth] & (1 << 4)) ? XINPUT_GAMEPAD_BACK : 0;
 
-		switch (joystick.rgdwPOV[0]) {
-		case 0:
-			ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_UP;
-			break;
+		ControllerState.Gamepad.wButtons += (bool)(inputReport.inputBuffer[9 + inputReport.bluetooth] & (1 << 5)) ? XINPUT_GAMEPAD_START : 0;
 
-		case 31500:
-			ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_UP + XINPUT_GAMEPAD_DPAD_LEFT;
-			break;
+		ControllerState.Gamepad.wButtons += (bool)(inputReport.inputBuffer[9 + inputReport.bluetooth] & (1 << 6)) ? XINPUT_GAMEPAD_LEFT_THUMB : 0;
 
-		case 4500: 
-			ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_UP + XINPUT_GAMEPAD_DPAD_RIGHT;
-			break;
+		ControllerState.Gamepad.wButtons += (bool)(inputReport.inputBuffer[9 + inputReport.bluetooth] & (1 << 7)) ? XINPUT_GAMEPAD_RIGHT_THUMB : 0;
+		//ControllerState.Gamepad.wButtons += joystick.rgbButtons[12] ? 0x0400 : 0;
 
-		case 27000: 
-			ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_LEFT;
-			break;
+		switch ((int)(inputReport.inputBuffer[8 + inputReport.bluetooth] & 0x0f)) {
+		case 0: ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_UP; break;
 
-		case 9000:  
-			ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_RIGHT;
-			break;
+		case 1: ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_UP + XINPUT_GAMEPAD_DPAD_RIGHT; break;
 
-		case 18000:
-			ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_DOWN;
-			break;
+		case 2: ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_RIGHT; break;
 
-		case 22500:
-			ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_DOWN + XINPUT_GAMEPAD_DPAD_LEFT;
-			break;
+		case 3: ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_DOWN + XINPUT_GAMEPAD_DPAD_RIGHT; break;
 
-		case 13500:
-			ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_DOWN + XINPUT_GAMEPAD_DPAD_RIGHT;
-			break;			
+		case 4: ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_DOWN; break;
+
+		case 5: ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_DOWN + XINPUT_GAMEPAD_DPAD_LEFT; break;
+
+		case 6: ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_LEFT; break;
+
+		case 7: ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_UP + XINPUT_GAMEPAD_DPAD_LEFT; break;
 		}
 
-		ControllerState.Gamepad.bLeftTrigger = joystick.lRx/257;
-		ControllerState.Gamepad.bRightTrigger = joystick.lRy / 257;
-		ControllerState.Gamepad.sThumbLX= joystick.lX - 32768;
-		ControllerState.Gamepad.sThumbLY =  32767 - joystick.lY;
-		ControllerState.Gamepad.sThumbRX = joystick.lZ - 32768;
-		ControllerState.Gamepad.sThumbRY = 32767 - joystick.lRz;
 
-		vigem_target_x360_register_notification(client, emulateX360, &notification, nullptr);
+		ControllerState.Gamepad.bLeftTrigger = (int)inputReport.inputBuffer[5 + inputReport.bluetooth];
+		ControllerState.Gamepad.bRightTrigger = (int)inputReport.inputBuffer[6 + inputReport.bluetooth];
+		ControllerState.Gamepad.sThumbLX = (int)((inputReport.inputBuffer[1 + inputReport.bluetooth] * 257) - 32768);
+		ControllerState.Gamepad.sThumbLY = (int)(32767 - (inputReport.inputBuffer[2 + inputReport.bluetooth] * 257));
+		ControllerState.Gamepad.sThumbRX = (int)((inputReport.inputBuffer[3 + inputReport.bluetooth] * 257) - 32768);
+		ControllerState.Gamepad.sThumbRY = (int)(32767 - (inputReport.inputBuffer[4 + inputReport.bluetooth] * 257));
+
 		vigem_target_x360_update(client, emulateX360, *reinterpret_cast<XUSB_REPORT*>(&ControllerState.Gamepad));
+
 	}
 
 	//Cleanup
 
-	ptrDirectInput->Release();
 	vigem_target_remove(client, emulateX360);
 	vigem_target_free(emulateX360);
 	vigem_disconnect(client);

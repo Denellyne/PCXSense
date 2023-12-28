@@ -82,7 +82,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>XInput.lib;dxguid.lib;Dinput8.lib;setupapi.lib;C:\Users\Gustavo Santos\Documents\GitHub\DualSenseToXInput\Include\ViGEm\ViGEmClient.lib;C:\Users\Gustavo Santos\Documents\GitHub\DualSenseToXInput\Include\hidapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;C:\Users\Gustavo Santos\Documents\GitHub\DualSenseToXInput\Include\ViGEm\ViGEmClient.lib;C:\Users\Gustavo Santos\Documents\GitHub\DualSenseToXInput\Include\hidapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Driver>NotSet</Driver>
       <AllowIsolation>false</AllowIsolation>
       <Profile>true</Profile>
@@ -120,7 +120,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>XInput.lib;dxguid.lib;Dinput8.lib;setupapi.lib;C:\Users\Gustavo Santos\Documents\GitHub\DualSenseToXInput\Include\ViGEm\ViGEmClient.lib;C:\Users\Gustavo Santos\Documents\GitHub\DualSenseToXInput\Include\hidapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;C:\Users\Gustavo Santos\Documents\GitHub\DualSenseToXInput\Include\ViGEm\ViGEmClient.lib;C:\Users\Gustavo Santos\Documents\GitHub\DualSenseToXInput\Include\hidapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Driver>NotSet</Driver>
       <AllowIsolation>false</AllowIsolation>
       <Profile>true</Profile>
@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="customInclude\util.cpp" />
+    <ClCompile Include="Include\ViGEm\Client.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
