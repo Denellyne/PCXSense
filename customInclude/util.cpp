@@ -88,6 +88,7 @@ void extern inline sendOutputReport(controller& x360Controller) {
 	unsigned char outputHID[547]{};
 
 	while (true) {
+		Sleep(4);
 		if (x360Controller.bluetooth) {
 			ZeroMemory(outputHID, 547);
 
