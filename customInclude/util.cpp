@@ -1,11 +1,30 @@
 #pragma once
 #include "util.h"
+#include <tlhelp32.h>
+
 
 #define DS_STATUS_BATTERY_CAPACITY 0xF
 #define DS_STATUS_CHARGING 0xF0
 #define DS_STATUS_CHARGING_SHIFT 4
 #define DS_VENDOR_ID 0x054c
 #define DS_PRODUCT_ID 0x0ce6
+
+BOOL inline IsProcessRunning()
+{
+	bool exists = false;
+	PROCESSENTRY32 entry;
+	entry.dwSize = sizeof(PROCESSENTRY32);
+
+	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+
+	if (Process32First(snapshot, &entry))
+		while (Process32Next(snapshot, &entry))
+			if (!wcsicmp(entry.szExeFile, L"Dolphin.exe"))
+				exists = true;
+
+	CloseHandle(snapshot);
+	return exists;
+}
 
 uint32_t computeCRC32(unsigned char* buffer, size_t len)
 {
@@ -90,7 +109,7 @@ void asyncSendOutputReport(inputReport& inputReport) {
 				outputHID[48] = 0; //Blue
 				break;
 			}
-			if (inputReport.gamecube) {
+			if (IsProcessRunning()) {
 				outputHID[12] = 0x2; //Mode Motor Right
 				outputHID[13] = 0x90; //right trigger start of resistance section
 				outputHID[14] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
@@ -155,7 +174,7 @@ void asyncSendOutputReport(inputReport& inputReport) {
 					break;
 			}
 
-			if (inputReport.gamecube) {
+			if (IsProcessRunning()) {
 				outputHID[11] = 0x2; //Mode Motor Right
 				outputHID[12] = 0x90; //right trigger start of resistance section
 				outputHID[13] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse

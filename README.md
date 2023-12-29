@@ -9,7 +9,8 @@
 
 
     Lightbar control,
-    Rumble support
+    Rumble support,
+    Gamecube Triggers - Activates automatically when Dolphin is opened
 
 
 

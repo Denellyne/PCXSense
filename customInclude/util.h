@@ -10,7 +10,6 @@ extern UCHAR rumble[2];
 
 struct inputReport {
 	
-	bool gamecube;
 	bool bluetooth;
 	unsigned char inputBuffer[78]{};
 	int bufferSize;
