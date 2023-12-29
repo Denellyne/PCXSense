@@ -9,7 +9,8 @@
 
     Lightbar control,
     Rumble support,
-    Gamecube Triggers - Activates automatically when Dolphin is opened
+    Gamecube Triggers (Triggers with Dolphin Emulator),
+    Rainbow mode on USB (Must change variable)
 
 
 
