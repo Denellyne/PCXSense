@@ -14,8 +14,9 @@
 
 
 
-#Rainbow Mode  
+# Rainbow Mode  
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+
 ![WhatsApp Video 2023-12-29 at 00 47 28](https://github.com/Denellyne/DualSenseToXInput/assets/56112881/abfa3a68-9147-4e20-8e57-cac6196095cf)
 
 
