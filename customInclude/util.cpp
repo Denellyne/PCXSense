@@ -1,21 +1,20 @@
 #pragma once
 #include "util.h"
 #include <tlhelp32.h>
-
-#define DS_STATUS_BATTERY_CAPACITY 0xF
-#define DS_STATUS_CHARGING 0xF0
-#define DS_STATUS_CHARGING_SHIFT 4
+#define EXPRIMENTAL false
+//#define DS_STATUS_BATTERY_CAPACITY 0xF
+//#define DS_STATUS_CHARGING 0xF0
+//#define DS_STATUS_CHARGING_SHIFT 4
 #define DS_VENDOR_ID 0x054c
 #define DS_PRODUCT_ID 0x0ce6
 
-void inline isControllerConnected(inputReport& inputReport) {
+void isControllerConnected(inputReport& inputReport) {
 
 	hid_device_info* deviceInfo = hid_enumerate(DS_VENDOR_ID, DS_PRODUCT_ID);
 	if (deviceInfo == nullptr) {
 		inputReport.isConnected = false;
 		return;
 	}
-
 	inputReport.deviceHandle = CreateFileA(deviceInfo->path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
 	inputReport.bluetooth = deviceInfo->interface_number == -1;
 
@@ -69,7 +68,7 @@ void inline static isDolphinRunning(unsigned char* outputHID)
 	CloseHandle(snapshot);
 }
 
-uint32_t computeCRC32(unsigned char* buffer, size_t len)
+uint32_t computeCRC32(unsigned char* buffer,const size_t& len)
 {
 	UINT32 result = crcSeed;
 	for (size_t i = 0; i < len; i++)
@@ -89,99 +88,106 @@ void asyncSendOutputReport(inputReport& inputReport) {
 	while(true){
 		if (inputReport.isConnected) {
 			if (inputReport.bluetooth) {
-			ZeroMemory(outputHID, 547);
+				ZeroMemory(outputHID, 547);
 
-			outputHID[0] = 0x31;
-			outputHID[1] = 0x02;
-			outputHID[2] = 0x03;
-			outputHID[3] = 0x55;
+				outputHID[0] = 0x31;
+				outputHID[1] = 0x02;
+				outputHID[2] = 0x03;
+				outputHID[3] = 0x55;
 
-			outputHID[4] = rumble[0]; //Low Rumble
-			outputHID[5] = rumble[1]; //High Rumble
+				outputHID[4] = rumble[0]; //Low Rumble
+				outputHID[5] = rumble[1]; //High Rumble
 
-			outputHID[10] = 0x00;
-			outputHID[40] = 0x02;
-			outputHID[43] = 0x02;
-			outputHID[44] = 0x02;
+				outputHID[10] = 0x00;
+				outputHID[40] = 0x02;
+				outputHID[43] = 0x02;
+				outputHID[44] = 0x02;
 
-			switch (inputReport.batteryLevel) {
-			case 0:
-				outputHID[10] = 0x02;
-				outputHID[46] = 255; //Red
-				break;
-			case 12:
-				outputHID[10] = 0x01;
-				outputHID[46] = 200; //Red
-				outputHID[47] = 0; //Green
-				outputHID[48] = 55; //Blue
-				break;
-			case 27:
-				outputHID[46] = 230; //Red
-				outputHID[47] = 90; //Green
-				outputHID[48] = 0; //Blue
-				break;
-			case 37:
-				outputHID[46] = 230; //Red
-				outputHID[47] = 130; //Green
-				outputHID[48] = 0; //Blue
-				break;
-			case 50:
-				outputHID[46] = 140; //Red
-				outputHID[47] = 30; //Green
-				outputHID[48] = 90; //Blue
-				break;
-			case 67:
-				outputHID[46] = 90; //Red
-				outputHID[47] = 0; //Green
-				outputHID[48] = 140; //Blue
-				break;
-			case 75:
-				outputHID[46] = 90; //Red
-				outputHID[47] = 0; //Green
-				outputHID[48] = 80; //Blue
-				break;
-			case 100:
-				outputHID[46] = 200; //Red
-				outputHID[47] = 0; //Green
-				outputHID[48] = 229; //Blue
-				break;
-			default:
-				outputHID[46] = 255; //Red
-				outputHID[47] = 140; //Green
-				outputHID[48] = 0; //Blue
-				break;
+				switch (inputReport.batteryLevel) {
+				case 0:
+					outputHID[10] = 0x02;
+					outputHID[46] = 255; //Red
+					break;
+				case 12:
+					outputHID[10] = 0x01;
+					outputHID[46] = 200; //Red
+					outputHID[47] = 0; //Green
+					outputHID[48] = 55; //Blue
+					break;
+				case 27:
+					outputHID[46] = 230; //Red
+					outputHID[47] = 90; //Green
+					outputHID[48] = 0; //Blue
+					break;
+				case 37:
+					outputHID[46] = 230; //Red
+					outputHID[47] = 130; //Green
+					outputHID[48] = 0; //Blue
+					break;
+				case 50:
+					outputHID[46] = 140; //Red
+					outputHID[47] = 30; //Green
+					outputHID[48] = 90; //Blue
+					break;
+				case 67:
+					outputHID[46] = 90; //Red
+					outputHID[47] = 0; //Green
+					outputHID[48] = 140; //Blue
+					break;
+				case 75:
+					outputHID[46] = 90; //Red
+					outputHID[47] = 0; //Green
+					outputHID[48] = 80; //Blue
+					break;
+				case 100:
+					outputHID[46] = 200; //Red
+					outputHID[47] = 0; //Green
+					outputHID[48] = 229; //Blue
+					break;
+				default:
+					outputHID[46] = 255; //Red
+					outputHID[47] = 140; //Green
+					outputHID[48] = 0; //Blue
+					break;
+				}
+
+#ifdef _EXPERIMENTAL
+				isDolphinRunning(outputHID);
+#endif // _EXPERIMENTAL
+
+				const UINT32 crc = computeCRC32(outputHID, 74);
+
+				outputHID[74] = (crc & 0x000000FF);
+				outputHID[75] = ((crc & 0x0000FF00) >> 8UL);
+				outputHID[76] = ((crc & 0x00FF0000) >> 16UL);
+				outputHID[77] = ((crc & 0xFF000000) >> 24UL);
+
+
+				WriteFile(inputReport.deviceHandle, outputHID, 547, NULL, NULL);
 			}
-			
-			isDolphinRunning(outputHID);
+			else {
 
-			const UINT32 crc = computeCRC32(outputHID, 74);
+				ZeroMemory(outputHID, 64);
 
-			outputHID[74] = (crc & 0x000000FF);
-			outputHID[75] = ((crc & 0x0000FF00) >> 8UL);
-			outputHID[76] = ((crc & 0x00FF0000) >> 16UL);
-			outputHID[77] = ((crc & 0xFF000000) >> 24UL);
+				outputHID[0] = 0x02;
+				outputHID[1] = 0x03 | 0x04 | 0x08;
+				outputHID[2] = 0x55;
 
+				outputHID[3] = rumble[0]; //Low Rumble
+				outputHID[4] = rumble[1]; //High Rumble
 
-			WriteFile(inputReport.deviceHandle, outputHID, 547, NULL, NULL);
-		}
-		else {
+				outputHID[9] = 0x00; //LED Controls
+				outputHID[39] = 0x02;
+				outputHID[42] = 0x02;
+				outputHID[43] = 0x02;
 
-			ZeroMemory(outputHID, 64);
-
-			outputHID[0] = 0x02;
-			outputHID[1] = 0x03 | 0x04 | 0x08;
-			outputHID[2] = 0x55;
-
-			outputHID[3] = rumble[0]; //Low Rumble
-			outputHID[4] = rumble[1]; //High Rumble
-
-			outputHID[9] = 0x00; //LED Controls
-			outputHID[39] = 0x02;
-			outputHID[42] = 0x02;
-			outputHID[43] = 0x02;
-
-			switch (inputReport.batteryLevel) {
+				switch (inputReport.batteryLevel) {
 				case 70:
+					outputHID[45] = 20; //Red
+					outputHID[46] = 170; //Green
+					outputHID[47] = 150; //Blue
+					break;
+				case 87:
 					outputHID[45] = 20; //Red
 					outputHID[46] = 170; //Green
 					outputHID[47] = 150; //Blue
@@ -196,29 +202,30 @@ void asyncSendOutputReport(inputReport& inputReport) {
 					outputHID[46] = 140; //Green
 					outputHID[47] = 0; //Blue
 					break;
+				}
+
+#ifdef _EXPRIMENTAL
+				isDolphinRunning(outputHID);
+
+				if (inputReport.rainbow) {
+					if (Red == 255) AddRed = false;
+					if (Red == 0) AddRed = true;
+					if (Green == 255) AddGreen = false;
+					if (Green == 0) AddGreen = true;
+					if (Blue == 255) AddBlue = false;
+					if (Blue == 0) AddBlue = true;
+
+					Red = AddRed ? Red++ : Red--;
+					Green = AddGreen ? Green++ : Blue--;
+					Blue = AddBlue ? Blue++ : Blue--;
+
+					outputHID[45] = Red; //Red
+					outputHID[46] = Green; //Green
+					outputHID[47] = Blue; //Blue
+				}
+#endif
+				WriteFile(inputReport.deviceHandle, outputHID, 64, NULL, NULL);
 			}
-
-			isDolphinRunning(outputHID);
-
-			if (inputReport.rainbow) {
-				if (Red == 255) AddRed = false;
-				if (Red == 0) AddRed = true;
-				if (Green == 255) AddGreen = false;
-				if (Green == 0) AddGreen = true;
-				if (Blue == 255) AddBlue = false;
-				if (Blue == 0) AddBlue = true;
-
-				Red = AddRed ? Red++ : Red--;
-				Green = AddGreen ? Green++ : Blue--;
-				Blue = AddBlue ? Blue++ : Blue--;
-
-				outputHID[45] = Red; //Red
-				outputHID[46] = Green; //Green
-				outputHID[47] = Blue; //Blue
-			}
-
-			WriteFile(inputReport.deviceHandle, outputHID, 64, NULL, NULL);
-		}
 		}
 	}
 	CloseHandle(inputReport.deviceHandle);
@@ -226,12 +233,11 @@ void asyncSendOutputReport(inputReport& inputReport) {
 void inline asyncGetInputReport(inputReport& inputReport){
 	while (true) {
 		isControllerConnected(inputReport);
-		if (inputReport.isConnected) {
-			inputReport.batteryLevel = (inputReport.inputBuffer[0x35 + inputReport.bluetooth] & 0x0F) * 12.5; /* Hex 0x35 (USB) to get Battery / Hex 0x36 (Bluetooth) to get Battery
-																										because if bluetooth == true then bluetooth == 1 so we can just add bluetooth
-																										to the hex value of USB to get the battery reading*/
-			ReadFile(inputReport.deviceHandle, inputReport.inputBuffer, inputReport.bufferSize, NULL, NULL);
-		}
+		inputReport.batteryLevel = (inputReport.inputBuffer[53 + inputReport.bluetooth] & 15) * 12.5; /* Hex 0x35 (USB) to get Battery / Hex 0x36 (Bluetooth) to get Battery
+																							//			because if bluetooth == true then bluetooth == 1 so we can just add bluetooth
+																						//				to the hex value of USB to get the battery reading*/
+		ReadFile(inputReport.deviceHandle, inputReport.inputBuffer, inputReport.bufferSize, NULL, NULL);
+		
 	}
 }
 
@@ -241,6 +247,14 @@ void asyncDataReport(inputReport &inputReport) {
 
 		Sleep(1);
 		system("cls"); //Clear console
+
+		std::cout << "\nLeftJoystick Horizontal Value: " << (int)((inputReport.inputBuffer[1 + inputReport.bluetooth] * 257) - 32768) << '\n';
+		std::cout << "LeftJoystick Vertical Value: " << (int)(32767 - (inputReport.inputBuffer[2 + inputReport.bluetooth] * 257)) << '\n';
+		std::cout << "RightJoystick Horizontal Value: " << (int)((inputReport.inputBuffer[3 + inputReport.bluetooth] * 257) - 32768) << '\n';
+		std::cout << "RightJoystick Vertical Value: " << (int)(32767 - (inputReport.inputBuffer[4 + inputReport.bluetooth] * 257)) << '\n';
+		std::cout << "Left Trigger Value: " << (int)inputReport.inputBuffer[5 + inputReport.bluetooth] << '\n';
+		std::cout << "Right Trigger Value: " << (int)inputReport.inputBuffer[6 + inputReport.bluetooth] << '\n';
+		std::cout << "Battery Level: " << inputReport.batteryLevel << "%\n";
 
 		switch ((int)(inputReport.inputBuffer[8 + inputReport.bluetooth] & 0x0f)) {
 
@@ -299,13 +313,7 @@ void asyncDataReport(inputReport &inputReport) {
 			system("cls");
 		}	
 		
-		std::cout << "\nLeftJoystick Horizontal Value: " << (int)((inputReport.inputBuffer[1 + inputReport.bluetooth] * 257) - 32768) << '\n';
-		std::cout << "LeftJoystick Vertical Value: " << (int)(32767 - (inputReport.inputBuffer[2 + inputReport.bluetooth] * 257)) << '\n';
-		std::cout << "RightJoystick Horizontal Value: " << (int)((inputReport.inputBuffer[3 + inputReport.bluetooth] * 257) - 32768) << '\n';
-		std::cout << "RightJoystick Vertical Value: " << (int)(32767 - (inputReport.inputBuffer[4 + inputReport.bluetooth] * 257)) << '\n';
-		std::cout << "Left Trigger Value: " << (int)inputReport.inputBuffer[5 + inputReport.bluetooth] << '\n';
-		std::cout << "Right Trigger Value: " << (int)inputReport.inputBuffer[6 + inputReport.bluetooth] << '\n';
-		std::cout << "Battery Level: " << inputReport.batteryLevel << "%\n";
+
 
 	}
 }

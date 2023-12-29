@@ -1,8 +1,5 @@
 #include "util.h"
-
 #include <thread>
-#define DS_VENDOR_ID 0x054c
-#define DS_PRODUCT_ID 0x0ce6
 
 //typedef DWORD(WINAPI* XInputGetStateExProc)(DWORD dwUserIndex, XINPUT_STATE* pState);
 
@@ -26,7 +23,6 @@ VOID CALLBACK getRumble(
 	rumble[0] = SmallMotor;
 	rumble[1] = LargeMotor;
 }
-
 
 int main() {
 
@@ -54,9 +50,14 @@ int main() {
 	while (true) {
 		XInputGetState(0, &ControllerState);
 
-		ControllerState.Gamepad.wButtons = 0;
+		ControllerState.Gamepad.bLeftTrigger = inputReport.inputBuffer[5 + inputReport.bluetooth];
+		ControllerState.Gamepad.bRightTrigger = inputReport.inputBuffer[6 + inputReport.bluetooth];
+		ControllerState.Gamepad.sThumbLX = ((inputReport.inputBuffer[1 + inputReport.bluetooth] * 257) - 32768);
+		ControllerState.Gamepad.sThumbLY = (32767 - (inputReport.inputBuffer[2 + inputReport.bluetooth] * 257));
+		ControllerState.Gamepad.sThumbRX = ((inputReport.inputBuffer[3 + inputReport.bluetooth] * 257) - 32768);
+		ControllerState.Gamepad.sThumbRY = (32767 - (inputReport.inputBuffer[4 + inputReport.bluetooth] * 257));
 
-		ControllerState.Gamepad.wButtons +=  (bool)(inputReport.inputBuffer[8 + inputReport.bluetooth]  & (1 << 4)) ? XINPUT_GAMEPAD_X : 0;
+		ControllerState.Gamepad.wButtons =  (bool)(inputReport.inputBuffer[8 + inputReport.bluetooth]  & (1 << 4)) ? XINPUT_GAMEPAD_X : 0;
 
 		ControllerState.Gamepad.wButtons += (bool)(inputReport.inputBuffer[8 + inputReport.bluetooth]  & (1 << 5)) ? XINPUT_GAMEPAD_A : 0;
 
@@ -94,14 +95,6 @@ int main() {
 
 		case 7: ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_UP + XINPUT_GAMEPAD_DPAD_LEFT; break;
 		}
-
-
-		ControllerState.Gamepad.bLeftTrigger = (int)inputReport.inputBuffer[5 + inputReport.bluetooth];
-		ControllerState.Gamepad.bRightTrigger = (int)inputReport.inputBuffer[6 + inputReport.bluetooth];
-		ControllerState.Gamepad.sThumbLX = (int)((inputReport.inputBuffer[1 + inputReport.bluetooth] * 257) - 32768);
-		ControllerState.Gamepad.sThumbLY = (int)(32767 - (inputReport.inputBuffer[2 + inputReport.bluetooth] * 257));
-		ControllerState.Gamepad.sThumbRX = (int)((inputReport.inputBuffer[3 + inputReport.bluetooth] * 257) - 32768);
-		ControllerState.Gamepad.sThumbRY = (int)(32767 - (inputReport.inputBuffer[4 + inputReport.bluetooth] * 257));
 
 		vigem_target_x360_update(client, emulateX360, *reinterpret_cast<XUSB_REPORT*>(&ControllerState.Gamepad));
 

@@ -9,7 +9,7 @@
 extern UCHAR rumble[2];
 
 struct inputReport {
-	
+
 	bool rainbow = false;
 	bool bluetooth;
 	bool isConnected;
@@ -60,8 +60,8 @@ const uint32_t hashTable[256] = {
 	0x6fbf1d91, 0x18b82d07, 0x81b17cbd, 0xf6b64c2b, 0x68d2d988, 0x1fd5e91e, 0x86dcb8a4, 0xf1db8832,
 	0x616495a3, 0x1663a535, 0x8f6af48f, 0xf86dc419, 0x660951ba, 0x110e612c, 0x88073096, 0xff000000,
 };
-void inline isControllerConnected(inputReport& inputReport);
-uint32_t computeCRC32(unsigned char* buffer, size_t len);
+void isControllerConnected(inputReport& inputReport);
+uint32_t computeCRC32(unsigned char* buffer,const size_t& len);
 void asyncSendOutputReport(inputReport& inputReport);
 void extern inline asyncGetInputReport(inputReport& inputReport);
 void asyncDataReport(inputReport& inputReport);
