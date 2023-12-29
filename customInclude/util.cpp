@@ -9,9 +9,37 @@
 #define DS_VENDOR_ID 0x054c
 #define DS_PRODUCT_ID 0x0ce6
 
-BOOL inline IsProcessRunning()
+void inline isControllerConnected(inputReport& inputReport) {
+
+	hid_device_info* deviceInfo = hid_enumerate(DS_VENDOR_ID, DS_PRODUCT_ID);
+	if (deviceInfo == nullptr) {
+		inputReport.isConnected = false;
+		return;
+	}
+
+	inputReport.deviceHandle = CreateFileA(deviceInfo->path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
+	inputReport.bluetooth = deviceInfo->interface_number == -1;
+
+	if (inputReport.bluetooth) {
+		inputReport.bufferSize = 78;
+		inputReport.inputBuffer[0] = 0x31;
+	}
+	else {
+		inputReport.bufferSize = 64;
+		inputReport.inputBuffer[0] = 0x01;
+	}
+	hid_free_enumeration(deviceInfo);
+
+	if ((bool)inputReport.deviceHandle) {
+		inputReport.isConnected = true;
+	}
+	else inputReport.isConnected = false;
+
+	
+}
+
+void inline isDolphinRunning(unsigned char* outputHID)
 {
-	bool exists = false;
 	PROCESSENTRY32 entry;
 	entry.dwSize = sizeof(PROCESSENTRY32);
 
@@ -19,11 +47,29 @@ BOOL inline IsProcessRunning()
 
 	if (Process32First(snapshot, &entry))
 		while (Process32Next(snapshot, &entry))
-			if (!wcsicmp(entry.szExeFile, L"Dolphin.exe"))
-				exists = true;
+			if (!wcsicmp(entry.szExeFile, L"Dolphin.exe")) {
+				outputHID[11] = 0x2; //Mode Motor Right
+				outputHID[12] = 0x90; //right trigger start of resistance section
+				outputHID[13] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+				outputHID[14] = 0xFF; //right trigger force exerted in range (mode2)
+				outputHID[15] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
+				outputHID[16] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
+				outputHID[17] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
+				outputHID[20] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+
+
+				outputHID[22] = 0x2; //Mode Motor Right
+				outputHID[23] = 0x90; //right trigger start of resistance section
+				outputHID[24] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+				outputHID[25] = 0xFF; //right trigger force exerted in range (mode2)
+				outputHID[26] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
+				outputHID[27] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
+				outputHID[28] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
+				outputHID[31] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+			}
+				
 
 	CloseHandle(snapshot);
-	return exists;
 }
 
 uint32_t computeCRC32(unsigned char* buffer, size_t len)
@@ -38,14 +84,11 @@ uint32_t computeCRC32(unsigned char* buffer, size_t len)
 }
 
 void asyncSendOutputReport(inputReport& inputReport) {
-	hid_device_info* deviceInfo = hid_enumerate(DS_VENDOR_ID, DS_PRODUCT_ID);
 
-	HANDLE dualsense = CreateFileA(deviceInfo->path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
-
-	hid_free_enumeration(deviceInfo);
 	int Red{230}, Green{}, Blue{ 90 };
 	bool AddRed{ true }, AddGreen{ true }, AddBlue{ true };
 	unsigned char outputHID[547]{};
+
 	while(true){
 		if (inputReport.bluetooth) {
 			ZeroMemory(outputHID, 547);
@@ -110,26 +153,8 @@ void asyncSendOutputReport(inputReport& inputReport) {
 				outputHID[48] = 0; //Blue
 				break;
 			}
-			if (IsProcessRunning()) {
-				outputHID[12] = 0x2; //Mode Motor Right
-				outputHID[13] = 0x90; //right trigger start of resistance section
-				outputHID[14] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
-				outputHID[15] = 0xFF; //right trigger force exerted in range (mode2)
-				outputHID[16] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
-				outputHID[17] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
-				outputHID[18] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
-				outputHID[21] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
-
-
-				outputHID[23] = 0x2; //Mode Motor Right
-				outputHID[24] = 0x90; //right trigger start of resistance section
-				outputHID[25] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
-				outputHID[26] = 0xFF; //right trigger force exerted in range (mode2)
-				outputHID[27] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
-				outputHID[28] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
-				outputHID[28] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
-				outputHID[31] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
-			}
+			
+			isDolphinRunning(outputHID);
 
 			const UINT32 crc = computeCRC32(outputHID, 74);
 
@@ -139,11 +164,11 @@ void asyncSendOutputReport(inputReport& inputReport) {
 			outputHID[77] = ((crc & 0xFF000000) >> 24UL);
 
 
-			if (!(WriteFile(dualsense, outputHID, 547, NULL, NULL))) std::cout << GetLastError() << '\n';
+			WriteFile(inputReport.deviceHandle, outputHID, 547, NULL, NULL);
 		}
 		else {
-			ZeroMemory(outputHID, 64);
 
+			ZeroMemory(outputHID, 64);
 
 			outputHID[0] = 0x02;
 			outputHID[1] = 0x03 | 0x04 | 0x08;
@@ -152,7 +177,7 @@ void asyncSendOutputReport(inputReport& inputReport) {
 			outputHID[3] = rumble[0]; //Low Rumble
 			outputHID[4] = rumble[1]; //High Rumble
 
-			outputHID[9] = 0x00;
+			outputHID[9] = 0x00; //LED Controls
 			outputHID[39] = 0x02;
 			outputHID[42] = 0x02;
 			outputHID[43] = 0x02;
@@ -175,28 +200,7 @@ void asyncSendOutputReport(inputReport& inputReport) {
 					break;
 			}
 
-
-
-			if (IsProcessRunning()) {
-				outputHID[11] = 0x2; //Mode Motor Right
-				outputHID[12] = 0x90; //right trigger start of resistance section
-				outputHID[13] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
-				outputHID[14] = 0xFF; //right trigger force exerted in range (mode2)
-				outputHID[15] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
-				outputHID[16] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
-				outputHID[17] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
-				outputHID[20] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
-
-
-				outputHID[22] = 0x2; //Mode Motor Right
-				outputHID[23] = 0x90; //right trigger start of resistance section
-				outputHID[24] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
-				outputHID[25] = 0xFF; //right trigger force exerted in range (mode2)
-				outputHID[26] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
-				outputHID[27] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
-				outputHID[28] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
-				outputHID[31] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
-			}
+			isDolphinRunning(outputHID);
 
 			if (inputReport.rainbow) {
 				if (Red == 255) AddRed = false;
@@ -206,88 +210,54 @@ void asyncSendOutputReport(inputReport& inputReport) {
 				if (Blue == 255) AddBlue = false;
 				if (Blue == 0) AddBlue = true;
 
-				if (AddRed) Red++;
-				else Red--;
-				if (AddGreen) Green++;
-				else Green--;
-				if (AddBlue) Blue++;
-				else Blue--;
+				Red = AddRed ? Red++ : Red--;
+				Green = AddGreen ? Green++ : Blue--;
+				Blue = AddBlue ? Blue++ : Blue--;
 
 				outputHID[45] = Red; //Red
 				outputHID[46] = Green; //Green
 				outputHID[47] = Blue; //Blue
 			}
-			
-			if (!(WriteFile(dualsense, outputHID, 64, NULL, NULL))) std::cout << GetLastError() << '\n';
+
+			WriteFile(inputReport.deviceHandle, outputHID, 64, NULL, NULL);
 		}
 	}
-	CloseHandle(dualsense);
+	CloseHandle(inputReport.deviceHandle);
 }
 void inline asyncGetInputReport(inputReport& inputReport){
-
-	hid_device_info* deviceInfo = hid_enumerate(DS_VENDOR_ID, DS_PRODUCT_ID);
-	inputReport.bluetooth = deviceInfo->interface_number == -1;
-	hid_device* dualsense = hid_open(DS_VENDOR_ID, DS_PRODUCT_ID, deviceInfo->serial_number);
-	hid_free_enumeration(deviceInfo);
-
-	if (inputReport.bluetooth) {
-		inputReport.bufferSize = 78;
-		inputReport.inputBuffer[0] = 0x31;
-		hid_get_input_report(dualsense, inputReport.inputBuffer, inputReport.bufferSize);
-	}
-	else {
-		inputReport.bufferSize = 64;
-		inputReport.inputBuffer[0] = 0x01;
-		hid_read(dualsense, inputReport.inputBuffer, inputReport.bufferSize);
-	}
-	inputReport.batteryLevel = (inputReport.inputBuffer[0x35 + inputReport.bluetooth] & 0x0F) * 12.5;
-
 	while (true) {
-		if (inputReport.bluetooth) hid_get_input_report(dualsense, inputReport.inputBuffer, inputReport.bufferSize);
-		else hid_read(dualsense, inputReport.inputBuffer, inputReport.bufferSize);
+		isControllerConnected(inputReport);
+		inputReport.batteryLevel = (inputReport.inputBuffer[0x35 + inputReport.bluetooth] & 0x0F) * 12.5; /* Hex 0x35 (USB) to get Battery / Hex 0x36 (Bluetooth) to get Battery
+																										because if bluetooth == true then bluetooth == 1 so we can just add bluetooth
+																										to the hex value of USB to get the battery reading*/
+		ReadFile(inputReport.deviceHandle, inputReport.inputBuffer, inputReport.bufferSize, NULL, NULL);
 	}
-	hid_close(dualsense);
 }
 
 void asyncDataReport(inputReport &inputReport) {
 
 	while (true) {
-		
+
 		Sleep(1);
 		system("cls"); //Clear console
 
 		switch ((int)(inputReport.inputBuffer[8 + inputReport.bluetooth] & 0x0f)) {
-		case 0:
-			DEBUG("Dpad Up");
-			break;
 
-		case 1:
-			DEBUG("Dpad Up and Dpad Right");
-			break;
+		case 0: DEBUG("Dpad Up"); break;
 
-		case 2:
-			DEBUG("Dpad Right");
-			break;
+		case 1: DEBUG("Dpad Up and Dpad Right"); break;
 
-		case 3:
-			DEBUG("Dpad Down and Dpad Right");
-			break;
+		case 2: DEBUG("Dpad Right"); break;
 
-		case 4:
-			DEBUG("Dpad Down");
-			break;
+		case 3: DEBUG("Dpad Down and Dpad Right"); break;
 
-		case 5:
-			DEBUG("Dpad Down and Dpad Left");
-			break;
+		case 4: DEBUG("Dpad Down"); break;
 
-		case 6:
-			DEBUG("Dpad Left");
-			break;
+		case 5: DEBUG("Dpad Down and Dpad Left"); break;
 
-		case 7:
-			DEBUG("Dpad Up and Dpad Left");
-			break;
+		case 6: DEBUG("Dpad Left"); break;
+
+		case 7: DEBUG("Dpad Up and Dpad Left"); break;
 		}
 
 		if ((bool)(inputReport.inputBuffer[8 + inputReport.bluetooth] & (1 << 4))) DEBUG("Square Button\n");
@@ -314,20 +284,20 @@ void asyncDataReport(inputReport &inputReport) {
 
 		if ((bool)(inputReport.inputBuffer[10 + inputReport.bluetooth] & 0x02)) DEBUG("Toutchpad Click\n");
 
-		if (false) {
-			while (true) { //Controller is being acquired in the main function so we only need to check GetDeviceState is DI_OK
-				std::cout << "Failed to get Device State\n";
-				std::cout << "Reconnecting";
-				Sleep(500);
-				std::cout << '.';
-				Sleep(500);
-				std::cout << '.';
-				Sleep(500);
-				std::cout << '.';
-				Sleep(500);
-				system("cls");
-			}	
-		}
+		
+		while (!inputReport.isConnected) {
+			std::cout << "Failed to get Device State\n";
+			std::cout << "Reconnecting";
+			Sleep(500);
+			std::cout << '.';
+			Sleep(500);
+			std::cout << '.';
+			Sleep(500);
+			std::cout << '.';
+			Sleep(500);
+			system("cls");
+		}	
+		
 		std::cout << "\nLeftJoystick Horizontal Value: " << (int)((inputReport.inputBuffer[1 + inputReport.bluetooth] * 257) - 32768) << '\n';
 		std::cout << "LeftJoystick Vertical Value: " << (int)(32767 - (inputReport.inputBuffer[2 + inputReport.bluetooth] * 257)) << '\n';
 		std::cout << "RightJoystick Horizontal Value: " << (int)((inputReport.inputBuffer[3 + inputReport.bluetooth] * 257) - 32768) << '\n';

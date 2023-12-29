@@ -38,6 +38,8 @@ int main() {
 	PVIGEM_CLIENT client = vigem_alloc();
 
 	inputReport inputReport{};
+	
+	isControllerConnected(inputReport);
 
 	std::thread(asyncGetInputReport, std::ref(inputReport)).detach(); //Gets the Controllers Input through the HID Input Report
 	std::thread(asyncSendOutputReport, std::ref(inputReport)).detach();
