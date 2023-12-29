@@ -44,7 +44,9 @@ int main() {
 	std::thread(asyncGetInputReport, std::ref(inputReport)).detach(); //Gets the Controllers Input through the HID Input Report
 	std::thread(asyncSendOutputReport, std::ref(inputReport)).detach();
 
-	std::thread(asyncDataReport,std::ref(inputReport)).detach(); // Displays controller info
+#ifdef _DEBUG
+	std::thread(asyncDataReport, std::ref(inputReport)).detach(); // Displays controller info
+#endif // _DEBUG
 
 	if (initializeFakeController(ControllerState, emulateX360, target, client) != 0) return -1;
 	vigem_target_x360_register_notification(client, emulateX360, &getRumble, nullptr);
@@ -52,7 +54,9 @@ int main() {
 	while (true) {
 		XInputGetState(0, &ControllerState);
 
-		ControllerState.Gamepad.wButtons =  (bool)(inputReport.inputBuffer[8 + inputReport.bluetooth]  & (1 << 4)) ? XINPUT_GAMEPAD_X : 0;
+		ControllerState.Gamepad.wButtons = 0;
+
+		ControllerState.Gamepad.wButtons +=  (bool)(inputReport.inputBuffer[8 + inputReport.bluetooth]  & (1 << 4)) ? XINPUT_GAMEPAD_X : 0;
 
 		ControllerState.Gamepad.wButtons += (bool)(inputReport.inputBuffer[8 + inputReport.bluetooth]  & (1 << 5)) ? XINPUT_GAMEPAD_A : 0;
 

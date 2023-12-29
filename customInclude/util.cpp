@@ -2,7 +2,6 @@
 #include "util.h"
 #include <tlhelp32.h>
 
-
 #define DS_STATUS_BATTERY_CAPACITY 0xF
 #define DS_STATUS_CHARGING 0xF0
 #define DS_STATUS_CHARGING_SHIFT 4
@@ -34,11 +33,9 @@ void inline isControllerConnected(inputReport& inputReport) {
 		inputReport.isConnected = true;
 	}
 	else inputReport.isConnected = false;
-
-	
 }
 
-void inline isDolphinRunning(unsigned char* outputHID)
+void inline static isDolphinRunning(unsigned char* outputHID)
 {
 	PROCESSENTRY32 entry;
 	entry.dwSize = sizeof(PROCESSENTRY32);
@@ -90,7 +87,8 @@ void asyncSendOutputReport(inputReport& inputReport) {
 	unsigned char outputHID[547]{};
 
 	while(true){
-		if (inputReport.bluetooth) {
+		if (inputReport.isConnected) {
+			if (inputReport.bluetooth) {
 			ZeroMemory(outputHID, 547);
 
 			outputHID[0] = 0x31;
@@ -221,16 +219,19 @@ void asyncSendOutputReport(inputReport& inputReport) {
 
 			WriteFile(inputReport.deviceHandle, outputHID, 64, NULL, NULL);
 		}
+		}
 	}
 	CloseHandle(inputReport.deviceHandle);
 }
 void inline asyncGetInputReport(inputReport& inputReport){
 	while (true) {
 		isControllerConnected(inputReport);
-		inputReport.batteryLevel = (inputReport.inputBuffer[0x35 + inputReport.bluetooth] & 0x0F) * 12.5; /* Hex 0x35 (USB) to get Battery / Hex 0x36 (Bluetooth) to get Battery
+		if (inputReport.isConnected) {
+			inputReport.batteryLevel = (inputReport.inputBuffer[0x35 + inputReport.bluetooth] & 0x0F) * 12.5; /* Hex 0x35 (USB) to get Battery / Hex 0x36 (Bluetooth) to get Battery
 																										because if bluetooth == true then bluetooth == 1 so we can just add bluetooth
 																										to the hex value of USB to get the battery reading*/
-		ReadFile(inputReport.deviceHandle, inputReport.inputBuffer, inputReport.bufferSize, NULL, NULL);
+			ReadFile(inputReport.deviceHandle, inputReport.inputBuffer, inputReport.bufferSize, NULL, NULL);
+		}
 	}
 }
 
