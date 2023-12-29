@@ -16,7 +16,11 @@
 # Thanks to,
 
 [DS4Windows](https://github.com/Ryochan7/DS4Windows)
+
+
 [Controllers Fandom](https://controllers.fandom.com/wiki/Sony_DualSense)
+
+
 [ViGemBus](https://github.com/nefarius/ViGEmBus)
 
     
