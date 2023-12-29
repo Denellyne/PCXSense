@@ -1,19 +1,19 @@
 #pragma once
 #include "util.h"
 #include <tlhelp32.h>
-#define EXPRIMENTAL false
+#define EXPRIMENTAL true
 //#define DS_STATUS_BATTERY_CAPACITY 0xF
 //#define DS_STATUS_CHARGING 0xF0
 //#define DS_STATUS_CHARGING_SHIFT 4
 #define DS_VENDOR_ID 0x054c
 #define DS_PRODUCT_ID 0x0ce6
 
-void isControllerConnected(inputReport& inputReport) {
-
+bool isControllerConnected(controller& inputReport) {
+	Sleep(500);
 	hid_device_info* deviceInfo = hid_enumerate(DS_VENDOR_ID, DS_PRODUCT_ID);
 	if (deviceInfo == nullptr) {
 		inputReport.isConnected = false;
-		return;
+		return false;
 	}
 	inputReport.deviceHandle = CreateFileA(deviceInfo->path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
 	inputReport.bluetooth = deviceInfo->interface_number == -1;
@@ -30,11 +30,14 @@ void isControllerConnected(inputReport& inputReport) {
 
 	if ((bool)inputReport.deviceHandle) {
 		inputReport.isConnected = true;
+		return true;
 	}
 	else inputReport.isConnected = false;
+
+	return false;
 }
 
-void inline static isDolphinRunning(unsigned char* outputHID)
+void isDolphinRunning(unsigned char* outputHID,int bluetooth)
 {
 	PROCESSENTRY32 entry;
 	entry.dwSize = sizeof(PROCESSENTRY32);
@@ -44,24 +47,24 @@ void inline static isDolphinRunning(unsigned char* outputHID)
 	if (Process32First(snapshot, &entry))
 		while (Process32Next(snapshot, &entry))
 			if (!wcsicmp(entry.szExeFile, L"Dolphin.exe")) {
-				outputHID[11] = 0x2; //Mode Motor Right
-				outputHID[12] = 0x90; //right trigger start of resistance section
-				outputHID[13] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
-				outputHID[14] = 0xFF; //right trigger force exerted in range (mode2)
-				outputHID[15] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
-				outputHID[16] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
-				outputHID[17] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
-				outputHID[20] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+				outputHID[11 + bluetooth] = 0x2; //Mode Motor Right
+				outputHID[12 + bluetooth] = 0x90; //right trigger start of resistance section
+				outputHID[13 + bluetooth] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+				outputHID[14 + bluetooth] = 0xFF; //right trigger force exerted in range (mode2)
+				outputHID[15 + bluetooth] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
+				outputHID[16 + bluetooth] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
+				outputHID[17 + bluetooth] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
+				outputHID[20 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
 
 
-				outputHID[22] = 0x2; //Mode Motor Right
-				outputHID[23] = 0x90; //right trigger start of resistance section
-				outputHID[24] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
-				outputHID[25] = 0xFF; //right trigger force exerted in range (mode2)
-				outputHID[26] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
-				outputHID[27] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
-				outputHID[28] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
-				outputHID[31] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+				outputHID[22 + bluetooth] = 0x2; //Mode Motor Right
+				outputHID[23 + bluetooth] = 0x90; //right trigger start of resistance section
+				outputHID[24 + bluetooth] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+				outputHID[25 + bluetooth] = 0xFF; //right trigger force exerted in range (mode2)
+				outputHID[26 + bluetooth] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
+				outputHID[27 + bluetooth] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
+				outputHID[28 + bluetooth] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
+				outputHID[31 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
 			}
 				
 
@@ -79,169 +82,236 @@ uint32_t computeCRC32(unsigned char* buffer,const size_t& len)
 	return result;
 }
 
-void asyncSendOutputReport(inputReport& inputReport) {
-
-	int Red{230}, Green{}, Blue{ 90 };
+void extern inline sendOutputReport(controller& x360Controller) {
+	float Red{ 210 }, Green{}, Blue{ 90 };
 	bool AddRed{ true }, AddGreen{ true }, AddBlue{ true };
 	unsigned char outputHID[547]{};
 
-	while(true){
-		if (inputReport.isConnected) {
-			if (inputReport.bluetooth) {
-				ZeroMemory(outputHID, 547);
-
-				outputHID[0] = 0x31;
-				outputHID[1] = 0x02;
-				outputHID[2] = 0x03;
-				outputHID[3] = 0x55;
-
-				outputHID[4] = rumble[0]; //Low Rumble
-				outputHID[5] = rumble[1]; //High Rumble
-
-				outputHID[10] = 0x00;
-				outputHID[40] = 0x02;
-				outputHID[43] = 0x02;
-				outputHID[44] = 0x02;
-
-				switch (inputReport.batteryLevel) {
-				case 0:
-					outputHID[10] = 0x02;
-					outputHID[46] = 255; //Red
-					break;
-				case 12:
-					outputHID[10] = 0x01;
-					outputHID[46] = 200; //Red
-					outputHID[47] = 0; //Green
-					outputHID[48] = 55; //Blue
-					break;
-				case 27:
-					outputHID[46] = 230; //Red
-					outputHID[47] = 90; //Green
-					outputHID[48] = 0; //Blue
-					break;
-				case 37:
-					outputHID[46] = 230; //Red
-					outputHID[47] = 130; //Green
-					outputHID[48] = 0; //Blue
-					break;
-				case 50:
-					outputHID[46] = 140; //Red
-					outputHID[47] = 30; //Green
-					outputHID[48] = 90; //Blue
-					break;
-				case 67:
-					outputHID[46] = 90; //Red
-					outputHID[47] = 0; //Green
-					outputHID[48] = 140; //Blue
-					break;
-				case 75:
-					outputHID[46] = 90; //Red
-					outputHID[47] = 0; //Green
-					outputHID[48] = 80; //Blue
-					break;
-				case 100:
-					outputHID[46] = 200; //Red
-					outputHID[47] = 0; //Green
-					outputHID[48] = 229; //Blue
-					break;
-				default:
-					outputHID[46] = 255; //Red
-					outputHID[47] = 140; //Green
-					outputHID[48] = 0; //Blue
-					break;
-				}
-
-#ifdef _EXPERIMENTAL
-				isDolphinRunning(outputHID);
-#endif // _EXPERIMENTAL
-
-				const UINT32 crc = computeCRC32(outputHID, 74);
-
-				outputHID[74] = (crc & 0x000000FF);
-				outputHID[75] = ((crc & 0x0000FF00) >> 8UL);
-				outputHID[76] = ((crc & 0x00FF0000) >> 16UL);
-				outputHID[77] = ((crc & 0xFF000000) >> 24UL);
+	while (true) {
+		if (x360Controller.bluetooth) {
+			ZeroMemory(outputHID, 547);
 
 
-				WriteFile(inputReport.deviceHandle, outputHID, 547, NULL, NULL);
+			outputHID[0] = 0x31;
+			outputHID[1] = 0x02;
+			outputHID[2] = 0x03 | 0x04 | 0x08;
+			outputHID[3] = 0x55;
+
+			outputHID[4] = rumble[0]; //Low Rumble
+			outputHID[5] = rumble[1]; //High Rumble
+
+			outputHID[10] = 0x00;
+			outputHID[40] = 0x02;
+			outputHID[43] = 0x02;
+			outputHID[44] = 0x02;
+
+			switch (x360Controller.batteryLevel) {
+			case 0:
+				outputHID[10] = 0x02;
+				outputHID[46] = 255; //Red
+				break;
+			case 12:
+				outputHID[10] = 0x01;
+				outputHID[46] = 200; //Red
+				outputHID[47] = 0; //Green
+				outputHID[48] = 55; //Blue
+				break;
+			case 27:
+				outputHID[46] = 230; //Red
+				outputHID[47] = 90; //Green
+				outputHID[48] = 0; //Blue
+				break;
+			case 37:
+				outputHID[46] = 230; //Red
+				outputHID[47] = 130; //Green
+				outputHID[48] = 0; //Blue
+				break;
+			case 50:
+				outputHID[46] = 140; //Red
+				outputHID[47] = 30; //Green
+				outputHID[48] = 90; //Blue
+				break;
+			case 67:
+				outputHID[46] = 90; //Red
+				outputHID[47] = 0; //Green
+				outputHID[48] = 140; //Blue
+				break;
+			case 75:
+				outputHID[46] = 90; //Red
+				outputHID[47] = 0; //Green
+				outputHID[48] = 80; //Blue
+				break;
+			case 100:
+				outputHID[46] = 200; //Red
+				outputHID[47] = 0; //Green
+				outputHID[48] = 229; //Blue
+				break;
+			default:
+				outputHID[46] = 255; //Red
+				outputHID[47] = 140; //Green
+				outputHID[48] = 0; //Blue
+				break;
 			}
-			else {
+			
+#ifdef EXPRIMENTAL
+			isDolphinRunning(outputHID,x360Controller.bluetooth);
 
-				ZeroMemory(outputHID, 64);
+			if (x360Controller.rainbow) {
+				if (Red == 255) AddRed = false;
+				if (Red == 0) AddRed = true;
+				if (Green == 255) AddGreen = false;
+				if (Green == 0) AddGreen = true;
+				if (Blue == 255) AddBlue = false;
+				if (Blue == 0) AddBlue = true;
 
-				outputHID[0] = 0x02;
-				outputHID[1] = 0x03 | 0x04 | 0x08;
-				outputHID[2] = 0x55;
+				if (AddRed) Red ++;
+				else Red --;
+				if (AddGreen) Green ++;
+				else Green --;
+				if (AddBlue) Blue ++;
+				else Blue --;
 
-				outputHID[3] = rumble[0]; //Low Rumble
-				outputHID[4] = rumble[1]; //High Rumble
+				outputHID[46] = Red; //Red
+				outputHID[47] = Green; //Green
+				outputHID[48] = Blue; //Blue
+			}
+#endif // EXPRIMENTAL
 
-				outputHID[9] = 0x00; //LED Controls
-				outputHID[39] = 0x02;
-				outputHID[42] = 0x02;
-				outputHID[43] = 0x02;
+			const UINT32 crc = computeCRC32(outputHID, 74);
 
-				switch (inputReport.batteryLevel) {
-				case 70:
-					outputHID[45] = 20; //Red
-					outputHID[46] = 170; //Green
-					outputHID[47] = 150; //Blue
-					break;
-				case 87:
-					outputHID[45] = 20; //Red
-					outputHID[46] = 170; //Green
-					outputHID[47] = 150; //Blue
-					break;
-				case 100:
-					outputHID[45] = 130; //Red
-					outputHID[46] = 30; //Green
-					outputHID[47] = 255; //Blue
-					break;
-				default:
-					outputHID[45] = 255; //Red
-					outputHID[46] = 140; //Green
-					outputHID[47] = 0; //Blue
-					break;
-				}
+			outputHID[74] = (crc & 0x000000FF);
+			outputHID[75] = ((crc & 0x0000FF00) >> 8UL);
+			outputHID[76] = ((crc & 0x00FF0000) >> 16UL);
+			outputHID[77] = ((crc & 0xFF000000) >> 24UL);
 
-#ifdef _EXPRIMENTAL
-				isDolphinRunning(outputHID);
 
-				if (inputReport.rainbow) {
-					if (Red == 255) AddRed = false;
-					if (Red == 0) AddRed = true;
-					if (Green == 255) AddGreen = false;
-					if (Green == 0) AddGreen = true;
-					if (Blue == 255) AddBlue = false;
-					if (Blue == 0) AddBlue = true;
+			WriteFile(x360Controller.deviceHandle, outputHID, 547, NULL, NULL);
+		}
+		else {
+			ZeroMemory(outputHID, 547);
 
-					Red = AddRed ? Red++ : Red--;
-					Green = AddGreen ? Green++ : Blue--;
-					Blue = AddBlue ? Blue++ : Blue--;
+			outputHID[0] = 0x02;
+			outputHID[1] = 0x03 | 0x04 | 0x08;
+			outputHID[2] = 0x55;
 
-					outputHID[45] = Red; //Red
-					outputHID[46] = Green; //Green
-					outputHID[47] = Blue; //Blue
-				}
+			outputHID[3] = rumble[0]; //Low Rumble
+			outputHID[4] = rumble[1]; //High Rumble
+
+			outputHID[9] = 0x00; //LED Controls
+			outputHID[39] = 0x02;
+			outputHID[42] = 0x02;
+			outputHID[43] = 0x02;
+
+			switch (x360Controller.batteryLevel) {
+			case 70:
+				outputHID[45] = 20; //Red
+				outputHID[46] = 170; //Green
+				outputHID[47] = 150; //Blue
+				break;
+			case 87:
+				outputHID[45] = 20; //Red
+				outputHID[46] = 170; //Green
+				outputHID[47] = 150; //Blue
+				break;
+			case 100:
+				outputHID[45] = 130; //Red
+				outputHID[46] = 30; //Green
+				outputHID[47] = 255; //Blue
+				break;
+			default:
+				outputHID[45] = 255; //Red
+				outputHID[46] = 140; //Green
+				outputHID[47] = 0; //Blue
+				break;
+			}
+
+#ifdef EXPRIMENTAL
+			isDolphinRunning(outputHID,x360Controller.bluetooth);
+
+			if (x360Controller.rainbow) {
+				if (Red == 255) AddRed = false;
+				if (Red == 0) AddRed = true;
+				if (Green == 255) AddGreen = false;
+				if (Green == 0) AddGreen = true;
+				if (Blue == 255) AddBlue = false;
+				if (Blue == 0) AddBlue = true;
+
+				Red = AddRed ? Red++ : Red--;
+				Green = AddGreen ? Green++ : Blue--;
+				Blue = AddBlue ? Blue++ : Blue--;
+
+				outputHID[45] = Red; //Red
+				outputHID[46] = Green; //Green
+				outputHID[47] = Blue; //Blue
+			}
 #endif
-				WriteFile(inputReport.deviceHandle, outputHID, 64, NULL, NULL);
-			}
+			WriteFile(x360Controller.deviceHandle, outputHID, 64, NULL, NULL);
 		}
 	}
-	CloseHandle(inputReport.deviceHandle);
-}
-void inline asyncGetInputReport(inputReport& inputReport){
-	while (true) {
-		isControllerConnected(inputReport);
-		inputReport.batteryLevel = (inputReport.inputBuffer[53 + inputReport.bluetooth] & 15) * 12.5; /* Hex 0x35 (USB) to get Battery / Hex 0x36 (Bluetooth) to get Battery
-																							//			because if bluetooth == true then bluetooth == 1 so we can just add bluetooth
-																						//				to the hex value of USB to get the battery reading*/
-		ReadFile(inputReport.deviceHandle, inputReport.inputBuffer, inputReport.bufferSize, NULL, NULL);
 		
-	}
+}
+void inline getInputReport(controller& x360Controller){
+
+
+		bool readSuccess = ReadFile(x360Controller.deviceHandle, x360Controller.inputBuffer, x360Controller.bufferSize, NULL, NULL);
+
+		x360Controller.batteryLevel = (x360Controller.inputBuffer[53 + x360Controller.bluetooth] & 15) * 12.5; /* Hex 0x35 (USB) to get Battery / Hex 0x36 (Bluetooth) to get Battery
+																									     because if bluetooth == true then bluetooth == 1 so we can just add bluetooth
+																										 to the hex value of USB to get the battery reading
+																										 */
+		x360Controller.ControllerState.Gamepad.bLeftTrigger = x360Controller.inputBuffer[5 + x360Controller.bluetooth];
+		x360Controller.ControllerState.Gamepad.bRightTrigger = x360Controller.inputBuffer[6 + x360Controller.bluetooth];
+		x360Controller.ControllerState.Gamepad.sThumbLX = ((x360Controller.inputBuffer[1 + x360Controller.bluetooth] * 257) - 32768);
+		x360Controller.ControllerState.Gamepad.sThumbLY = (32767 - (x360Controller.inputBuffer[2 + x360Controller.bluetooth] * 257));
+		x360Controller.ControllerState.Gamepad.sThumbRX = ((x360Controller.inputBuffer[3 + x360Controller.bluetooth] * 257) - 32768);
+		x360Controller.ControllerState.Gamepad.sThumbRY = (32767 - (x360Controller.inputBuffer[4 + x360Controller.bluetooth] * 257));
+
+		x360Controller.ControllerState.Gamepad.wButtons = (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 4)) ? XINPUT_GAMEPAD_X : 0;
+
+		x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 5)) ? XINPUT_GAMEPAD_A : 0;
+
+		x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 6)) ? XINPUT_GAMEPAD_B : 0;
+
+		x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 7)) ? XINPUT_GAMEPAD_Y : 0;
+
+		x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 0)) ? XINPUT_GAMEPAD_LEFT_SHOULDER : 0;
+
+		x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 1)) ? XINPUT_GAMEPAD_RIGHT_SHOULDER : 0;
+
+		x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 4)) ? XINPUT_GAMEPAD_BACK : 0;
+
+		x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 5)) ? XINPUT_GAMEPAD_START : 0;
+
+		x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 6)) ? XINPUT_GAMEPAD_LEFT_THUMB : 0;
+
+		x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 7)) ? XINPUT_GAMEPAD_RIGHT_THUMB : 0;
+		//ControllerState.Gamepad.wButtons += joystick.rgbButtons[12] ? 0x0400 : 0;
+
+		switch ((int)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & 0x0f)) {
+		case 0: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_UP; break;
+
+		case 1: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_UP + XINPUT_GAMEPAD_DPAD_RIGHT; break;
+
+		case 2: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_RIGHT; break;
+
+		case 3: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_DOWN + XINPUT_GAMEPAD_DPAD_RIGHT; break;
+
+		case 4: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_DOWN; break;
+
+		case 5: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_DOWN + XINPUT_GAMEPAD_DPAD_LEFT; break;
+
+		case 6: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_LEFT; break;
+
+		case 7: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_UP + XINPUT_GAMEPAD_DPAD_LEFT; break;
+		}
+
+		if (!readSuccess) {
+			CloseHandle(x360Controller.deviceHandle);
+			while (!isControllerConnected(x360Controller)) {}
+		}
 }
 
-void asyncDataReport(inputReport &inputReport) {
+void asyncDataReport(controller &inputReport) {
 
 	while (true) {
 
@@ -318,7 +388,7 @@ void asyncDataReport(inputReport &inputReport) {
 	}
 }
 
-int initializeFakeController(XINPUT_STATE& ControllerState, PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PVIGEM_CLIENT& client) {
+int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PVIGEM_CLIENT& client) {
 
 	if (client == nullptr)
 	{

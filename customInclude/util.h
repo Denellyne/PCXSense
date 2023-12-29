@@ -8,11 +8,12 @@
 
 extern UCHAR rumble[2];
 
-struct inputReport {
 
-	bool rainbow = false;
-	bool bluetooth;
+struct controller {
+
+	bool rainbow = true;
 	bool isConnected;
+	bool bluetooth;
 
 	unsigned char inputBuffer[78]{};
 
@@ -20,6 +21,12 @@ struct inputReport {
 	int batteryLevel; 
 
 	HANDLE deviceHandle;
+	PVIGEM_CLIENT client;
+	PVIGEM_TARGET emulateX360;
+	XINPUT_STATE ControllerState;
+	VIGEM_ERROR target;
+
+
 };
 
 #define DEBUG(x) do { std::cout << x << '\n'; } while (0)
@@ -60,9 +67,9 @@ const uint32_t hashTable[256] = {
 	0x6fbf1d91, 0x18b82d07, 0x81b17cbd, 0xf6b64c2b, 0x68d2d988, 0x1fd5e91e, 0x86dcb8a4, 0xf1db8832,
 	0x616495a3, 0x1663a535, 0x8f6af48f, 0xf86dc419, 0x660951ba, 0x110e612c, 0x88073096, 0xff000000,
 };
-void isControllerConnected(inputReport& inputReport);
+bool isControllerConnected(controller& inputReport);
 uint32_t computeCRC32(unsigned char* buffer,const size_t& len);
-void asyncSendOutputReport(inputReport& inputReport);
-void extern inline asyncGetInputReport(inputReport& inputReport);
-void asyncDataReport(inputReport& inputReport);
-int initializeFakeController(XINPUT_STATE & ControllerState, PVIGEM_TARGET & emulateX360, VIGEM_ERROR & target, PVIGEM_CLIENT & client);
+void extern inline sendOutputReport(controller& inputReport);
+void extern inline getInputReport(controller& inputReport);
+void asyncDataReport(controller& inputReport);
+int initializeFakeController(PVIGEM_TARGET & emulateX360, VIGEM_ERROR & target, PVIGEM_CLIENT & client);
