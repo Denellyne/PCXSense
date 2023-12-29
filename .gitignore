@@ -199,3 +199,6 @@ x64/Release/DualSenseToXInput.iobj
 x64/Release/DualSenseToXInput.ipdb
 x64/Release/DualSenseToXInput.pdb
 x64/Release/vc143.pdb
+x64/Debug/util.asm
+.vs/DualSenseToXInput/FileContentIndex/e00d7666-ba9b-4d67-ac10-8de231bea035.vsidx
+x64/Debug/main.asm

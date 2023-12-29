@@ -43,7 +43,8 @@ void asyncSendOutputReport(inputReport& inputReport) {
 	HANDLE dualsense = CreateFileA(deviceInfo->path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
 
 	hid_free_enumeration(deviceInfo);
-
+	int i{230}, j{}, k{ 90 };
+	bool ipp{ true }, jpp{ true }, kpp{ true };
 	unsigned char outputHID[547]{};
 	while(true){
 		if (inputReport.bluetooth) {
@@ -174,6 +175,8 @@ void asyncSendOutputReport(inputReport& inputReport) {
 					break;
 			}
 
+
+
 			if (IsProcessRunning()) {
 				outputHID[11] = 0x2; //Mode Motor Right
 				outputHID[12] = 0x90; //right trigger start of resistance section
@@ -194,6 +197,27 @@ void asyncSendOutputReport(inputReport& inputReport) {
 				outputHID[28] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
 				outputHID[31] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
 			}
+
+			if (inputReport.rainbow) {
+				if (i == 255) ipp = false;
+				if (i == 0) ipp = true;
+				if (j == 255) jpp = false;
+				if (j == 0) jpp = true;
+				if (k == 255) kpp = false;
+				if (k == 0) kpp = true;
+
+				if (ipp) i++;
+				else i--;
+				if (jpp) j++;
+				else j--;
+				if (kpp) k++;
+				else k--;
+
+				outputHID[45] = i; //Red
+				outputHID[46] = j; //Green
+				outputHID[47] = k; //Blue
+			}
+			
 			if (!(WriteFile(dualsense, outputHID, 64, NULL, NULL))) std::cout << GetLastError() << '\n';
 		}
 	}

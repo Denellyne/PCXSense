@@ -10,6 +10,7 @@ extern UCHAR rumble[2];
 
 struct inputReport {
 	
+	bool rainbow = false;
 	bool bluetooth;
 	unsigned char inputBuffer[78]{};
 	int bufferSize;
