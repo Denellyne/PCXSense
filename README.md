@@ -4,8 +4,9 @@
     Translation layer for the Dualsense controller,
     Enables controller support in every game with XInput.
 
-    
-![HPNG2-PhotoRoom png-PhotoRoom](https://github.com/Denellyne/DualSenseToXInput/assets/56112881/45d25208-7581-42a2-9c16-9b33fd5ef58e)
+
+![imageedit_2_5901184072](https://github.com/Denellyne/DualSenseToXInput/assets/56112881/cdc5cd29-2a96-4e4b-afaf-6bf4f5e66a9d)
+
 
 ## Features
 
