@@ -43,8 +43,8 @@ void asyncSendOutputReport(inputReport& inputReport) {
 	HANDLE dualsense = CreateFileA(deviceInfo->path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
 
 	hid_free_enumeration(deviceInfo);
-	int i{230}, j{}, k{ 90 };
-	bool ipp{ true }, jpp{ true }, kpp{ true };
+	int Red{230}, Green{}, Blue{ 90 };
+	bool AddRed{ true }, AddGreen{ true }, AddBlue{ true };
 	unsigned char outputHID[547]{};
 	while(true){
 		if (inputReport.bluetooth) {
@@ -199,23 +199,23 @@ void asyncSendOutputReport(inputReport& inputReport) {
 			}
 
 			if (inputReport.rainbow) {
-				if (i == 255) ipp = false;
-				if (i == 0) ipp = true;
-				if (j == 255) jpp = false;
-				if (j == 0) jpp = true;
-				if (k == 255) kpp = false;
-				if (k == 0) kpp = true;
+				if (Red == 255) AddRed = false;
+				if (Red == 0) AddRed = true;
+				if (Green == 255) AddGreen = false;
+				if (Green == 0) AddGreen = true;
+				if (Blue == 255) AddBlue = false;
+				if (Blue == 0) AddBlue = true;
 
-				if (ipp) i++;
-				else i--;
-				if (jpp) j++;
-				else j--;
-				if (kpp) k++;
-				else k--;
+				if (AddRed) Red++;
+				else Red--;
+				if (AddGreen) Green++;
+				else Green--;
+				if (AddBlue) Blue++;
+				else Blue--;
 
-				outputHID[45] = i; //Red
-				outputHID[46] = j; //Green
-				outputHID[47] = k; //Blue
+				outputHID[45] = Red; //Red
+				outputHID[46] = Green; //Green
+				outputHID[47] = Blue; //Blue
 			}
 			
 			if (!(WriteFile(dualsense, outputHID, 64, NULL, NULL))) std::cout << GetLastError() << '\n';
