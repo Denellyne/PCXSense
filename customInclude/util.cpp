@@ -107,8 +107,8 @@ void asyncSendOutputReport(inputReport& inputReport) {
 				outputHID[26] = 0xFF; //right trigger force exerted in range (mode2)
 				outputHID[27] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
 				outputHID[28] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
-				outputHID[29] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
-				outputHID[32] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+				outputHID[28] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
+				outputHID[31] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
 			}
 
 			const UINT32 crc = computeCRC32(outputHID, 74);
@@ -180,7 +180,7 @@ void asyncSendOutputReport(inputReport& inputReport) {
 	}
 	CloseHandle(dualsense);
 }
-void asyncGetInputReport(inputReport& inputReport){
+void inline asyncGetInputReport(inputReport& inputReport){
 
 	hid_device_info* deviceInfo = hid_enumerate(DS_VENDOR_ID, DS_PRODUCT_ID);
 	inputReport.bluetooth = deviceInfo->interface_number == -1;

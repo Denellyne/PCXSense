@@ -1,4 +1,5 @@
 #include "util.h"
+
 #include <thread>
 #define DS_VENDOR_ID 0x054c
 #define DS_PRODUCT_ID 0x0ce6
@@ -37,7 +38,6 @@ int main() {
 	PVIGEM_CLIENT client = vigem_alloc();
 
 	inputReport inputReport{};
-
 
 	std::thread(asyncGetInputReport, std::ref(inputReport)).detach(); //Gets the Controllers Input through the HID Input Report
 	std::thread(asyncSendOutputReport, std::ref(inputReport)).detach();

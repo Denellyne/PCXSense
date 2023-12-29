@@ -58,6 +58,6 @@ const uint32_t hashTable[256] = {
 
 uint32_t computeCRC32(unsigned char* buffer, size_t len);
 void asyncSendOutputReport(inputReport& inputReport);
-void asyncGetInputReport(inputReport& inputReport);
+void extern inline asyncGetInputReport(inputReport& inputReport);
 void asyncDataReport(inputReport& inputReport);
 int initializeFakeController(XINPUT_STATE & ControllerState, PVIGEM_TARGET & emulateX360, VIGEM_ERROR & target, PVIGEM_CLIENT & client);

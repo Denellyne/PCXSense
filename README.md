@@ -1,4 +1,20 @@
-# Translates DirectInput to Xinput
+# Dualsense to XInput
 
-Translates DirectInput to XInput , making it possible to use with virtually any gamepad.
 
+    Translation layer for the Dualsense controller,
+    Enables controller support in every game with XInput.
+    
+
+## Features
+
+
+    Lightbar control,
+    Rumble support
+
+
+
+# Thanks to,
+
+    DS4Windows : https://github.com/Ryochan7/DS4Windows
+    Controllers Fandom: https://controllers.fandom.com/wiki/Sony_DualSense
+    ViGemBus: https://github.com/nefarius/ViGEmBus
