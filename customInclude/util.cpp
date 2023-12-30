@@ -1,12 +1,7 @@
 #pragma once
 #include "util.h"
 #include <tlhelp32.h>
-#define EXPRIMENTAL true
-//#define DS_STATUS_BATTERY_CAPACITY 0xF
-//#define DS_STATUS_CHARGING 0xF0
-//#define DS_STATUS_CHARGING_SHIFT 4
-#define DS_VENDOR_ID 0x054c
-#define DS_PRODUCT_ID 0x0ce6
+
 
 bool isControllerConnected(controller& inputReport) {
 	Sleep(500);
@@ -39,7 +34,7 @@ bool isControllerConnected(controller& inputReport) {
 
 void isDolphinRunning(unsigned char* outputHID,int bluetooth)
 {
-	PROCESSENTRY32 entry;
+	PROCESSENTRY32 entry{};
 	entry.dwSize = sizeof(PROCESSENTRY32);
 
 	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
@@ -154,7 +149,7 @@ void extern inline sendOutputReport(controller& x360Controller) {
 				break;
 			}
 			
-#ifdef EXPRIMENTAL
+#if EXPERIMENTAL
 			isDolphinRunning(outputHID,x360Controller.bluetooth);
 
 			if (x360Controller.rainbow) {
@@ -176,7 +171,7 @@ void extern inline sendOutputReport(controller& x360Controller) {
 				outputHID[47] = Green; //Green
 				outputHID[48] = Blue; //Blue
 			}
-#endif // EXPRIMENTAL
+#endif // EXPERIMENTAL
 
 			const UINT32 crc = computeCRC32(outputHID, 74);
 
@@ -226,7 +221,7 @@ void extern inline sendOutputReport(controller& x360Controller) {
 				break;
 			}
 
-#ifdef EXPRIMENTAL
+#if EXPERIMENTAL
 			isDolphinRunning(outputHID,x360Controller.bluetooth);
 
 			if (x360Controller.rainbow) {
@@ -237,13 +232,16 @@ void extern inline sendOutputReport(controller& x360Controller) {
 				if (Blue == 255) AddBlue = false;
 				if (Blue == 0) AddBlue = true;
 
-				Red = AddRed ? Red++ : Red--;
-				Green = AddGreen ? Green++ : Blue--;
-				Blue = AddBlue ? Blue++ : Blue--;
+				if (AddRed) Red++;
+				else Red--;
+				if (AddGreen) Green++;
+				else Green--;
+				if (AddBlue) Blue++;
+				else Blue--;
 
-				outputHID[45] = Red; //Red
-				outputHID[46] = Green; //Green
-				outputHID[47] = Blue; //Blue
+				outputHID[46] = Red; //Red
+				outputHID[47] = Green; //Green
+				outputHID[48] = Blue; //Blue
 			}
 #endif
 			WriteFile(x360Controller.deviceHandle, outputHID, 64, NULL, NULL);

@@ -6,12 +6,16 @@
 #include "ViGEm/Client.h"
 #include <hidapi.h>
 
+#define EXPERIMENTAL false
+#define DS_VENDOR_ID 0x054c
+#define DS_PRODUCT_ID 0x0ce6
+
 extern UCHAR rumble[2];
 
 
 struct controller {
 
-	bool rainbow = true;
+	bool rainbow = false;
 	bool isConnected;
 	bool bluetooth;
 

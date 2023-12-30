@@ -79,6 +79,7 @@
       <AdditionalIncludeDirectories>C:\Users\Gustavo Santos\Documents\GitHub\DualSenseToXInput\customInclude;C:\Users\Gustavo Santos\Documents\GitHub\DualSenseToXInput\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/sdl /w34996 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -126,6 +127,7 @@
       <AdditionalIncludeDirectories>C:\Users\Gustavo Santos\Documents\GitHub\DualSenseToXInput\customInclude;C:\Users\Gustavo Santos\Documents\GitHub\DualSenseToXInput\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/sdl /w34996 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

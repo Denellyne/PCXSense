@@ -33,7 +33,10 @@ int main() {
 	x360Controller.client = vigem_alloc();
 
 	LPVOID ptrController = &x360Controller;
-	//isControllerConnected(x360Controller);
+
+#if EXPERIMENTAL
+	x360Controller.rainbow = true;
+#endif
 
 #ifdef _DEBUG
 	std::thread(asyncDataReport, std::ref(x360Controller)).detach(); // Displays controller info
