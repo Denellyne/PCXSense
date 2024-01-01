@@ -32,37 +32,51 @@ bool isControllerConnected(controller& inputReport) {
 	return false;
 }
 
-void isDolphinRunning(unsigned char* outputHID,int bluetooth)
+void inline isEmulatorRunning(unsigned char* outputHID,int bluetooth,int& shortTriggers)
 {
 	PROCESSENTRY32 entry{};
 	entry.dwSize = sizeof(PROCESSENTRY32);
 
 	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
-
 	if (Process32First(snapshot, &entry))
-		while (Process32Next(snapshot, &entry))
+		while (Process32Next(snapshot, &entry)) {
 			if (!wcsicmp(entry.szExeFile, L"Dolphin.exe")) {
 				outputHID[11 + bluetooth] = 0x2; //Mode Motor Right
 				outputHID[12 + bluetooth] = 0x90; //right trigger start of resistance section
 				outputHID[13 + bluetooth] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
 				outputHID[14 + bluetooth] = 0xFF; //right trigger force exerted in range (mode2)
-				outputHID[15 + bluetooth] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
-				outputHID[16 + bluetooth] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
-				outputHID[17 + bluetooth] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
-				outputHID[20 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+				//	outputHID[15 + bluetooth] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
+					//outputHID[16 + bluetooth] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
+				//	outputHID[17 + bluetooth] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
+			//		outputHID[20 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
 
 
 				outputHID[22 + bluetooth] = 0x2; //Mode Motor Right
 				outputHID[23 + bluetooth] = 0x90; //right trigger start of resistance section
 				outputHID[24 + bluetooth] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
 				outputHID[25 + bluetooth] = 0xFF; //right trigger force exerted in range (mode2)
-				outputHID[26 + bluetooth] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
-				outputHID[27 + bluetooth] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
-				outputHID[28 + bluetooth] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
-				outputHID[31 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
-			}
-				
+				//	outputHID[26 + bluetooth] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
+				//	outputHID[27 + bluetooth] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
+				//	outputHID[28 + bluetooth] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
+				//	outputHID[31 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
 
+			}
+			if (!wcsicmp(entry.szExeFile, L"Yuzu.exe")) {
+				shortTriggers = 190;
+				outputHID[11 + bluetooth] = 0x1; //Mode Motor Right
+				outputHID[12 + bluetooth] = 35; //right trigger start of resistance section
+				outputHID[13 + bluetooth] = 0xFF; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+
+
+				outputHID[22 + bluetooth] = 0x1; //Mode Motor Left
+				outputHID[23 + bluetooth] = 35; //right trigger start of resistance section
+				outputHID[24 + bluetooth] = 0xFF; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+				return;
+			}
+			
+		}
+	shortTriggers = 0;
+				
 	CloseHandle(snapshot);
 }
 
@@ -150,7 +164,7 @@ void extern inline sendOutputReport(controller& x360Controller) {
 			}
 			
 #if EXPERIMENTAL
-			isDolphinRunning(outputHID,x360Controller.bluetooth);
+			isEmulatorRunning(outputHID,x360Controller.bluetooth,x360Controller.shortTriggers);
 
 			if (x360Controller.rainbow) {
 				if (Red == 255) AddRed = false;
@@ -222,7 +236,7 @@ void extern inline sendOutputReport(controller& x360Controller) {
 			}
 
 #if EXPERIMENTAL
-			isDolphinRunning(outputHID,x360Controller.bluetooth);
+			isEmulatorRunning(outputHID,x360Controller.bluetooth,x360Controller.shortTriggers);
 
 			if (x360Controller.rainbow) {
 				if (Red == 255) AddRed = false;
@@ -247,8 +261,10 @@ void extern inline sendOutputReport(controller& x360Controller) {
 			WriteFile(x360Controller.deviceHandle, outputHID, 64, NULL, NULL);
 		}
 	}
-		
+	
 }
+
+
 void inline getInputReport(controller& x360Controller){
 
 
@@ -258,8 +274,9 @@ void inline getInputReport(controller& x360Controller){
 																									     because if bluetooth == true then bluetooth == 1 so we can just add bluetooth
 																										 to the hex value of USB to get the battery reading
 																										 */
-		x360Controller.ControllerState.Gamepad.bLeftTrigger = x360Controller.inputBuffer[5 + x360Controller.bluetooth];
-		x360Controller.ControllerState.Gamepad.bRightTrigger = x360Controller.inputBuffer[6 + x360Controller.bluetooth];
+		x360Controller.ControllerState.Gamepad.bLeftTrigger = x360Controller.inputBuffer[5 + x360Controller.bluetooth] + x360Controller.shortTriggers;
+		x360Controller.ControllerState.Gamepad.bRightTrigger = x360Controller.inputBuffer[6 + x360Controller.bluetooth] + x360Controller.shortTriggers;
+
 		x360Controller.ControllerState.Gamepad.sThumbLX = ((x360Controller.inputBuffer[1 + x360Controller.bluetooth] * 257) - 32768);
 		x360Controller.ControllerState.Gamepad.sThumbLY = (32767 - (x360Controller.inputBuffer[2 + x360Controller.bluetooth] * 257));
 		x360Controller.ControllerState.Gamepad.sThumbRX = ((x360Controller.inputBuffer[3 + x360Controller.bluetooth] * 257) - 32768);
@@ -321,8 +338,8 @@ void asyncDataReport(controller &inputReport) {
 		std::cout << "LeftJoystick Vertical Value: " << (int)(32767 - (inputReport.inputBuffer[2 + inputReport.bluetooth] * 257)) << '\n';
 		std::cout << "RightJoystick Horizontal Value: " << (int)((inputReport.inputBuffer[3 + inputReport.bluetooth] * 257) - 32768) << '\n';
 		std::cout << "RightJoystick Vertical Value: " << (int)(32767 - (inputReport.inputBuffer[4 + inputReport.bluetooth] * 257)) << '\n';
-		std::cout << "Left Trigger Value: " << (int)inputReport.inputBuffer[5 + inputReport.bluetooth] << '\n';
-		std::cout << "Right Trigger Value: " << (int)inputReport.inputBuffer[6 + inputReport.bluetooth] << '\n';
+		std::cout << "Left Trigger Value: " << (int)inputReport.inputBuffer[5 + inputReport.bluetooth] + inputReport.shortTriggers << '\n';
+		std::cout << "Right Trigger Value: " << (int)inputReport.inputBuffer[6 + inputReport.bluetooth] + inputReport.shortTriggers << '\n';
 		std::cout << "Battery Level: " << inputReport.batteryLevel << "%\n";
 
 		switch ((int)(inputReport.inputBuffer[8 + inputReport.bluetooth] & 0x0f)) {

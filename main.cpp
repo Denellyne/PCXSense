@@ -1,51 +1,85 @@
 #include "util.h"
 #include <thread>
 
-//typedef DWORD(WINAPI* XInputGetStateExProc)(DWORD dwUserIndex, XINPUT_STATE* pState);
-
-	//HMODULE xinput_lib = LoadLibraryA("xinput1_3.dll");
-	//XInputGetStateExProc XInputGetStateEx{};
-	//int XInputGetStateExOrdinal = 100;
-//	XInputGetStateEx = (XInputGetStateExProc)GetProcAddress(xinput_lib, (LPCSTR)XInputGetStateExOrdinal);
-
+LPVOID ptrController;
+LPVOID asyncThreadPointer;
 extern UCHAR rumble[2]{};
 
-VOID CALLBACK getRumble(
-	PVIGEM_CLIENT Client,
-	PVIGEM_TARGET Target,
-	UCHAR LargeMotor,
-	UCHAR SmallMotor,
-	UCHAR LedNumber,
-	LPVOID UserData
-)
+VOID CALLBACK getRumble(PVIGEM_CLIENT Client, PVIGEM_TARGET Target, UCHAR LargeMotor, UCHAR SmallMotor, UCHAR LedNumber, LPVOID UserData)
 {
 	rumble[0] = SmallMotor;
 	rumble[1] = LargeMotor;
-
 }
 
+void zeroOutputReport() {
+	unsigned char outputHID[547]{};
+	if (reinterpret_cast<controller*>(ptrController)->bluetooth) {
+		ZeroMemory(outputHID, 547);
+
+
+		outputHID[0] = 0x31;
+		outputHID[1] = 0x02;
+		outputHID[2] = 0x03 | 0x04 | 0x08;
+		outputHID[3] = 0x55;
+
+		const UINT32 crc = computeCRC32(outputHID, 74);
+
+		outputHID[74] = (crc & 0x000000FF);
+		outputHID[75] = ((crc & 0x0000FF00) >> 8UL);
+		outputHID[76] = ((crc & 0x00FF0000) >> 16UL);
+		outputHID[77] = ((crc & 0xFF000000) >> 24UL);
+
+
+		WriteFile(reinterpret_cast<controller*>(ptrController)->deviceHandle, outputHID, 547, NULL, NULL);
+	}
+	else {
+		ZeroMemory(outputHID, 547);
+
+		outputHID[0] = 0x02;
+		outputHID[1] = 0x03 | 0x04 | 0x08;
+		outputHID[2] = 0x55;
+
+		WriteFile(reinterpret_cast<controller*>(ptrController)->deviceHandle, outputHID, 64, NULL, NULL);
+	}
+}
+
+BOOL WINAPI exitFunction(_In_ DWORD dwCtrlType) {
+	reinterpret_cast<std::thread*>(asyncThreadPointer)->~thread();
+	if(dwCtrlType == CTRL_CLOSE_EVENT) zeroOutputReport();
+
+	//Cleanup	
+	vigem_target_remove(reinterpret_cast<controller*>(ptrController)->client, reinterpret_cast<controller*>(ptrController)->emulateX360);
+	vigem_target_free(reinterpret_cast<controller*>(ptrController)->emulateX360);
+	vigem_disconnect(reinterpret_cast<controller*>(ptrController)->client);
+	vigem_free(reinterpret_cast<controller*>(ptrController)->client);
+	return TRUE;
+}
 
 int main() {
 
 	//Initialize Fake Controller
 	controller x360Controller{};
 
+	ptrController = &x360Controller;
+
 	x360Controller.client = vigem_alloc();
 
-	LPVOID ptrController = &x360Controller;
+	SetProcessShutdownParameters(2, 0);
 
-#if EXPERIMENTAL
-	x360Controller.rainbow = true;
-#endif
+	SetConsoleCtrlHandler(exitFunction, TRUE);
+
+	if (initializeFakeController(x360Controller.emulateX360, x360Controller.target, x360Controller.client) != 0) return -1;
+
+	std::thread asyncOutputReport(sendOutputReport, std::ref(x360Controller));
+	asyncOutputReport.detach();
+
+	asyncThreadPointer = &asyncOutputReport;
+
+	vigem_target_x360_register_notification(x360Controller.client, x360Controller.emulateX360, &getRumble, ptrController);
 
 #ifdef _DEBUG
 	std::thread(asyncDataReport, std::ref(x360Controller)).detach(); // Displays controller info
 #endif // _DEBUG
-
-	if (initializeFakeController(x360Controller.emulateX360, x360Controller.target, x360Controller.client) != 0) return -1;
-	vigem_target_x360_register_notification(x360Controller.client, x360Controller.emulateX360, &getRumble, ptrController);
-	std::thread(sendOutputReport, std::ref(x360Controller)).detach();
-
 
 	while (true) {
 
@@ -55,14 +89,6 @@ int main() {
 		
 		vigem_target_x360_update(x360Controller.client, x360Controller.emulateX360, *reinterpret_cast<XUSB_REPORT*>(&x360Controller.ControllerState.Gamepad));
 	}
-
-	//Cleanup
-
-	vigem_target_remove(x360Controller.client, x360Controller.emulateX360);
-	vigem_target_free(x360Controller.emulateX360);
-	vigem_disconnect(x360Controller.client);
-	vigem_free(x360Controller.client);
-
-
 	return 0;
 }
+
