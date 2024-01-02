@@ -24,6 +24,7 @@
     <ProjectGuid>{2008fc36-f82f-4d6a-836e-265bf6b36531}</ProjectGuid>
     <RootNamespace>DualSenseToXInput</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>PCXSense</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -116,6 +117,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;C:\Users\Gustavo Santos\Documents\GitHub\DualSenseToXInput\Include\ViGEm\ViGEmClient.lib;C:\Users\Gustavo Santos\Documents\GitHub\DualSenseToXInput\Include\hidapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Driver>NotSet</Driver>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -164,6 +166,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;C:\Users\Gustavo Santos\Documents\GitHub\DualSenseToXInput\Include\ViGEm\ViGEmClient.lib;C:\Users\Gustavo Santos\Documents\GitHub\DualSenseToXInput\Include\hidapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Driver>NotSet</Driver>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
