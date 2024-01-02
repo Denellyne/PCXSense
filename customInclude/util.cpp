@@ -4,7 +4,7 @@
 
 
 bool isControllerConnected(controller& inputReport) {
-	Sleep(500);
+	//Sleep(500);
 	hid_device_info* deviceInfo = hid_enumerate(DS_VENDOR_ID, DS_PRODUCT_ID);
 	if (deviceInfo == nullptr) {
 		inputReport.isConnected = false;
@@ -32,8 +32,7 @@ bool isControllerConnected(controller& inputReport) {
 	return false;
 }
 
-void inline isEmulatorRunning(unsigned char* outputHID,int bluetooth,int& shortTriggers)
-{
+void inline isEmulatorRunning(unsigned char* outputHID,int bluetooth,int& shortTriggers){
 	PROCESSENTRY32 entry{};
 	entry.dwSize = sizeof(PROCESSENTRY32);
 
@@ -50,11 +49,10 @@ void inline isEmulatorRunning(unsigned char* outputHID,int bluetooth,int& shortT
 				//	outputHID[17 + bluetooth] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
 			//		outputHID[20 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
 
-
-				outputHID[22 + bluetooth] = 0x2; //Mode Motor Right
-				outputHID[23 + bluetooth] = 0x90; //right trigger start of resistance section
-				outputHID[24 + bluetooth] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
-				outputHID[25 + bluetooth] = 0xFF; //right trigger force exerted in range (mode2)
+				outputHID[22 + bluetooth] = 0x2; //Mode Motor Left
+				outputHID[23 + bluetooth] = 0x90; //Left trigger start of resistance section
+				outputHID[24 + bluetooth] = 0xA0; //Left trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+				outputHID[25 + bluetooth] = 0xFF; //Left trigger force exerted in range (mode2)
 				//	outputHID[26 + bluetooth] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
 				//	outputHID[27 + bluetooth] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
 				//	outputHID[28 + bluetooth] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
@@ -63,14 +61,16 @@ void inline isEmulatorRunning(unsigned char* outputHID,int bluetooth,int& shortT
 			}
 			if (!wcsicmp(entry.szExeFile, L"Yuzu.exe")) {
 				shortTriggers = 190;
-				outputHID[11 + bluetooth] = 0x1; //Mode Motor Right
-				outputHID[12 + bluetooth] = 35; //right trigger start of resistance section
-				outputHID[13 + bluetooth] = 0xFF; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+				outputHID[11 + bluetooth] = 0x2 | 0x4;
+				outputHID[12 + bluetooth] = 20;
+				outputHID[13 + bluetooth] = 180;
+				outputHID[14 + bluetooth] = 30;
 
-
-				outputHID[22 + bluetooth] = 0x1; //Mode Motor Left
-				outputHID[23 + bluetooth] = 35; //right trigger start of resistance section
-				outputHID[24 + bluetooth] = 0xFF; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+				outputHID[22 + bluetooth] = 0x2;
+				outputHID[23 + bluetooth] = 20;
+				outputHID[24 + bluetooth] = 180;
+				outputHID[25 + bluetooth] = 50;
+				CloseHandle(snapshot);
 				return;
 			}
 			
@@ -263,7 +263,6 @@ void extern inline sendOutputReport(controller& x360Controller) {
 	}
 	
 }
-
 
 void inline getInputReport(controller& x360Controller){
 

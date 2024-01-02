@@ -16,7 +16,6 @@ void zeroOutputReport() {
 	if (reinterpret_cast<controller*>(ptrController)->bluetooth) {
 		ZeroMemory(outputHID, 547);
 
-
 		outputHID[0] = 0x31;
 		outputHID[1] = 0x02;
 		outputHID[2] = 0x03 | 0x04 | 0x08;
@@ -28,7 +27,6 @@ void zeroOutputReport() {
 		outputHID[75] = ((crc & 0x0000FF00) >> 8UL);
 		outputHID[76] = ((crc & 0x00FF0000) >> 16UL);
 		outputHID[77] = ((crc & 0xFF000000) >> 24UL);
-
 
 		WriteFile(reinterpret_cast<controller*>(ptrController)->deviceHandle, outputHID, 547, NULL, NULL);
 	}

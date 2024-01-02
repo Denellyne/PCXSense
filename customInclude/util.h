@@ -12,7 +12,6 @@
 
 extern UCHAR rumble[2];
 
-
 struct controller {
 
 	int shortTriggers = 0;
@@ -30,7 +29,6 @@ struct controller {
 	PVIGEM_TARGET emulateX360;
 	XINPUT_STATE ControllerState;
 	VIGEM_ERROR target;
-
 
 };
 
