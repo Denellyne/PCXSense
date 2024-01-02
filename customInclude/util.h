@@ -9,6 +9,8 @@
 #define EXPERIMENTAL true
 #define DS_VENDOR_ID 0x054c
 #define DS_PRODUCT_ID 0x0ce6
+#define DEBUG(x) do { std::cout << x << '\n'; } while (0)
+
 
 extern UCHAR rumble[2];
 
@@ -31,8 +33,6 @@ struct controller {
 	VIGEM_ERROR target;
 
 };
-
-#define DEBUG(x) do { std::cout << x << '\n'; } while (0)
 
 const UINT32 crcSeed = 0xeada2d49;
 

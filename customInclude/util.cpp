@@ -61,10 +61,10 @@ void inline isEmulatorRunning(unsigned char* outputHID,int bluetooth,int& shortT
 			}
 			if (!wcsicmp(entry.szExeFile, L"Yuzu.exe")) {
 				shortTriggers = 190;
-				outputHID[11 + bluetooth] = 0x2 | 0x4;
-				outputHID[12 + bluetooth] = 20;
-				outputHID[13 + bluetooth] = 180;
-				outputHID[14 + bluetooth] = 30;
+				outputHID[11 + bluetooth] = 0x2 ;
+				outputHID[12 + bluetooth] = 40;
+				outputHID[13 + bluetooth] = 100;
+				outputHID[14 + bluetooth] = 35;
 
 				outputHID[22 + bluetooth] = 0x2;
 				outputHID[23 + bluetooth] = 20;
@@ -273,8 +273,16 @@ void inline getInputReport(controller& x360Controller){
 																									     because if bluetooth == true then bluetooth == 1 so we can just add bluetooth
 																										 to the hex value of USB to get the battery reading
 																										 */
-		x360Controller.ControllerState.Gamepad.bLeftTrigger = x360Controller.inputBuffer[5 + x360Controller.bluetooth] + x360Controller.shortTriggers;
-		x360Controller.ControllerState.Gamepad.bRightTrigger = x360Controller.inputBuffer[6 + x360Controller.bluetooth] + x360Controller.shortTriggers;
+		
+		if (bool(x360Controller.shortTriggers)) {
+			x360Controller.ControllerState.Gamepad.bLeftTrigger = (x360Controller.inputBuffer[5 + x360Controller.bluetooth])*0.25 + 190;
+			x360Controller.ControllerState.Gamepad.bRightTrigger = (x360Controller.inputBuffer[6 + x360Controller.bluetooth]) * 0.25 + 190;
+		}
+		else {
+			x360Controller.ControllerState.Gamepad.bLeftTrigger = x360Controller.inputBuffer[5 + x360Controller.bluetooth];
+			x360Controller.ControllerState.Gamepad.bRightTrigger = x360Controller.inputBuffer[6 + x360Controller.bluetooth];
+		}
+		
 
 		x360Controller.ControllerState.Gamepad.sThumbLX = ((x360Controller.inputBuffer[1 + x360Controller.bluetooth] * 257) - 32768);
 		x360Controller.ControllerState.Gamepad.sThumbLY = (32767 - (x360Controller.inputBuffer[2 + x360Controller.bluetooth] * 257));
@@ -326,22 +334,22 @@ void inline getInputReport(controller& x360Controller){
 		}
 }
 
-void asyncDataReport(controller &inputReport) {
+void asyncDataReport(controller &x360Controller) {
 
 	while (true) {
 
 		Sleep(1);
 		system("cls"); //Clear console
 
-		std::cout << "\nLeftJoystick Horizontal Value: " << (int)((inputReport.inputBuffer[1 + inputReport.bluetooth] * 257) - 32768) << '\n';
-		std::cout << "LeftJoystick Vertical Value: " << (int)(32767 - (inputReport.inputBuffer[2 + inputReport.bluetooth] * 257)) << '\n';
-		std::cout << "RightJoystick Horizontal Value: " << (int)((inputReport.inputBuffer[3 + inputReport.bluetooth] * 257) - 32768) << '\n';
-		std::cout << "RightJoystick Vertical Value: " << (int)(32767 - (inputReport.inputBuffer[4 + inputReport.bluetooth] * 257)) << '\n';
-		std::cout << "Left Trigger Value: " << (int)inputReport.inputBuffer[5 + inputReport.bluetooth] + inputReport.shortTriggers << '\n';
-		std::cout << "Right Trigger Value: " << (int)inputReport.inputBuffer[6 + inputReport.bluetooth] + inputReport.shortTriggers << '\n';
-		std::cout << "Battery Level: " << inputReport.batteryLevel << "%\n";
+		std::cout << "\nLeftJoystick Horizontal Value: " << (int)((x360Controller.inputBuffer[1 + x360Controller.bluetooth] * 257) - 32768) << '\n';
+		std::cout << "LeftJoystick Vertical Value: " << (int)(32767 - (x360Controller.inputBuffer[2 + x360Controller.bluetooth] * 257)) << '\n';
+		std::cout << "RightJoystick Horizontal Value: " << (int)((x360Controller.inputBuffer[3 + x360Controller.bluetooth] * 257) - 32768) << '\n';
+		std::cout << "RightJoystick Vertical Value: " << (int)(32767 - (x360Controller.inputBuffer[4 + x360Controller.bluetooth] * 257)) << '\n';
+		std::cout << "Left Trigger Value: " << (int)x360Controller.ControllerState.Gamepad.bLeftTrigger << '\n';
+		std::cout << "Right Trigger Value: " << (int)x360Controller.ControllerState.Gamepad.bRightTrigger << '\n';
+		std::cout << "Battery Level: " << x360Controller.batteryLevel << "%\n";
 
-		switch ((int)(inputReport.inputBuffer[8 + inputReport.bluetooth] & 0x0f)) {
+		switch ((int)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & 0x0f)) {
 
 		case 0: DEBUG("Dpad Up"); break;
 
@@ -360,32 +368,32 @@ void asyncDataReport(controller &inputReport) {
 		case 7: DEBUG("Dpad Up and Dpad Left"); break;
 		}
 
-		if ((bool)(inputReport.inputBuffer[8 + inputReport.bluetooth] & (1 << 4))) DEBUG("Square Button\n");
+		if ((bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 4))) DEBUG("Square Button\n");
 
-		if ((bool)(inputReport.inputBuffer[8 + inputReport.bluetooth] & (1 << 5))) DEBUG("X Button\n");
+		if ((bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 5))) DEBUG("X Button\n");
 
-		if ((bool)(inputReport.inputBuffer[8 + inputReport.bluetooth] & (1 << 6))) DEBUG("Circle Button\n");
+		if ((bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 6))) DEBUG("Circle Button\n");
 
-		if ((bool)(inputReport.inputBuffer[8 + inputReport.bluetooth] & (1 << 7))) DEBUG("Triangle Button\n");
+		if ((bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 7))) DEBUG("Triangle Button\n");
 
-		if ((bool)(inputReport.inputBuffer[9 + inputReport.bluetooth] & (1 << 0))) DEBUG("L1 Button\n");
+		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 0))) DEBUG("L1 Button\n");
 
-		if ((bool)(inputReport.inputBuffer[9 + inputReport.bluetooth] & (1 << 1))) DEBUG("R1 Button\n");
+		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 1))) DEBUG("R1 Button\n");
 
-		if ((bool)(inputReport.inputBuffer[9 + inputReport.bluetooth] & (1 << 4))) DEBUG("Select Button\n");
+		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 4))) DEBUG("Select Button\n");
 
-		if ((bool)(inputReport.inputBuffer[9 + inputReport.bluetooth] & (1 << 5))) DEBUG("Start Button\n");
+		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 5))) DEBUG("Start Button\n");
 
-		if ((bool)(inputReport.inputBuffer[9 + inputReport.bluetooth] & (1 << 6))) DEBUG("L3 Button\n");
+		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 6))) DEBUG("L3 Button\n");
 
-		if ((bool)(inputReport.inputBuffer[9 + inputReport.bluetooth] & (1 << 7))) DEBUG("R3 Button\n");
+		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 7))) DEBUG("R3 Button\n");
 
-		if ((bool)(inputReport.inputBuffer[10 + inputReport.bluetooth] & (1 << 0))) DEBUG("Sony/Home Button\n");
+		if ((bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 0))) DEBUG("Sony/Home Button\n");
 
-		if ((bool)(inputReport.inputBuffer[10 + inputReport.bluetooth] & 0x02)) DEBUG("Toutchpad Click\n");
+		if ((bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & 0x02)) DEBUG("Toutchpad Click\n");
 
 		
-		while (!inputReport.isConnected) {
+		while (!x360Controller.isConnected) {
 			std::cout << "Failed to get Device State\n";
 			std::cout << "Reconnecting";
 			Sleep(500);
@@ -398,8 +406,6 @@ void asyncDataReport(controller &inputReport) {
 			system("cls");
 		}	
 		
-
-
 	}
 }
 

@@ -43,7 +43,7 @@ void zeroOutputReport() {
 
 BOOL WINAPI exitFunction(_In_ DWORD dwCtrlType) {
 	reinterpret_cast<std::thread*>(asyncThreadPointer)->~thread();
-	if(dwCtrlType == CTRL_CLOSE_EVENT) zeroOutputReport();
+	zeroOutputReport();
 
 	//Cleanup	
 	vigem_target_remove(reinterpret_cast<controller*>(ptrController)->client, reinterpret_cast<controller*>(ptrController)->emulateX360);
