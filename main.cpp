@@ -43,7 +43,6 @@ void inline update() {
 		Sleep(1000);
 
     }
-	CloseHandle(pi.hProcess);
 	CloseHandle(pi.hThread);
 }
 
