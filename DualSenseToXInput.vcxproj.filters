@@ -13,21 +13,96 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Backend">
+      <UniqueIdentifier>{d07c9697-9dce-438e-94e2-0c124e526e1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FrontEnd">
+      <UniqueIdentifier>{342b1684-87df-4838-a1c3-93169f5947b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ImGui">
+      <UniqueIdentifier>{cebe3235-338e-4573-92a3-fb0489e937e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\systemTray">
+      <UniqueIdentifier>{20663cb5-520f-41bf-bfdc-65f95074fe48}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Backend</Filter>
     </ClCompile>
     <ClCompile Include="customInclude\util.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Backend</Filter>
     </ClCompile>
-    <ClCompile Include="Include\ViGEm\Client.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="customInclude\GUI.cpp">
+      <Filter>Source Files\FrontEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\cpp\imgui.cpp">
+      <Filter>Source Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\cpp\imgui_draw.cpp">
+      <Filter>Source Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\cpp\imgui_impl_glfw.cpp">
+      <Filter>Source Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\cpp\imgui_impl_opengl3.cpp">
+      <Filter>Source Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\cpp\imgui_stdlib.cpp">
+      <Filter>Source Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\cpp\imgui_tables.cpp">
+      <Filter>Source Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\cpp\imgui_widgets.cpp">
+      <Filter>Source Files\ImGui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="customInclude\util.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="customInclude\GUI.h">
+      <Filter>Source Files\FrontEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\header\GLFW\glfw3.h">
+      <Filter>Source Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\header\GLFW\glfw3native.h">
+      <Filter>Source Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\header\imconfig.h">
+      <Filter>Source Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\header\imgui.h">
+      <Filter>Source Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\header\imgui_impl_glfw.h">
+      <Filter>Source Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\header\imgui_impl_opengl3.h">
+      <Filter>Source Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\header\imgui_impl_opengl3_loader.h">
+      <Filter>Source Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\header\imgui_internal.h">
+      <Filter>Source Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\header\imgui_stdlib.h">
+      <Filter>Source Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\header\imstb_rectpack.h">
+      <Filter>Source Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\header\imstb_textedit.h">
+      <Filter>Source Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\header\imstb_truetype.h">
+      <Filter>Source Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\header\stb_image.h">
+      <Filter>Source Files\ImGui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

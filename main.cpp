@@ -1,4 +1,8 @@
+#ifndef _DEBUG
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#endif
 #include "util.h"
+#include "GUI.h"
 #include <thread>
 
 LPVOID ptrController;
@@ -41,7 +45,7 @@ void zeroOutputReport() {
 	}
 }
 
-BOOL WINAPI exitFunction(_In_ DWORD dwCtrlType) {
+extern BOOL WINAPI exitFunction(_In_ DWORD dwCtrlType) {
 	reinterpret_cast<std::thread*>(asyncThreadPointer)->~thread();
 	zeroOutputReport();
 
@@ -50,11 +54,12 @@ BOOL WINAPI exitFunction(_In_ DWORD dwCtrlType) {
 	vigem_target_free(reinterpret_cast<controller*>(ptrController)->emulateX360);
 	vigem_disconnect(reinterpret_cast<controller*>(ptrController)->client);
 	vigem_free(reinterpret_cast<controller*>(ptrController)->client);
+	_exit(NULL);
 	return TRUE;
 }
 
-int main() {
 
+int main() {
 	//Initialize Fake Controller
 	controller x360Controller{};
 
@@ -72,7 +77,9 @@ int main() {
 	asyncOutputReport.detach();
 
 	asyncThreadPointer = &asyncOutputReport;
-
+#if EXPERIMENTAL
+	std::thread(GUI,std::ref(x360Controller)).detach();
+#endif
 	vigem_target_x360_register_notification(x360Controller.client, x360Controller.emulateX360, &getRumble, ptrController);
 
 #ifdef _DEBUG

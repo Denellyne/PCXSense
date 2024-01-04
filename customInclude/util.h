@@ -11,7 +11,11 @@
 #define DS_PRODUCT_ID 0x0ce6
 #define DEBUG(x) do { std::cout << x << '\n'; } while (0)
 
-
+struct RGB {
+	float red;
+	float green;
+	float blue;
+};
 extern UCHAR rumble[2];
 
 struct controller {
@@ -31,6 +35,7 @@ struct controller {
 	PVIGEM_TARGET emulateX360;
 	XINPUT_STATE ControllerState;
 	VIGEM_ERROR target;
+	RGB RGB;
 
 };
 

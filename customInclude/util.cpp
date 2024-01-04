@@ -194,6 +194,10 @@ void extern inline sendOutputReport(controller& x360Controller) {
 			outputHID[76] = ((crc & 0x00FF0000) >> 16UL);
 			outputHID[77] = ((crc & 0xFF000000) >> 24UL);
 
+			x360Controller.RGB.red = outputHID[46];
+			x360Controller.RGB.green = outputHID[47];
+			x360Controller.RGB.blue = outputHID[48];
+
 
 			WriteFile(x360Controller.deviceHandle, outputHID, 547, NULL, NULL);
 		}
@@ -253,11 +257,15 @@ void extern inline sendOutputReport(controller& x360Controller) {
 				if (AddBlue) Blue++;
 				else Blue--;
 
-				outputHID[46] = Red; //Red
-				outputHID[47] = Green; //Green
-				outputHID[48] = Blue; //Blue
+				outputHID[45] = Red; //Red
+				outputHID[46] = Green; //Green
+				outputHID[47] = Blue; //Blue
 			}
 #endif
+			x360Controller.RGB.red = outputHID[45];
+			x360Controller.RGB.green = outputHID[46];
+			x360Controller.RGB.blue = outputHID[47];
+
 			WriteFile(x360Controller.deviceHandle, outputHID, 64, NULL, NULL);
 		}
 	}
@@ -370,7 +378,7 @@ void asyncDataReport(controller &x360Controller) {
 
 		if ((bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 4))) DEBUG("Square Button\n");
 
-		if ((bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 5))) DEBUG("X Button\n");
+		if ((bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 5))) DEBUG("Cross Button\n");
 
 		if ((bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 6))) DEBUG("Circle Button\n");
 

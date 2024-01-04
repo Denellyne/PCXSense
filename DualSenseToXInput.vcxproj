@@ -77,18 +77,26 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\customInclude;.\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Include\tray;.\imgui\cpp;.\imgui\header;.\imgui\header\GLFW;.\customInclude;.\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/sdl /w34996 %(AdditionalOptions)</AdditionalOptions>
-      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
+      <AssemblerOutput>NoListing</AssemblerOutput>
       <TreatWarningAsError>false</TreatWarningAsError>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Driver>NotSet</Driver>
       <AllowIsolation>false</AllowIsolation>
       <Profile>true</Profile>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -99,7 +107,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\customInclude;.\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Include\tray;.\imgui\cpp;.\imgui\header;.\imgui\header\GLFW;.\customInclude;.\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <DebugInformationFormat>None</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -109,15 +117,19 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ControlFlowGuard>false</ControlFlowGuard>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Driver>NotSet</Driver>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -126,18 +138,26 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\customInclude;.\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Include\tray;.\imgui\cpp;.\imgui\header;.\imgui\header\GLFW;.\customInclude;.\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/sdl /w34996 %(AdditionalOptions)</AdditionalOptions>
-      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
+      <AssemblerOutput>NoListing</AssemblerOutput>
       <TreatWarningAsError>false</TreatWarningAsError>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Driver>NotSet</Driver>
       <AllowIsolation>false</AllowIsolation>
       <Profile>true</Profile>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -148,7 +168,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\customInclude;.\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Include\tray;.\imgui\cpp;.\imgui\header;.\imgui\header\GLFW;.\customInclude;.\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <DebugInformationFormat>None</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -158,24 +178,49 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ControlFlowGuard>false</ControlFlowGuard>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Driver>NotSet</Driver>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="customInclude\GUI.cpp" />
     <ClCompile Include="customInclude\util.cpp" />
-    <ClCompile Include="Include\ViGEm\Client.cpp" />
+    <ClCompile Include="imgui\cpp\imgui.cpp" />
+    <ClCompile Include="imgui\cpp\imgui_draw.cpp" />
+    <ClCompile Include="imgui\cpp\imgui_impl_glfw.cpp" />
+    <ClCompile Include="imgui\cpp\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="imgui\cpp\imgui_stdlib.cpp" />
+    <ClCompile Include="imgui\cpp\imgui_tables.cpp" />
+    <ClCompile Include="imgui\cpp\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="customInclude\GUI.h" />
     <ClInclude Include="customInclude\util.h" />
+    <ClInclude Include="imgui\header\GLFW\glfw3.h" />
+    <ClInclude Include="imgui\header\GLFW\glfw3native.h" />
+    <ClInclude Include="imgui\header\imconfig.h" />
+    <ClInclude Include="imgui\header\imgui.h" />
+    <ClInclude Include="imgui\header\imgui_impl_glfw.h" />
+    <ClInclude Include="imgui\header\imgui_impl_opengl3.h" />
+    <ClInclude Include="imgui\header\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="imgui\header\imgui_internal.h" />
+    <ClInclude Include="imgui\header\imgui_stdlib.h" />
+    <ClInclude Include="imgui\header\imstb_rectpack.h" />
+    <ClInclude Include="imgui\header\imstb_textedit.h" />
+    <ClInclude Include="imgui\header\imstb_truetype.h" />
+    <ClInclude Include="imgui\header\stb_image.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
