@@ -425,7 +425,7 @@ FodyWeavers.xsd
 *.lib
 
 # Executables
-*.exe
+
 *.out
 *.app
 x64/Release/DualSens.2008fc36.tlog/CL.command.1.tlog
@@ -450,3 +450,4 @@ x64/Release/DualSens.2008fc36.tlog/link.write.1.tlog
 x64/Release/DualSenseToXInput.iobj
 x64/Release/DualSenseToXInput.pdb
 temp.txt
+XInputTest.exe

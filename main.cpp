@@ -4,10 +4,12 @@
 #include "util.h"
 #include "GUI.h"
 #include <thread>
+#include <format>
 
 LPVOID ptrController;
 LPVOID asyncThreadPointer;
 extern UCHAR rumble[2]{};
+std::string Version = "PCXSense Beta 0.2";
 
 VOID CALLBACK getRumble(PVIGEM_CLIENT Client, PVIGEM_TARGET Target, UCHAR LargeMotor, UCHAR SmallMotor, UCHAR LedNumber, LPVOID UserData)
 {
@@ -60,6 +62,8 @@ extern BOOL WINAPI exitFunction(_In_ DWORD dwCtrlType) {
 
 
 int main() {
+	system(std::format("PCXSenseUpdater.exe \"{}",Version).c_str());
+	Sleep(400);
 	//Initialize Fake Controller
 	controller x360Controller{};
 

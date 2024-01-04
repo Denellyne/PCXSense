@@ -12,25 +12,20 @@
 
 void app(controller& x360Controller,const GLuint* Images);
 bool inline LoadTextureFromFile(const char* filename, GLuint* out_texture, int image_width, int image_height);
+bool LoadTextureFromFile(GLuint* Images);
 void setColors();
-void drawButtons(float displaySizeX, float displaySizeY, float xMultiplier, float yMultiplier, const controller& x360Controller, const GLuint* Images);
-
-
+void inline drawButtons(float displaySizeX, float displaySizeY, float xMultiplier, float yMultiplier, const controller& x360Controller, const GLuint* Images);
 
 int GUI(controller& x360Controller){
-    GLuint Images[17];
+    GLuint Images[16];
     
-
-
     glfwInit();
     GLFWwindow* window = glfwCreateWindow(1280, 720, "PSXSense", nullptr, nullptr);
     if (window == nullptr) return 1;
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
 
-    LoadTextureFromFile("./images/dualsense.png", &Images[0], 2524, 1419);
-    LoadTextureFromFile("./images/stick.png", &Images[1], 226, 226);
-    LoadTextureFromFile("./images/lightbar.png", &Images[2], 801, 388);
+    LoadTextureFromFile(Images);
 
     // GUI BoilerPlate
 
@@ -44,7 +39,6 @@ int GUI(controller& x360Controller){
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
     while (!glfwWindowShouldClose(window)) { // Render
-
         glfwPollEvents();
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -66,6 +60,7 @@ int GUI(controller& x360Controller){
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+    exitFunction(2);
     return 0;
 }
 
@@ -73,6 +68,8 @@ void app(controller& x360Controller,const GLuint* Images) {
     //Boilerplate Window Code
     static ImGuiIO& io = ImGui::GetIO();
     static float lightbar = 0.0f;
+    if (lightbar >= 1) lightbar = 1;
+    if (lightbar < 0) lightbar = 0;
     float xMultiplier = io.DisplaySize.x / 1280;
     float yMultiplier = io.DisplaySize.y / 720;
 
@@ -81,6 +78,8 @@ void app(controller& x360Controller,const GLuint* Images) {
     ImGui::SetNextWindowPos(ImVec2(0, 0));
 
     ImGui::Begin("PSXSense", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
+    if (ImGui::Button("RAINBOW", { 20,20 })) x360Controller.rainbow = !x360Controller.rainbow;
+
 #ifdef _DEBUG
     ImGui::SetCursorPos({ 20,0 });
 
@@ -88,12 +87,7 @@ void app(controller& x360Controller,const GLuint* Images) {
 #endif // _DEBUG
 
     ImGui::SetCursorPos({ io.DisplaySize.x / 2.49f, io.DisplaySize.y / 3.935f });
-    ImGui::Image((void*)Images[2], { (801 / 3) * io.DisplaySize.x / 1280,(388 / 2.7f) * io.DisplaySize.y / 720 }, {}, { 1,1 }, { x360Controller.RGB.red/255,x360Controller.RGB.green/255,x360Controller.RGB.blue/255,lightbar }); //RGB
-
-    ImGui::SetCursorPos({ io.DisplaySize.x/5.8f, io.DisplaySize.y/5.8f });
-    ImGui::Image((void*)Images[0], { (2524 / 3) * io.DisplaySize.x / 1280,(1419 / 2.7f) * io.DisplaySize.y / 720 }, {}, { 1,1 }, { 1.0f,1.0f,1.0f,1.0f });
-
-
+    ImGui::Image((void*)Images[3], { (801 / 3) * io.DisplaySize.x / 1280,(388 / 2.7f) * io.DisplaySize.y / 720 }, {}, { 1,1 }, { x360Controller.RGB.red/255,x360Controller.RGB.green/255,x360Controller.RGB.blue/255,lightbar }); //RGB
 
     drawButtons(io.DisplaySize.x,io.DisplaySize.y,xMultiplier,yMultiplier,x360Controller,Images);
 
@@ -105,6 +99,7 @@ void app(controller& x360Controller,const GLuint* Images) {
     ImGui::BeginChild("##Notifications");
 
 
+
     ImGui::SetCursorPosX(io.DisplaySize.x - 200);
 
     if (x360Controller.isConnected) {
@@ -114,7 +109,7 @@ void app(controller& x360Controller,const GLuint* Images) {
         ImGui::Text(std::format("Device Battery: {}%%",x360Controller.batteryLevel).c_str());
     }
     else {
-        lightbar -= 0.05;
+        lightbar -= 0.005;
         ImGui::Text("Device Status: Disconnected");
     }
 
@@ -141,34 +136,120 @@ void inline setColors() {
 
 }
 
-void drawButtons(float displaySizeX, float displaySizeY, float xMultiplier, float yMultiplier, const controller& x360Controller,const GLuint* Images){
+void inline drawButtons(float displaySizeX, float displaySizeY, float xMultiplier, float yMultiplier, const controller& x360Controller,const GLuint* Images){
 
     if (x360Controller.isConnected) {
+        //Controller
+        ImGui::SetCursorPos({ displaySizeX / 5.8f, displaySizeY / 5.8f });
+        ImGui::Image((void*)Images[0], { (2524 / 3) * displaySizeX / 1280,(1419 / 2.7f) * displaySizeY / 720 });
 
         //Left  Analogic
         ImGui::SetCursorPos({ ((displaySizeX / 2.935f) + (((int)(x360Controller.ControllerState.Gamepad.sThumbLX + 32768) / 470)) * xMultiplier) , (displaySizeY / 2.62f) + (((32767 - (int)x360Controller.ControllerState.Gamepad.sThumbLY) / 470)) * yMultiplier });
-        if (x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_THUMB) ImGui::Image((void*)Images[1], { (226 / 3) * displaySizeX / 1280,(226 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { 0.8f, 0.8f, 0.8f, 1 });
-        else ImGui::Image((void*)Images[1], { (226 / 3) * displaySizeX / 1280,(226 / 2.7f) * displaySizeY / 720 });
+        if (x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_THUMB) ImGui::Image((void*)Images[2], { (226 / 3) * displaySizeX / 1280,(226 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { 0.8f, 0.8f, 0.8f, 1 });
+        else ImGui::Image((void*)Images[2], { (226 / 3) * displaySizeX / 1280,(226 / 2.7f) * displaySizeY / 720 });
 
         //Right Analogic
         ImGui::SetCursorPos({ ((displaySizeX / 1.99f) + ((int)(x360Controller.ControllerState.Gamepad.sThumbRX + 32768) / 470) * xMultiplier) , (displaySizeY / 2.61f) + ((32767 - (int)x360Controller.ControllerState.Gamepad.sThumbRY) / 470) * yMultiplier });
-        if (x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB) ImGui::Image((void*)Images[1], { (226 / 3) * displaySizeX / 1280,(226 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { 0.8f, 0.8f, 0.8f, 1 });
-        else ImGui::Image((void*)Images[1], { (226 / 3) * displaySizeX / 1280,(226 / 2.7f) * displaySizeY / 720 });
+        if (x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB) ImGui::Image((void*)Images[2], { (226 / 3) * displaySizeX / 1280,(226 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { 0.8f, 0.8f, 0.8f, 1 });
+        else ImGui::Image((void*)Images[2], { (226 / 3) * displaySizeX / 1280,(226 / 2.7f) * displaySizeY / 720 });
+
+        //Cross
+        ImGui::SetCursorPos({ displaySizeX / 5.8f, displaySizeY / 5.8f });
+        if (x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_A) ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 },{},{1,1},{0.8f,0.8f,0.8f,1});
+        else ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 });
+
+        //Circle
+        ImGui::SetCursorPos({ displaySizeX / 5.8f, displaySizeY / 5.8f });
+        if (x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_A) ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { 0.8f,0.8f,0.8f,1 });
+        else ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 });
+
+        //Triangle
+        ImGui::SetCursorPos({ displaySizeX / 5.8f, displaySizeY / 5.8f });
+        if (x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_A) ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { 0.8f,0.8f,0.8f,1 });
+        else ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 });
+
+        //Square
+        ImGui::SetCursorPos({ displaySizeX / 5.8f, displaySizeY / 5.8f });
+        if (x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_A) ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { 0.8f,0.8f,0.8f,1 });
+        else ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 });
+
+        //Start
+        ImGui::SetCursorPos({ displaySizeX / 5.8f, displaySizeY / 5.8f });
+        if (x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_A) ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { 0.8f,0.8f,0.8f,1 });
+        else ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 });
+
+        //Select
+        ImGui::SetCursorPos({ displaySizeX / 5.8f, displaySizeY / 5.8f });
+        if (x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_A) ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { 0.8f,0.8f,0.8f,1 });
+        else ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 });
+
+        //DpadUp
+        ImGui::SetCursorPos({ displaySizeX / 5.8f, displaySizeY / 5.8f });
+        if (x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_A) ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { 0.8f,0.8f,0.8f,1 });
+        else ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 });
+
+        //DpadDown
+        ImGui::SetCursorPos({ displaySizeX / 5.8f, displaySizeY / 5.8f });
+        if (x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_A) ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { 0.8f,0.8f,0.8f,1 });
+        else ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 });
+
+        //DpadLeft
+        ImGui::SetCursorPos({ displaySizeX / 5.8f, displaySizeY / 5.8f });
+        if (x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_A) ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { 0.8f,0.8f,0.8f,1 });
+        else ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 });
+
+        //DpadRight
+        ImGui::SetCursorPos({ displaySizeX / 5.8f, displaySizeY / 5.8f });
+        if (x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_A) ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { 0.8f,0.8f,0.8f,1 });
+        else ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 });
+
+        //ShoulderLeft
+        ImGui::SetCursorPos({ displaySizeX / 5.8f, displaySizeY / 5.8f });
+        if (x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_A) ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { 0.8f,0.8f,0.8f,1 });
+        else ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 });
+
+        //ShoulderRight
+        ImGui::SetCursorPos({ displaySizeX / 5.8f, displaySizeY / 5.8f });
+        if (x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_A) ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { 0.8f,0.8f,0.8f,1 });
+        else ImGui::Image((void*)Images[4], { (127 / 3) * displaySizeX / 1280,(127 / 2.7f) * displaySizeY / 720 });
+        
+
     }
     else {
+        //Controller
+        ImGui::SetCursorPos({ displaySizeX / 5.8f, displaySizeY / 5.8f });
+        ImGui::Image((void*)Images[1], { (2524 / 3) * displaySizeX / 1280,(1419 / 2.7f) * displaySizeY / 720 });
 
         //Left  Analogic
         ImGui::SetCursorPos({ displaySizeX / 2.52f, displaySizeY / 2.07f });
-        ImGui::Image((void*)Images[1], { (226 / 3) * displaySizeX / 1280,(226 / 2.7f) * displaySizeY / 720 });
+        ImGui::Image((void*)Images[2], { (226 / 3) * displaySizeX / 1280,(226 / 2.7f) * displaySizeY / 720 });
         //Right Analogic
         ImGui::SetCursorPos({ displaySizeX / 1.8f, displaySizeY / 2.07f });
-        ImGui::Image((void*)Images[1], { (226 / 3) * displaySizeX / 1280,(226 / 2.7f) * displaySizeY / 720 });
+        ImGui::Image((void*)Images[2], { (226 / 3) * displaySizeX / 1280,(226 / 2.7f) * displaySizeY / 720 });
     }
 
+}
 
+bool LoadTextureFromFile(GLuint* Images) {
 
+    LoadTextureFromFile("./images/dualsense.png", &Images[0], 2524, 1419);
+    LoadTextureFromFile("./images/dualsenseD.png", &Images[1], 2524, 1419);
+    LoadTextureFromFile("./images/stick.png", &Images[2], 226, 226);
+    LoadTextureFromFile("./images/lightbar.png", &Images[3], 801, 388);
+    LoadTextureFromFile("./images/Cross.png", &Images[4], 127, 127);
+    LoadTextureFromFile("./images/Circle.png", &Images[5], 127, 127);
+    LoadTextureFromFile("./images/Triangle.png", &Images[6], 127, 127);
+    LoadTextureFromFile("./images/Square.png", &Images[7], 127, 127);
+    LoadTextureFromFile("./images/Start.png", &Images[8], 127, 127);
+    LoadTextureFromFile("./images/Select.png", &Images[9], 127, 127);
+    LoadTextureFromFile("./images/DpadUp.png", &Images[10], 127, 127);
+    LoadTextureFromFile("./images/DpadDown.png", &Images[11], 127, 127);
+    LoadTextureFromFile("./images/DpadLeft.png", &Images[12], 127, 127);
+    LoadTextureFromFile("./images/DpadRight.png", &Images[13], 127, 127);
+    LoadTextureFromFile("./images/ShoulderLeft.png", &Images[14], 257, 87);
+    LoadTextureFromFile("./images/ShoulderRight.png", &Images[15], 257, 87);
 
-
+    return true;
 }
 
 bool inline LoadTextureFromFile(const char* filename, GLuint* out_texture, int image_width, int image_height)

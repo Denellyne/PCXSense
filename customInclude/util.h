@@ -6,7 +6,7 @@
 #include "ViGEm/Client.h"
 #include <hidapi.h>
 
-#define EXPERIMENTAL true
+#define EXPERIMENTAL false
 #define DS_VENDOR_ID 0x054c
 #define DS_PRODUCT_ID 0x0ce6
 #define DEBUG(x) do { std::cout << x << '\n'; } while (0)

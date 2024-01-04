@@ -97,6 +97,7 @@ void extern inline sendOutputReport(controller& x360Controller) {
 	unsigned char outputHID[547]{};
 
 	while (true) {
+	//	if (x360Controller.batteryLevel > 100) x360Controller.batteryLevel = 100;
 		Sleep(4);
 		if (x360Controller.bluetooth) {
 			ZeroMemory(outputHID, 547);
@@ -163,7 +164,6 @@ void extern inline sendOutputReport(controller& x360Controller) {
 				break;
 			}
 			
-#if EXPERIMENTAL
 			isEmulatorRunning(outputHID,x360Controller.bluetooth,x360Controller.shortTriggers);
 
 			if (x360Controller.rainbow) {
@@ -185,7 +185,6 @@ void extern inline sendOutputReport(controller& x360Controller) {
 				outputHID[47] = Green; //Green
 				outputHID[48] = Blue; //Blue
 			}
-#endif // EXPERIMENTAL
 
 			const UINT32 crc = computeCRC32(outputHID, 74);
 
@@ -239,7 +238,6 @@ void extern inline sendOutputReport(controller& x360Controller) {
 				break;
 			}
 
-#if EXPERIMENTAL
 			isEmulatorRunning(outputHID,x360Controller.bluetooth,x360Controller.shortTriggers);
 
 			if (x360Controller.rainbow) {
@@ -261,7 +259,6 @@ void extern inline sendOutputReport(controller& x360Controller) {
 				outputHID[46] = Green; //Green
 				outputHID[47] = Blue; //Blue
 			}
-#endif
 			x360Controller.RGB.red = outputHID[45];
 			x360Controller.RGB.green = outputHID[46];
 			x360Controller.RGB.blue = outputHID[47];
