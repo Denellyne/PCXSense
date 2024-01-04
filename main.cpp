@@ -9,7 +9,7 @@
 LPVOID ptrController;
 LPVOID asyncThreadPointer;
 extern UCHAR rumble[2]{};
-LPSTR Version = (char*)(" \"PCXSense Beta 0.2\"");
+LPSTR Version = (char*)(" \"PCXSenseBeta0.2\"");
 void inline update() {
 	STARTUPINFOA si;
     PROCESS_INFORMATION pi; // The function returns this
