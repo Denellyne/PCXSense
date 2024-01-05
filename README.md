@@ -9,6 +9,7 @@
 
     Lightbar control,
     Rumble support,
+    Bluetooth and USB mode (Recognizes when you change from one mode to the other),
     Gamecube Triggers, (Triggers with Dolphin Emulator)
     Nintendo Switch Triggers, (Triggers with Yuzu Emulator)
     Auto updater
