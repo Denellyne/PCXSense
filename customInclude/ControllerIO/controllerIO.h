@@ -6,10 +6,15 @@
 #include "ViGEm/Client.h"
 #include <hidapi.h>
 
+#ifdef _DEBUG
+#define EXPERIMENTAL true
+#else
 #define EXPERIMENTAL false
-#define DS_VENDOR_ID 0x054c
+#endif
+
+
 #define DS_PRODUCT_ID 0x0ce6
-#define DEBUG(x) do { std::cout << x << '\n'; } while (0)
+#define DS_VENDOR_ID 0x054c
 
 struct RGB {
 	float red;
@@ -28,7 +33,7 @@ struct controller {
 	unsigned char inputBuffer[78]{};
 
 	int bufferSize;
-	int batteryLevel; 
+	int batteryLevel;
 
 	HANDLE deviceHandle;
 	PVIGEM_CLIENT client;
@@ -76,8 +81,6 @@ const uint32_t hashTable[256] = {
 	0x616495a3, 0x1663a535, 0x8f6af48f, 0xf86dc419, 0x660951ba, 0x110e612c, 0x88073096, 0xff000000,
 };
 bool isControllerConnected(controller& inputReport);
-uint32_t computeCRC32(unsigned char* buffer,const size_t& len);
+uint32_t computeCRC32(unsigned char* buffer, const size_t& len);
 void extern inline sendOutputReport(controller& inputReport);
 void extern inline getInputReport(controller& inputReport);
-void asyncDataReport(controller& inputReport);
-int initializeFakeController(PVIGEM_TARGET & emulateX360, VIGEM_ERROR & target, PVIGEM_CLIENT & client);

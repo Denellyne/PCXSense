@@ -1,50 +1,17 @@
 #ifndef _DEBUG
 //#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
-#include "util.h"
-#include "GUI.h"
+#include "misc\util.h"
+#include "GUI\GUI.h"
+#include "Updater\update.h"
 #include <thread>
 #include <format>
 
 LPVOID ptrController;
 LPVOID asyncThreadPointer;
 extern UCHAR rumble[2]{};
-LPSTR Version = (char*)(" \"PCXSenseBeta0.2\"");
-void inline update() {
-	STARTUPINFOA si;
-    PROCESS_INFORMATION pi; // The function returns this
-    ZeroMemory(&si, sizeof(si));
-    si.cb = sizeof(si);
-    ZeroMemory(&pi, sizeof(pi));
+extern std::string Version = "PCXSenseBeta0.2";
 
-	//CONST std::string commandLine = Version;
-	//std::cout << commandLine;
-	//Sleep(1000000000000);
-    // Start the child process.
-    if (!CreateProcessA(
-        "PCXSenseUpdater.exe",      // app path
-        Version,     // Command line 
-        NULL,           // Process handle not inheritable
-        NULL,           // Thread handle not inheritable
-        FALSE,          // Set handle inheritance to FALSE
-        0,              // No creation flags
-        NULL,           // Use parent's environment block
-        NULL,           // Use parent's starting directory
-        &si,            // Pointer to STARTUPINFO structure
-        &pi)           // Pointer to PROCESS_INFORMATION structure
-        )
-    {
-        printf("CreateProcess failed (%d).\n", GetLastError());
-        throw std::exception("Could not create child process");
-    }
-    else
-    {
-        std::cout << "[          ] Successfully launched child process" << std::endl;
-		Sleep(1000);
-
-    }
-	CloseHandle(pi.hThread);
-}
 
 VOID CALLBACK getRumble(PVIGEM_CLIENT Client, PVIGEM_TARGET Target, UCHAR LargeMotor, UCHAR SmallMotor, UCHAR LedNumber, LPVOID UserData)
 {
@@ -95,10 +62,11 @@ extern BOOL WINAPI exitFunction(_In_ DWORD dwCtrlType) {
 	return TRUE;
 }
 
-
+						
 int main() {
-	update();
-	Sleep(400);
+#ifndef _DEBUG
+	autoUpdater();
+#endif
 	//Initialize Fake Controller
 	controller x360Controller{};
 
@@ -121,9 +89,7 @@ int main() {
 #endif
 	vigem_target_x360_register_notification(x360Controller.client, x360Controller.emulateX360, &getRumble, ptrController);
 
-#ifndef _DEBUG
 	std::thread(asyncDataReport, std::ref(x360Controller)).detach(); // Displays controller info
-#endif // _DEBUG
 
 	while (true) {
 

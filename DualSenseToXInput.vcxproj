@@ -138,7 +138,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\Include\tray;.\imgui\cpp;.\imgui\header;.\imgui\header\GLFW;.\customInclude;.\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Include\tray;.\imgui\cpp;.\imgui\header;.\imgui\header\GLFW;.\customInclude\;.\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/sdl /w34996 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerOutput>NoListing</AssemblerOutput>
       <TreatWarningAsError>false</TreatWarningAsError>
@@ -150,7 +150,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;Urlmon.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Driver>NotSet</Driver>
       <AllowIsolation>false</AllowIsolation>
       <Profile>true</Profile>
@@ -168,7 +168,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\Include\tray;.\imgui\cpp;.\imgui\header;.\imgui\header\GLFW;.\customInclude;.\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Include\tray;.\imgui\cpp;.\imgui\header;.\imgui\header\GLFW;.\customInclude\;.\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <DebugInformationFormat>None</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -186,7 +186,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;Urlmon.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Driver>NotSet</Driver>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <DelayLoadDLLs>
@@ -194,8 +194,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="customInclude\GUI.cpp" />
-    <ClCompile Include="customInclude\util.cpp" />
+    <ClCompile Include="customInclude\ControllerIO\controllerIO.cpp" />
+    <ClCompile Include="customInclude\GUI\GUI.cpp" />
+    <ClCompile Include="customInclude\Misc\util.cpp" />
+    <ClCompile Include="customInclude\Updater\update.cpp" />
     <ClCompile Include="imgui\cpp\imgui.cpp" />
     <ClCompile Include="imgui\cpp\imgui_draw.cpp" />
     <ClCompile Include="imgui\cpp\imgui_impl_glfw.cpp" />
@@ -206,8 +208,10 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="customInclude\GUI.h" />
-    <ClInclude Include="customInclude\util.h" />
+    <ClInclude Include="customInclude\ControllerIO\controllerIO.h" />
+    <ClInclude Include="customInclude\GUI\GUI.h" />
+    <ClInclude Include="customInclude\Misc\util.h" />
+    <ClInclude Include="customInclude\Updater\update.h" />
     <ClInclude Include="imgui\header\GLFW\glfw3.h" />
     <ClInclude Include="imgui\header\GLFW\glfw3native.h" />
     <ClInclude Include="imgui\header\imconfig.h" />

@@ -22,20 +22,20 @@
     <Filter Include="Source Files\ImGui">
       <UniqueIdentifier>{cebe3235-338e-4573-92a3-fb0489e937e3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\systemTray">
-      <UniqueIdentifier>{20663cb5-520f-41bf-bfdc-65f95074fe48}</UniqueIdentifier>
+    <Filter Include="Source Files\Backend\Controller IO">
+      <UniqueIdentifier>{09f5b18a-fdb5-4467-8694-194b6ef46eb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Backend\Updater">
+      <UniqueIdentifier>{c3b8648b-b856-4100-98c6-2da8a56e79d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Backend\Misc">
+      <UniqueIdentifier>{ea1ba039-592b-47ec-934f-e7f6e2324a80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FrontEnd\GUI">
+      <UniqueIdentifier>{7bc69e98-5bc2-4697-ac51-b27e1d3cd11b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files\Backend</Filter>
-    </ClCompile>
-    <ClCompile Include="customInclude\util.cpp">
-      <Filter>Source Files\Backend</Filter>
-    </ClCompile>
-    <ClCompile Include="customInclude\GUI.cpp">
-      <Filter>Source Files\FrontEnd</Filter>
-    </ClCompile>
     <ClCompile Include="imgui\cpp\imgui.cpp">
       <Filter>Source Files\ImGui</Filter>
     </ClCompile>
@@ -57,14 +57,23 @@
     <ClCompile Include="imgui\cpp\imgui_widgets.cpp">
       <Filter>Source Files\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="customInclude\ControllerIO\controllerIO.cpp">
+      <Filter>Source Files\Backend\Controller IO</Filter>
+    </ClCompile>
+    <ClCompile Include="customInclude\Updater\update.cpp">
+      <Filter>Source Files\Backend\Updater</Filter>
+    </ClCompile>
+    <ClCompile Include="customInclude\Misc\util.cpp">
+      <Filter>Source Files\Backend\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="customInclude\GUI\GUI.cpp">
+      <Filter>Source Files\FrontEnd\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="customInclude\util.h">
-      <Filter>Source Files\Backend</Filter>
-    </ClInclude>
-    <ClInclude Include="customInclude\GUI.h">
-      <Filter>Source Files\FrontEnd</Filter>
-    </ClInclude>
     <ClInclude Include="imgui\header\GLFW\glfw3.h">
       <Filter>Source Files\ImGui</Filter>
     </ClInclude>
@@ -103,6 +112,18 @@
     </ClInclude>
     <ClInclude Include="imgui\header\stb_image.h">
       <Filter>Source Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="customInclude\ControllerIO\controllerIO.h">
+      <Filter>Source Files\Backend\Controller IO</Filter>
+    </ClInclude>
+    <ClInclude Include="customInclude\Updater\update.h">
+      <Filter>Source Files\Backend\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="customInclude\Misc\util.h">
+      <Filter>Source Files\Backend\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="customInclude\GUI\GUI.h">
+      <Filter>Source Files\FrontEnd\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
