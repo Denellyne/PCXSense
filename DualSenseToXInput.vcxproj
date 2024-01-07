@@ -173,8 +173,8 @@
       <Command>copy /y "$(SolutionDir)\unrar.exe" "$(TargetDir)\unrar.exe"
 copy /y "$(SolutionDir)\unrar3.dll" "$(TargetDir)\unrar3.dll"
 copy /y "$(SolutionDir)\ViGEmClient.dll" "$(TargetDir)\ViGEmClient.dll"
-copy /y "$(SolutionDir)\glfw3.dll" "$(TargetDir)\glfw3.dll"
-copy /y "$(SolutionDir)\hidapi.dll" "$(TargetDir)\hidapi.dll"
+copy /y "$(SolutionDir)imgui\header\GLFW\glfw3.dll" "$(TargetDir)\glfw3.dll"
+copy /y "$(SolutionDir)Include\hidapi.dll" "$(TargetDir)\hidapi.dll"
 xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
 </Command>
     </PostBuildEvent>
@@ -219,8 +219,8 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
       <Command>copy /y "$(SolutionDir)\unrar.exe" "$(TargetDir)\unrar.exe"
 copy /y "$(SolutionDir)\unrar3.dll" "$(TargetDir)\unrar3.dll"
 copy /y "$(SolutionDir)\ViGEmClient.dll" "$(TargetDir)\ViGEmClient.dll"
-copy /y "$(SolutionDir)\glfw3.dll" "$(TargetDir)\glfw3.dll"
-copy /y "$(SolutionDir)\hidapi.dll" "$(TargetDir)\hidapi.dll"
+copy /y "$(SolutionDir)imgui\header\GLFW\glfw3.dll" "$(TargetDir)\glfw3.dll"
+copy /y "$(SolutionDir)Include\hidapi.dll" "$(TargetDir)\hidapi.dll"
 xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
 </Command>
     </PostBuildEvent>
