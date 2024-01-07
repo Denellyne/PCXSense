@@ -1,18 +1,57 @@
-# Dualsense to XInput
+# PCXSense
 
 
-    Translation layer for the Dualsense controller,
-    Enables controller support in every game with XInput.
+Use your Dualsense controller in any game on your computer, via XInput Emulation
 
 ## Features
 
 
-    Lightbar control,
-    Rumble support,
-    Bluetooth and USB mode (Recognizes when you change from one mode to the other),
-    Gamecube Triggers, (Triggers with Dolphin Emulator)
-    Nintendo Switch Triggers, (Triggers with Yuzu Emulator)
-    Auto updater
+Lightbar control,
+
+Rumble support,
+
+Bluetooth and USB mode
+
+Gamecube Triggers, (Triggers with [Dolphin](https://pt.dolphin-emu.org/) Emulator)
+
+Nintendo Switch Triggers, (Triggers with [Yuzu](https://yuzu-emu.org/) Emulator)
+
+Auto updater [PCXSense Updater](https://github.com/Denellyne/PCXSense-Updater)
+
+Macros (*Not Implemented Yet*)
+
+## Goals
+
+This project aims to make using your Dualsense as easy and hassle-free as possible with the ability to customize everything about your own experience.
+
+Enhancing your experience on emulators via the use of the Adaptive Triggers
+
+## Yet to implement
+
+Joycons support (Merged),
+
+Touchpad support (*with Only Citra Mode Option*)
+
+Gyro support
+
+Easy to use Graphical Interface (*Currently being worked on*)
+
+Device Hiding (*Blocks double inputs*)
+
+Multiple Controller Emulation
+
+## Found a bug
+
+Please open an issue with as much detail as possible and the method to reproduce it
+
+Also contributions are appreciated, if you want to contribute open a pull request  and I'll review it
+
+
+## Support me
+
+All support and feedback is appreciated,
+Please check my other projects and maybe leave a star on this one :D
+
 
 # Thanks to,
 
