@@ -71,6 +71,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <CopyLocalDeploymentContent>false</CopyLocalDeploymentContent>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <CopyLocalDeploymentContent>false</CopyLocalDeploymentContent>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
@@ -159,6 +165,19 @@
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
+    <CustomBuildStep>
+      <Inputs>
+      </Inputs>
+    </CustomBuildStep>
+    <PostBuildEvent>
+      <Command>copy /y "$(SolutionDir)\unrar.exe" "$(TargetDir)\unrar.exe"
+copy /y "$(SolutionDir)\unrar3.dll" "$(TargetDir)\unrar3.dll"
+copy /y "$(SolutionDir)\ViGEmClient.dll" "$(TargetDir)\ViGEmClient.dll"
+copy /y "$(SolutionDir)\glfw3.dll" "$(TargetDir)\glfw3.dll"
+copy /y "$(SolutionDir)\hidapi.dll" "$(TargetDir)\hidapi.dll"
+xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -192,6 +211,19 @@
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
+    <CustomBuildStep>
+      <Inputs>
+      </Inputs>
+    </CustomBuildStep>
+    <PostBuildEvent>
+      <Command>copy /y "$(SolutionDir)\unrar.exe" "$(TargetDir)\unrar.exe"
+copy /y "$(SolutionDir)\unrar3.dll" "$(TargetDir)\unrar3.dll"
+copy /y "$(SolutionDir)\ViGEmClient.dll" "$(TargetDir)\ViGEmClient.dll"
+copy /y "$(SolutionDir)\glfw3.dll" "$(TargetDir)\glfw3.dll"
+copy /y "$(SolutionDir)\hidapi.dll" "$(TargetDir)\hidapi.dll"
+xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="customInclude\ControllerIO\controllerIO.cpp" />
