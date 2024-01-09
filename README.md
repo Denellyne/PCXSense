@@ -1,7 +1,7 @@
 # PCXSense
 
 <Badges ref ="https://github.com/Denellyne/PCXSense/releases/tag/Latest">
-    <img width = 120 align="left" src="https://img.shields.io/github/downloads/Denellyne/PCXSense/total.svg">
+    <img width = 120 align="left" src="https://img.shields.io/github/downloads/Denellyne/PCXSense/total.svg&(https://github.com/Denellyne/PCXSense">
 <Badges\>
 
 <Badges ref = "https://github.com/Denellyne/">
