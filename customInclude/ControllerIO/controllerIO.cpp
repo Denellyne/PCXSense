@@ -1,64 +1,7 @@
 #include "controllerIO.h"
 #include <tlhelp32.h>
 
-void inline isEmulatorRunning(unsigned char* outputHID, int bluetooth, int& shortTriggers) {
-	PROCESSENTRY32 entry{};
-	entry.dwSize = sizeof(PROCESSENTRY32);
-
-	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
-	if (Process32First(snapshot, &entry))
-		while (Process32Next(snapshot, &entry)) {
-			if (!wcsicmp(entry.szExeFile, L"Dolphin.exe")) {
-				outputHID[11 + bluetooth] = 0x2; //Mode Motor Right
-				outputHID[12 + bluetooth] = 0x90; //right trigger start of resistance section
-				outputHID[13 + bluetooth] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
-				outputHID[14 + bluetooth] = 0xFF; //right trigger force exerted in range (mode2)
-				//	outputHID[15 + bluetooth] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
-					//outputHID[16 + bluetooth] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
-				//	outputHID[17 + bluetooth] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
-			//		outputHID[20 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
-
-				outputHID[22 + bluetooth] = 0x2; //Mode Motor Left
-				outputHID[23 + bluetooth] = 0x90; //Left trigger start of resistance section
-				outputHID[24 + bluetooth] = 0xA0; //Left trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
-				outputHID[25 + bluetooth] = 0xFF; //Left trigger force exerted in range (mode2)
-				//	outputHID[26 + bluetooth] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
-				//	outputHID[27 + bluetooth] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
-				//	outputHID[28 + bluetooth] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
-				//	outputHID[31 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
-
-			}
-			if (!wcsicmp(entry.szExeFile, L"Yuzu.exe")) {
-				shortTriggers = 190;
-				outputHID[11 + bluetooth] = 0x2;
-				outputHID[12 + bluetooth] = 30;
-				outputHID[13 + bluetooth] = 180;
-				outputHID[14 + bluetooth] = 50;
-
-				outputHID[22 + bluetooth] = 0x2;
-				outputHID[23 + bluetooth] = 23;
-				outputHID[24 + bluetooth] = 180;
-				outputHID[25 + bluetooth] = 50;
-				CloseHandle(snapshot);
-				return;
-			}
-
-		}
-	shortTriggers = 0;
-
-	CloseHandle(snapshot);
-}
-
-uint32_t computeCRC32(unsigned char* buffer, const size_t& len)
-{
-	UINT32 result = crcSeed;
-	for (size_t i = 0; i < len; i++)
-		// Compute crc
-		result = hashTable[((unsigned char)result) ^ ((unsigned char)buffer[i])] ^ (result >> 8);
-
-	// Return result
-	return result;
-}
+void inline isEmulatorRunning(unsigned char* outputHID, int bluetooth, int& shortTriggers);
 
 void extern inline sendOutputReport(controller& x360Controller) {
 	float Red{ 210 }, Green{}, Blue{ 90 };
@@ -305,4 +248,62 @@ void inline getInputReport(controller& x360Controller) {
 		CloseHandle(x360Controller.deviceHandle);
 		while (!isControllerConnected(x360Controller)) {}
 	}
+}
+
+void inline isEmulatorRunning(unsigned char* outputHID, int bluetooth, int& shortTriggers) {
+	PROCESSENTRY32 entry{};
+	entry.dwSize = sizeof(PROCESSENTRY32);
+
+	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+	if (Process32First(snapshot, &entry))
+		while (Process32Next(snapshot, &entry)) {
+			if (!wcsicmp(entry.szExeFile, L"Dolphin.exe")) {
+				outputHID[11 + bluetooth] = 0x2; //Mode Motor Right
+				outputHID[12 + bluetooth] = 0x90; //right trigger start of resistance section
+				outputHID[13 + bluetooth] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+				outputHID[14 + bluetooth] = 0xFF; //right trigger force exerted in range (mode2)
+				//	outputHID[15 + bluetooth] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
+					//outputHID[16 + bluetooth] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
+				//	outputHID[17 + bluetooth] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
+			//		outputHID[20 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+
+				outputHID[22 + bluetooth] = 0x2; //Mode Motor Left
+				outputHID[23 + bluetooth] = 0x90; //Left trigger start of resistance section
+				outputHID[24 + bluetooth] = 0xA0; //Left trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+				outputHID[25 + bluetooth] = 0xFF; //Left trigger force exerted in range (mode2)
+				//	outputHID[26 + bluetooth] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
+				//	outputHID[27 + bluetooth] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
+				//	outputHID[28 + bluetooth] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
+				//	outputHID[31 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+
+			}
+			if (!wcsicmp(entry.szExeFile, L"Yuzu.exe")) {
+				shortTriggers = 190;
+				outputHID[11 + bluetooth] = 0x2;
+				outputHID[12 + bluetooth] = 30;
+				outputHID[13 + bluetooth] = 180;
+				outputHID[14 + bluetooth] = 50;
+
+				outputHID[22 + bluetooth] = 0x2;
+				outputHID[23 + bluetooth] = 23;
+				outputHID[24 + bluetooth] = 180;
+				outputHID[25 + bluetooth] = 50;
+				CloseHandle(snapshot);
+				return;
+			}
+		}
+	shortTriggers = 0;
+
+	CloseHandle(snapshot);
+}
+
+uint32_t computeCRC32(unsigned char* buffer, const size_t& len)
+{
+	UINT32 result = crcSeed;
+	for (size_t i = 0; i < len; i++)
+		// Compute crc
+		result = hashTable[((unsigned char)result) ^ ((unsigned char)buffer[i])] ^ (result >> 8);
+
+	// Return result
+	return result;
 }

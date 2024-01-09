@@ -3,6 +3,11 @@
 #include <fstream>
 #include <Windows.h>
 
+#ifdef _DEBUG
+void autoUpdater() {
+    Sleep(3000);
+}
+#else
 void autoUpdater() {
     DownloadProgress downloadStatus;
 
@@ -25,3 +30,4 @@ void autoUpdater() {
         _exit(NULL);
     }
 }
+#endif // _DEBUG
