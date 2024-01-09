@@ -1,8 +1,20 @@
 # PCXSense
 
+<Badges ref ="https://github.com/Denellyne/PCXSense/releases/tag/Latest">
+    <img width = 120 align="left" src="https://img.shields.io/github/downloads/Denellyne/PCXSense/total.svg">
+<Badges\>
 
+<Badges ref = "https://github.com/Denellyne/">
+    <img width = 130 align="left" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg">
+<Badges\>
+<Badges>
+    <img width = 120 align="center">
+<Badges\>
 
+####
 Use your Dualsense controller in any game on your computer, via XInput Emulation
+
+
 
 ## Features
 
@@ -66,6 +78,6 @@ Please check my other projects and maybe leave a star on this one :D
 
 [ViGemBus](https://github.com/nefarius/ViGEmBus)
 
-    
+
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀![imageedit_2_5901184072](https://github.com/Denellyne/DualSenseToXInput/assets/56112881/cdc5cd29-2a96-4e4b-afaf-6bf4f5e66a9d)
 
