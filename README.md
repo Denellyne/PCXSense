@@ -66,8 +66,5 @@ Please check my other projects and maybe leave a star on this one :D
 [ViGemBus](https://github.com/nefarius/ViGEmBus)
 
     
-<Dualsense>
-    <img width = 350 height = 350 center = "center"
-        src="https://github.com/Denellyne/DualSenseToXInput/assets/56112881/cdc5cd29-2a96-4e4b-afaf-6bf4f5e66a9d"/>
-</Dualsense>
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀![imageedit_2_5901184072](https://github.com/Denellyne/DualSenseToXInput/assets/56112881/cdc5cd29-2a96-4e4b-afaf-6bf4f5e66a9d)
 
