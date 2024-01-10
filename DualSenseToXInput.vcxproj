@@ -170,9 +170,9 @@
       </Inputs>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>copy /y "$(SolutionDir)\unrar.exe" "$(TargetDir)\unrar.exe"
-copy /y "$(SolutionDir)\unrar3.dll" "$(TargetDir)\unrar3.dll"
-copy /y "$(SolutionDir)\ViGEmClient.dll" "$(TargetDir)\ViGEmClient.dll"
+      <Command>copy /y "$(SolutionDir)Include\unrar.exe" "$(TargetDir)\unrar.exe"
+copy /y "$(SolutionDir)Include\unrar3.dll" "$(TargetDir)\unrar3.dll"
+copy /y "$(SolutionDir)Include\ViGEm\ViGEmClient.dll" "$(TargetDir)\ViGEmClient.dll"
 copy /y "$(SolutionDir)imgui\header\GLFW\glfw3.dll" "$(TargetDir)\glfw3.dll"
 copy /y "$(SolutionDir)Include\hidapi.dll" "$(TargetDir)\hidapi.dll"
 xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
@@ -216,9 +216,9 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
       </Inputs>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>copy /y "$(SolutionDir)\unrar.exe" "$(TargetDir)\unrar.exe"
-copy /y "$(SolutionDir)\unrar3.dll" "$(TargetDir)\unrar3.dll"
-copy /y "$(SolutionDir)\ViGEmClient.dll" "$(TargetDir)\ViGEmClient.dll"
+      <Command>copy /y "$(SolutionDir)Include\unrar.exe" "$(TargetDir)\unrar.exe"
+copy /y "$(SolutionDir)Include\unrar3.dll" "$(TargetDir)\unrar3.dll"
+copy /y "$(SolutionDir)Include\ViGEm\ViGEmClient.dll" "$(TargetDir)\ViGEmClient.dll"
 copy /y "$(SolutionDir)imgui\header\GLFW\glfw3.dll" "$(TargetDir)\glfw3.dll"
 copy /y "$(SolutionDir)Include\hidapi.dll" "$(TargetDir)\hidapi.dll"
 xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
@@ -260,6 +260,10 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
     <ClInclude Include="imgui\header\imstb_textedit.h" />
     <ClInclude Include="imgui\header\imstb_truetype.h" />
     <ClInclude Include="imgui\header\stb_image.h" />
+    <ClInclude Include="resource1.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="PCXSense.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

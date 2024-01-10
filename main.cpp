@@ -11,7 +11,7 @@
 LPVOID ptrController;
 LPVOID asyncThreadPointer;
 extern UCHAR rumble[2]{};
-extern std::string Version = "PCXSenseBeta0.2";
+extern std::string Version = "PCXSenseBeta0.3";
 
 
 VOID CALLBACK getRumble(PVIGEM_CLIENT Client, PVIGEM_TARGET Target, UCHAR LargeMotor, UCHAR SmallMotor, UCHAR LedNumber, LPVOID UserData)
