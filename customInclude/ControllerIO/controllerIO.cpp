@@ -1,5 +1,24 @@
 #include "controllerIO.h"
 #include <tlhelp32.h>
+#include <tchar.h>
+
+BOOL CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring)
+{
+	const DWORD TITLE_SIZE = 1024;
+	TCHAR windowTitle[TITLE_SIZE];
+
+	if (GetWindowText(hwnd, windowTitle, TITLE_SIZE))
+	{
+		//_tprintf(TEXT("%s\n"), windowTitle);
+		// Uncomment to print all windows being enumerated
+		if (_tcsstr(windowTitle, LPCTSTR(substring)) != NULL)
+		{
+			// We found the window! Stop enumerating.
+			return false;
+		}
+	}
+	return true; // Need to continue enumerating windows
+}
 
 void inline isEmulatorRunning(unsigned char* outputHID, int bluetooth, int& shortTriggers);
 
@@ -251,51 +270,50 @@ void inline getInputReport(controller& x360Controller) {
 }
 
 void inline isEmulatorRunning(unsigned char* outputHID, int bluetooth, int& shortTriggers) {
-	PROCESSENTRY32 entry{};
-	entry.dwSize = sizeof(PROCESSENTRY32);
 
-	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
-	if (Process32First(snapshot, &entry))
-		while (Process32Next(snapshot, &entry)) {
-			if (!wcsicmp(entry.szExeFile, L"Dolphin.exe")) {
-				outputHID[11 + bluetooth] = 0x2; //Mode Motor Right
-				outputHID[12 + bluetooth] = 0x90; //right trigger start of resistance section
-				outputHID[13 + bluetooth] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
-				outputHID[14 + bluetooth] = 0xFF; //right trigger force exerted in range (mode2)
-				//	outputHID[15 + bluetooth] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
-					//outputHID[16 + bluetooth] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
-				//	outputHID[17 + bluetooth] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
-			//		outputHID[20 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+	if (EnumWindows(FindWindowBySubstr, (LPARAM)L"yuzu") == false) {
 
-				outputHID[22 + bluetooth] = 0x2; //Mode Motor Left
-				outputHID[23 + bluetooth] = 0x90; //Left trigger start of resistance section
-				outputHID[24 + bluetooth] = 0xA0; //Left trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
-				outputHID[25 + bluetooth] = 0xFF; //Left trigger force exerted in range (mode2)
-				//	outputHID[26 + bluetooth] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
-				//	outputHID[27 + bluetooth] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
-				//	outputHID[28 + bluetooth] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
-				//	outputHID[31 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+		shortTriggers = 190;
+		outputHID[11 + bluetooth] = 0x2;
+		outputHID[12 + bluetooth] = 30;
+		outputHID[13 + bluetooth] = 180;
+		outputHID[14 + bluetooth] = 50;
 
-			}
-			if (!wcsicmp(entry.szExeFile, L"Yuzu.exe")) {
-				shortTriggers = 190;
-				outputHID[11 + bluetooth] = 0x2;
-				outputHID[12 + bluetooth] = 30;
-				outputHID[13 + bluetooth] = 180;
-				outputHID[14 + bluetooth] = 50;
+		outputHID[22 + bluetooth] = 0x2;
+		outputHID[23 + bluetooth] = 23;
+		outputHID[24 + bluetooth] = 180;
+		outputHID[25 + bluetooth] = 50;
 
-				outputHID[22 + bluetooth] = 0x2;
-				outputHID[23 + bluetooth] = 23;
-				outputHID[24 + bluetooth] = 180;
-				outputHID[25 + bluetooth] = 50;
-				CloseHandle(snapshot);
-				return;
-			}
-		}
+		return;
+	}
+
+	if (EnumWindows(FindWindowBySubstr, (LPARAM)L"Dolphin ") == false) {
+
+		shortTriggers = 0;
+		outputHID[11 + bluetooth] = 0x2; //Mode Motor Right
+		outputHID[12 + bluetooth] = 0x90; //right trigger start of resistance section
+		outputHID[13 + bluetooth] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+		outputHID[14 + bluetooth] = 0xFF; //right trigger force exerted in range (mode2)
+		//	outputHID[15 + bluetooth] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
+			//outputHID[16 + bluetooth] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
+		//	outputHID[17 + bluetooth] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
+	//		outputHID[20 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+
+		outputHID[22 + bluetooth] = 0x2; //Mode Motor Left
+		outputHID[23 + bluetooth] = 0x90; //Left trigger start of resistance section
+		outputHID[24 + bluetooth] = 0xA0; //Left trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+		outputHID[25 + bluetooth] = 0xFF; //Left trigger force exerted in range (mode2)
+		//	outputHID[26 + bluetooth] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
+		//	outputHID[27 + bluetooth] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
+		//	outputHID[28 + bluetooth] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
+		//	outputHID[31 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+		return;
+	}
+
+	ZeroMemory(outputHID, 0);
 	shortTriggers = 0;
-
-	CloseHandle(snapshot);
 }
+
 
 uint32_t computeCRC32(unsigned char* buffer, const size_t& len)
 {

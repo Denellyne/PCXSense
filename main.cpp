@@ -1,5 +1,5 @@
 #ifndef _DEBUG
-	//#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+	#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 
 #include "misc\util.h"
@@ -85,12 +85,13 @@ int main() {
 	asyncOutputReport.detach();
 
 	asyncThreadPointer = &asyncOutputReport;
-#if EXPERIMENTAL
-	std::thread(GUI,std::ref(x360Controller)).detach();
+	std::thread(GUI, std::ref(x360Controller)).detach();
+
+#if _DEBUG
+	std::thread(asyncDataReport, std::ref(x360Controller)).detach(); // Displays controller info
 #endif
 	vigem_target_x360_register_notification(x360Controller.client, x360Controller.emulateX360, &getRumble, ptrController);
 
-	std::thread(asyncDataReport, std::ref(x360Controller)).detach(); // Displays controller info
 
 	while (true) {
 

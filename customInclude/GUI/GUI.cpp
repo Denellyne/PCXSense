@@ -1,5 +1,6 @@
 #include "GUI.h"
 #include "functionality.h"
+#include <conio.h>
 
 void app(controller& x360Controller,const GLuint* Images);
 void inline drawController(float displaySizeX, float displaySizeY, float xMultiplier, float yMultiplier, const controller& x360Controller, const GLuint* Images);
@@ -7,12 +8,24 @@ void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected,const 
 bool rumbleWindow = false;
 float lightbar = 0.0f;
 
+//const HWND thisProcess = FindWindow(NULL, L"PCXSense");
+
+/*
+bool inline isFocus() {
+    
+    HWND activeWindow = GetActiveWindow();
+
+    if (thisProcess != activeWindow) return true;
+    return false;
+
+}
+*/ //Needs testing
 
 int GUI(controller& x360Controller){
     GLuint Images[17];
     
     glfwInit();
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "PSXSense", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "PCXSense", nullptr, nullptr);
     if (window == nullptr) return 1;
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
@@ -34,13 +47,11 @@ int GUI(controller& x360Controller){
     ImGui_ImplOpenGL3_Init("#version 330");
     while (!glfwWindowShouldClose(window)) { // Render
         glfwPollEvents();
-
+   
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-
-        app(x360Controller,Images);
-
+        app(x360Controller, Images);
         ImGui::Render();
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
@@ -48,6 +59,25 @@ int GUI(controller& x360Controller){
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(window);
+/*
+        if (isFocus()) {
+            
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+            app(x360Controller, Images);
+            ImGui::Render();
+            int display_w, display_h;
+            glfwGetFramebufferSize(window, &display_w, &display_h);
+            glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+            glClear(GL_COLOR_BUFFER_BIT);
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            glfwSwapBuffers(window);
+            
+
+        }
+ */      
+
     }
 
     glfwTerminate();
@@ -72,7 +102,7 @@ void app(controller& x360Controller,const GLuint* Images) {
     ImGui::SetNextWindowPos(ImVec2(0, 0));
 
     ImGui::Begin("PSXSense", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus);
-    if (ImGui::Button("RAINBOW", { 20,20 })) x360Controller.rainbow = !x360Controller.rainbow;
+    if (ImGui::Button("RAINBOW", { 90,20 })) x360Controller.rainbow = !x360Controller.rainbow;
 
     //Setting colors for child window
     setColors();
@@ -81,11 +111,8 @@ void app(controller& x360Controller,const GLuint* Images) {
 
     drawController(io.DisplaySize.x, io.DisplaySize.y, xMultiplier, yMultiplier, x360Controller, Images);
 
-    ImGui::SetCursorPos({ io.DisplaySize.x - 210, 50 });
-    if (ImGui::Button("Rumble Test", { 20,20 })) rumbleWindow = true;
-
     if (rumbleWindow) rumleTestWindow(rumbleWindow);
-    
+
     ImGui::PopStyleColor(3);
 
     ImGui::End();
@@ -111,6 +138,10 @@ void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected, const
         lightbar -= 0.005;
         ImGui::Text("Device Status: Disconnected");
     }
+
+//Temporary -> Only for Beta 0.3
+    ImGui::SetCursorPos({ 200,14 });
+    if (ImGui::Button("Rumble Test", { 90,20 })) rumbleWindow = true;
     
 #ifdef _DEBUG
     static ImGuiIO& io = ImGui::GetIO();
