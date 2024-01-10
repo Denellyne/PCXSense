@@ -17,7 +17,9 @@ int GUI(controller& x360Controller){
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
 
-    loadTexture(Images);
+
+
+    loadTexture(Images,window);
 
     // GUI BoilerPlate
 

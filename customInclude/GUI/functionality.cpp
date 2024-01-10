@@ -31,7 +31,16 @@ bool inline LoadTextureFromFile(const char* filename, GLuint* out_texture, int i
     return true;
 }
 
-bool loadTexture(GLuint* Images) {
+bool loadTexture(GLuint* Images, GLFWwindow* window) {
+
+    int width, height, channels;
+    unsigned char* icon = stbi_load("./images/PCXSense.png", &width, &height, &channels, 4);
+    GLFWimage images[1]{};
+    images[0].width = width;
+    images[0].height = height;
+    images[0].pixels = icon;
+    glfwSetWindowIcon(window, 1, images);
+    stbi_image_free(icon);
 
     LoadTextureFromFile("./images/dualsense.png", &Images[0], 2524, 1419);
     LoadTextureFromFile("./images/dualsenseD.png", &Images[1], 2524, 1419);
