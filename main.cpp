@@ -1,6 +1,7 @@
 #ifndef _DEBUG
-//#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+	//#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
+
 #include "misc\util.h"
 #include "GUI\GUI.h"
 #include "Updater\update.h"
