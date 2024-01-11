@@ -101,6 +101,7 @@ int main() {
 		
 		vigem_target_x360_update(x360Controller.client, x360Controller.emulateX360, *reinterpret_cast<XUSB_REPORT*>(&x360Controller.ControllerState.Gamepad));
 	}
+
 	return 0;
 }
 

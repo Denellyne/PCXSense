@@ -8,16 +8,10 @@ BOOL CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring)
 	TCHAR windowTitle[TITLE_SIZE];
 
 	if (GetWindowText(hwnd, windowTitle, TITLE_SIZE))
-	{
-		//_tprintf(TEXT("%s\n"), windowTitle);
-		// Uncomment to print all windows being enumerated
 		if (_tcsstr(windowTitle, LPCTSTR(substring)) != NULL)
-		{
-			// We found the window! Stop enumerating.
 			return false;
-		}
-	}
-	return true; // Need to continue enumerating windows
+
+	return true;
 }
 
 void inline isEmulatorRunning(unsigned char* outputHID, int bluetooth, int& shortTriggers);
@@ -270,7 +264,6 @@ void inline getInputReport(controller& x360Controller) {
 }
 
 void inline isEmulatorRunning(unsigned char* outputHID, int bluetooth, int& shortTriggers) {
-
 	if (EnumWindows(FindWindowBySubstr, (LPARAM)L"yuzu") == false) {
 
 		shortTriggers = 190;
@@ -309,6 +302,8 @@ void inline isEmulatorRunning(unsigned char* outputHID, int bluetooth, int& shor
 		//	outputHID[31 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
 		return;
 	}
+
+	
 
 	ZeroMemory(outputHID, 0);
 	shortTriggers = 0;

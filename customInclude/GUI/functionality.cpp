@@ -58,7 +58,9 @@ bool loadTexture(GLuint* Images, GLFWwindow* window) {
     LoadTextureFromFile("./images/DpadRight.png", &Images[13], 2524, 1419);
     LoadTextureFromFile("./images/ShoulderLeft.png", &Images[14], 2524, 1419);
     LoadTextureFromFile("./images/ShoulderRight.png", &Images[15], 2524, 1419);
-    LoadTextureFromFile("./images/updateButton.png", &Images[16], 200, 30);
+    //16
+    LoadTextureFromFile("./images/github.png", &Images[17], 512, 512);
+    LoadTextureFromFile("./images/PCXSense.png", &Images[18], 218, 219);
 
     return true;
 }

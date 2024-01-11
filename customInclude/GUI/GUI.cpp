@@ -1,10 +1,14 @@
 #include "GUI.h"
 #include "functionality.h"
 #include <conio.h>
+#define defaultWindowWidth 1280
+#define defaultWindowHeigth 720
 
 void app(controller& x360Controller,const GLuint* Images);
-void inline drawController(float displaySizeX, float displaySizeY, float xMultiplier, float yMultiplier, const controller& x360Controller, const GLuint* Images);
+void inline drawController(const float& displaySizeX, const float& displaySizeY, float xMultiplier, float yMultiplier, const controller& x360Controller, const GLuint* Images);
 void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected,const int& batteryLevel,float& lightbar,const ImTextureID& updateButton);
+void inline topBar(const GLuint* Images, const float& displaySizeX, const float& displaySizeY,const float* RGB);
+
 bool rumbleWindow = false;
 float lightbar = 0.0f;
 
@@ -22,15 +26,13 @@ bool inline isFocus() {
 */ //Needs testing
 
 int GUI(controller& x360Controller){
-    GLuint Images[17];
+    GLuint Images[18];
     
     glfwInit();
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "PCXSense", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(defaultWindowWidth, defaultWindowHeigth, "PCXSense", nullptr, nullptr);
     if (window == nullptr) return 1;
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
-
-
 
     loadTexture(Images,window);
 
@@ -94,8 +96,8 @@ void app(controller& x360Controller,const GLuint* Images) {
     static ImGuiIO& io = ImGui::GetIO();
     if (lightbar >= 1) lightbar = 1;
     if (lightbar < 0) lightbar = 0;
-    float xMultiplier = io.DisplaySize.x / 1280;
-    float yMultiplier = io.DisplaySize.y / 720;
+    float xMultiplier = io.DisplaySize.x / defaultWindowWidth;
+    float yMultiplier = io.DisplaySize.y / defaultWindowHeigth;
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, io.DisplaySize.y));
@@ -103,11 +105,13 @@ void app(controller& x360Controller,const GLuint* Images) {
 
     ImGui::Begin("PSXSense", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus);
     if (ImGui::Button("RAINBOW", { 90,20 })) x360Controller.rainbow = !x360Controller.rainbow;
+    float RGB[3] = { x360Controller.RGB.red / 255,x360Controller.RGB.green / 255,x360Controller.RGB.blue / 255 };
+
 
     //Setting colors for child window
     setColors();
-
-    notificationBar({ io.DisplaySize.x - 210 , io.DisplaySize.y - 35 }, x360Controller.isConnected, x360Controller.batteryLevel, lightbar, (void*)Images[16]);
+    topBar(Images,io.DisplaySize.x,io.DisplaySize.y,RGB);
+    notificationBar({ io.DisplaySize.x , io.DisplaySize.y - 35 }, x360Controller.isConnected, x360Controller.batteryLevel, lightbar, (void*)Images[16]);
 
     drawController(io.DisplaySize.x, io.DisplaySize.y, xMultiplier, yMultiplier, x360Controller, Images);
 
@@ -138,10 +142,6 @@ void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected, const
         lightbar -= 0.005;
         ImGui::Text("Device Status: Disconnected");
     }
-
-//Temporary -> Only for Beta 0.3
-    ImGui::SetCursorPos({ 200,14 });
-    if (ImGui::Button("Rumble Test", { 90,20 })) rumbleWindow = true;
     
 #ifdef _DEBUG
     static ImGuiIO& io = ImGui::GetIO();
@@ -149,13 +149,79 @@ void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected, const
     ImGui::Text(std::format("Framerate: {}", (int)io.Framerate).c_str());
 #endif // _DEBUG
 
-    ImGui::SetCursorPos({ cursorPosition.x ,0});
-    if (ImGui::ImageButton(updateButton, { 200,29 })) autoUpdater();
+    ImGui::SetCursorPos({ cursorPosition.x - 90 ,17});
+    ImGui::Text("ver Beta0.3");
 
     ImGui::EndChild();
 }
 
-void inline drawController(float displaySizeX, float displaySizeY, float xMultiplier, float yMultiplier, const controller& x360Controller,const GLuint* Images){
+inline void topBar(const GLuint* Images, const float& displaySizeX, const float& displaySizeY, const float* RGB) {
+
+    ImGui::SetCursorPos({ displaySizeX-60,0 });
+    ImVec2 combo_pos = ImGui::GetCursorScreenPos();
+    ImGuiStyle& style = ImGui::GetStyle();
+    ImGui::SetCursorScreenPos(ImVec2(combo_pos.x + style.FramePadding.x, combo_pos.y));
+    float h = ImGui::GetTextLineHeightWithSpacing() - style.FramePadding.y;
+
+    if (ImGui::BeginCombo("##Misc","Misc", ImGuiComboFlags_WidthFitPreview | ImGuiComboFlags_PopupAlignLeft)) {
+        if(ImGui::Selectable("##Github")) ShellExecute(0, 0, L"https://github.com/Denellyne", 0, 0, SW_SHOW);
+        ImGui::SameLine(7);
+        ImGui::Image((void*)Images[17], { h,h });
+        ImGui::SameLine();
+        ImGui::Text("Github");
+
+        if (ImGui::Selectable("##PCXSense")) ShellExecute(0, 0, L"https://github.com/Denellyne/PCXSense", 0, 0, SW_SHOW);
+        ImGui::SameLine(7);
+        ImGui::Image((void*)Images[18], { h,h });
+        ImGui::SameLine();
+        ImGui::Text("PCXSense");
+
+        if (ImGui::Selectable("##Debug Menu")) ;
+        ImGui::SameLine(30);
+        ImGui::Text("Debug Menu");
+
+        if (ImGui::Selectable("##Update")) autoUpdater();
+        ImGui::SameLine(30);
+        ImGui::Text("Update");
+
+
+
+        ImGui::EndCombo();
+    }
+
+    ImGui::SetCursorPos({ displaySizeX - 216,0 });
+
+
+    if (ImGui::BeginCombo("##Controller Settings", "Controller Settings", ImGuiComboFlags_WidthFitPreview | ImGuiComboFlags_PopupAlignLeft)) {
+        if (ImGui::Selectable("##Rumble Test")) rumbleWindow = true;
+        ImGui::SameLine(30);
+        ImGui::Text("Rumble Test");
+
+        if (ImGui::Selectable("##Lightbar Settings")); //Ligthbar Menu
+        ImGui::SameLine(7);
+        ImGui::ColorButton("Lightbar", { RGB[0],RGB[1],RGB[2],1 },0, {h,h});
+        ImGui::SameLine();
+        ImGui::Text("Lightbar Settings");
+
+        if (ImGui::Selectable("##Adaptive Triggers")); //Ligthbar Menu
+        ImGui::SameLine(30);
+        ImGui::Text("Adaptive Triggers");
+
+        if (ImGui::Selectable("##Macros")); //Ligthbar Menu
+        ImGui::SameLine(30);
+        ImGui::Text("Macros");
+
+
+
+        ImGui::EndCombo();
+    }
+
+
+
+
+}
+
+void inline drawController(const float& displaySizeX, const float& displaySizeY, float xMultiplier, float yMultiplier, const controller& x360Controller,const GLuint* Images){
     ImVec2 controllerPosition = { displaySizeX / 5.8f, displaySizeY / 5.8f };
     ImVec2 controllerSize = { (2524 / 3) * displaySizeX / 1280,(1419 / 2.7f) * displaySizeY / 720 };
 
