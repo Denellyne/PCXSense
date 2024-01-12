@@ -50,8 +50,6 @@ Enhancing your experience on emulators via the use of the Adaptive Triggers
 
 Joycons support (Merged),
 
-Touchpad support (*with Only Citra Mode Option*)
-
 Gyro support
 
 Easy to use Graphical Interface (*Currently being worked on*)
