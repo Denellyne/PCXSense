@@ -50,8 +50,6 @@ Enhancing your experience on emulators via the use of the Adaptive Triggers
 
 Joycons support (Merged),
 
-Gyro support
-
 Easy to use Graphical Interface (*Currently being worked on*)
 
 Device Hiding (*Blocks double inputs*)
