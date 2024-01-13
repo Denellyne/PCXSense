@@ -22,7 +22,6 @@ void extern inline sendOutputReport(controller& x360Controller) {
 	unsigned char outputHID[547]{};
 
 	while (true) {
-		//	if (x360Controller.batteryLevel > 100) x360Controller.batteryLevel = 100;
 		Sleep(4);
 		if (x360Controller.bluetooth) {
 			ZeroMemory(outputHID, 547);
@@ -77,6 +76,11 @@ void extern inline sendOutputReport(controller& x360Controller) {
 				outputHID[47] = 0; //Green
 				outputHID[48] = 80; //Blue
 				break;
+			case 87:
+				outputHID[46] = 110; //Red
+				outputHID[47] = 0; //Green
+				outputHID[48] = 80; //Blue
+				break;
 			case 100:
 				outputHID[46] = 200; //Red
 				outputHID[47] = 0; //Green
@@ -99,12 +103,12 @@ void extern inline sendOutputReport(controller& x360Controller) {
 				if (Blue == 255) AddBlue = false;
 				if (Blue == 0) AddBlue = true;
 
-				if (AddRed) Red++;
-				else Red--;
-				if (AddGreen) Green++;
-				else Green--;
-				if (AddBlue) Blue++;
-				else Blue--;
+				if (AddRed) Red+=2.5f;
+				else Red -= 2.5f;
+				if (AddGreen) Green += 5;
+				else Green -= 5;
+				if (AddBlue) Blue += 2.5f;
+				else Blue -= 2.5f;
 
 				outputHID[46] = Red; //Red
 				outputHID[47] = Green; //Green
@@ -121,7 +125,6 @@ void extern inline sendOutputReport(controller& x360Controller) {
 			x360Controller.RGB.red = outputHID[46];
 			x360Controller.RGB.green = outputHID[47];
 			x360Controller.RGB.blue = outputHID[48];
-
 
 			WriteFile(x360Controller.deviceHandle, outputHID, 547, NULL, NULL);
 		}
@@ -141,7 +144,7 @@ void extern inline sendOutputReport(controller& x360Controller) {
 			outputHID[43] = 0x02;
 
 			switch (x360Controller.batteryLevel) {
-			case 70:
+			case 75:
 				outputHID[45] = 20; //Red
 				outputHID[46] = 170; //Green
 				outputHID[47] = 150; //Blue
@@ -173,12 +176,12 @@ void extern inline sendOutputReport(controller& x360Controller) {
 				if (Blue == 255) AddBlue = false;
 				if (Blue == 0) AddBlue = true;
 
-				if (AddRed) Red++;
-				else Red--;
-				if (AddGreen) Green++;
-				else Green--;
-				if (AddBlue) Blue++;
-				else Blue--;
+				if (AddRed) Red += 2.5f;
+				else Red -= 2.5f;
+				if (AddGreen) Green += 5;
+				else Green -= 5;
+				if (AddBlue) Blue += 2.5f;
+				else Blue -= 2.5f;
 
 				outputHID[45] = Red; //Red
 				outputHID[46] = Green; //Green
@@ -196,12 +199,15 @@ void extern inline sendOutputReport(controller& x360Controller) {
 
 void inline getInputReport(controller& x360Controller) {
 
+	static uint8_t isCharging = (x360Controller.inputBuffer[53 + x360Controller.bluetooth] & 0xf0) >> 0x4;
+
 	bool readSuccess = ReadFile(x360Controller.deviceHandle, x360Controller.inputBuffer, x360Controller.bufferSize, NULL, NULL);
 
 	x360Controller.batteryLevel = (x360Controller.inputBuffer[53 + x360Controller.bluetooth] & 15) * 12.5; /* Hex 0x35 (USB) to get Battery / Hex 0x36 (Bluetooth) to get Battery
 																									 because if bluetooth == true then bluetooth == 1 so we can just add bluetooth
 																									 to the hex value of USB to get the battery reading
 																									 */
+
 
 	if (bool(x360Controller.shortTriggers)) {
 		x360Controller.ControllerState.Gamepad.bLeftTrigger = (x360Controller.inputBuffer[5 + x360Controller.bluetooth]) * 0.25 + 190;

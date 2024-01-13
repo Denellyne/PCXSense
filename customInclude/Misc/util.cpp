@@ -45,6 +45,7 @@ void asyncDataReport(controller &x360Controller) {
 		std::cout << "Left Trigger Value: " << (int)x360Controller.ControllerState.Gamepad.bLeftTrigger << '\n';
 		std::cout << "Right Trigger Value: " << (int)x360Controller.ControllerState.Gamepad.bRightTrigger << '\n';
 		std::cout << "Battery Level: " << x360Controller.batteryLevel << "%\n";
+		std::cout << "Buttons Reading: " << x360Controller.ControllerState.Gamepad.wButtons << "\n";
 
 		switch ((int)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & 0x0f)) {
 
@@ -89,6 +90,8 @@ void asyncDataReport(controller &x360Controller) {
 
 		if ((bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & 0x02)) DEBUG("Toutchpad Click\n");
 
+
+		
 		
 		while (!x360Controller.isConnected) {
 			std::cout << "Failed to get Device State\n";
@@ -128,3 +131,40 @@ int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PV
 
 	return 0;
 }
+
+void inline loadMacros(std::vector<Macros>& Macro) {
+
+
+}
+
+void asyncMacro(const controller& x360Controller,std::vector<Macros>& Macro) {
+
+	loadMacros(Macro);
+
+	//This is here only for testS
+
+	Macro[0].Name = "Citra Speedup";
+	Macro[0].input[0].type = INPUT_KEYBOARD;
+	Macro[0].input[0].ki.wVk = VK_CONTROL;
+	Macro[0].input[1].type = INPUT_KEYBOARD;
+	Macro[0].input[1].ki.wVk = 'Z';
+	Macro[0].buttonCombination = 0x1000;
+
+	while (true) {
+		Sleep(20);
+		for (short int i = 0; i < Macro.size(); i++) {
+			if (Macro[i].buttonCombination == x360Controller.ControllerState.Gamepad.wButtons) {
+				SendInput(ARRAYSIZE(Macro[i].input), Macro[i].input, sizeof(INPUT));
+				Macro[i].input[0].ki.dwFlags = KEYEVENTF_KEYUP;
+				Macro[i].input[1].ki.dwFlags = KEYEVENTF_KEYUP;
+				SendInput(ARRAYSIZE(Macro[i].input), Macro[i].input, sizeof(INPUT));
+				Macro[i].input[0].ki.dwFlags = 0;
+				Macro[i].input[1].ki.dwFlags = 0;
+				Sleep(1000);
+			}
+		}
+	}
+
+}
+
+void saveMacros(std::vector<Macros>& Macro){}

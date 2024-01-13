@@ -3,6 +3,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_ONLY_PNG
 #include "stb_image.h"
+extern bool debugOpen;
 
 bool inline LoadTextureFromFile(const char* filename, GLuint* out_texture, int image_width, int image_height)
 {
@@ -93,4 +94,25 @@ void rumleTestWindow(bool& rumbleWindow) {
 
         ImGui::End();
     }
+}
+
+void debugMenu(controller& x360Controller) {
+    static ImGuiIO& io = ImGui::GetIO();
+
+    if (ImGui::Begin("Debug Menu", &debugOpen, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings)) {
+        ImGui::Text(std::format("Framerate: {}", (int)io.Framerate).c_str());
+        ImGui::Text("Controller Readings:");
+        ImGui::Text(std::format("Left Joystick Horizontal  Value: {}", (int)((x360Controller.inputBuffer[1 + x360Controller.bluetooth] * 257) - 32768)).c_str());
+        ImGui::Text(std::format("Left Joystick Vertical    Value: {}", (int)(32767 - (x360Controller.inputBuffer[2 + x360Controller.bluetooth] * 257))).c_str());
+        ImGui::Text(std::format("Right Joystick Horizontal Value: {}", (int)((x360Controller.inputBuffer[3 + x360Controller.bluetooth] * 257) - 32768)).c_str());
+        ImGui::Text(std::format("RightJoystick Vertical    Value: {}", (int)(32767 - (x360Controller.inputBuffer[4 + x360Controller.bluetooth] * 257))).c_str());
+        ImGui::Text(std::format("Left Trigger              Value: {}", (int)x360Controller.ControllerState.Gamepad.bLeftTrigger).c_str());
+        ImGui::Text(std::format("Right Trigger             Value: {}", (int)x360Controller.ControllerState.Gamepad.bRightTrigger).c_str());
+
+    }
+    ImGui::End();
+
+
+
+
 }

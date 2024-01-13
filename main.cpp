@@ -10,6 +10,7 @@
 
 LPVOID ptrController;
 LPVOID asyncThreadPointer;
+LPVOID ptrMacros;
 extern UCHAR rumble[2]{};
 extern std::string Version = "PCXSenseBeta0.3";
 
@@ -53,6 +54,7 @@ void zeroOutputReport() {
 extern BOOL WINAPI exitFunction(_In_ DWORD dwCtrlType) {
 	reinterpret_cast<std::thread*>(asyncThreadPointer)->~thread();
 	zeroOutputReport();
+	saveMacros(*reinterpret_cast<std::vector<Macros>*>(ptrMacros));
 
 	//Cleanup	
 	vigem_target_remove(reinterpret_cast<controller*>(ptrController)->client, reinterpret_cast<controller*>(ptrController)->emulateX360);
@@ -70,6 +72,8 @@ int main() {
 #endif
 	//Initialize Fake Controller
 	controller x360Controller{};
+	std::vector<Macros> Macro(1);
+	ptrMacros = &Macro;
 
 	ptrController = &x360Controller;
 
@@ -86,6 +90,7 @@ int main() {
 
 	asyncThreadPointer = &asyncOutputReport;
 	std::thread(GUI, std::ref(x360Controller)).detach();
+	std::thread(asyncMacro, std::ref(x360Controller),std::ref(Macro)).detach();
 
 #if _DEBUG
 	std::thread(asyncDataReport, std::ref(x360Controller)).detach(); // Displays controller info

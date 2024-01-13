@@ -10,6 +10,7 @@ void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected,const 
 void inline topBar(const GLuint* Images, const float& displaySizeX, const float& displaySizeY,const float* RGB);
 
 bool rumbleWindow = false;
+extern bool debugOpen = false;
 float lightbar = 0.0f;
 
 //const HWND thisProcess = FindWindow(NULL, L"PCXSense");
@@ -116,6 +117,7 @@ void app(controller& x360Controller,const GLuint* Images) {
     drawController(io.DisplaySize.x, io.DisplaySize.y, xMultiplier, yMultiplier, x360Controller, Images);
 
     if (rumbleWindow) rumleTestWindow(rumbleWindow);
+    if (debugOpen) debugMenu(x360Controller);
 
     ImGui::PopStyleColor(3);
 
@@ -123,8 +125,7 @@ void app(controller& x360Controller,const GLuint* Images) {
 
 }
 
-
-void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected, const int& batteryLevel, float& lightbar, const ImTextureID& updateButton) {
+void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected,const int& batteryLevel, float& lightbar, const ImTextureID& updateButton) {
 
     ImGui::SetCursorPosY(cursorPosition.y);
 
@@ -142,15 +143,13 @@ void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected, const
         lightbar -= 0.005;
         ImGui::Text("Device Status: Disconnected");
     }
-    
-#ifdef _DEBUG
-    static ImGuiIO& io = ImGui::GetIO();
-    ImGui::SetCursorPos({ 200,17 });
-    ImGui::Text(std::format("Framerate: {}", (int)io.Framerate).c_str());
-#endif // _DEBUG
 
-    ImGui::SetCursorPos({ cursorPosition.x - 90 ,17});
-    ImGui::Text("ver Beta0.3");
+    ImGui::SetCursorPos({ cursorPosition.x - 130 ,17});
+    ImGui::Text(Version.c_str());
+
+   // ImGui::SetCursorPos({500, 5});
+   // ImGui::ColorButton("Connected", { 0,255,0,1 },ImGuiColorEditFlags_NoTooltip,{20,20});
+
 
     ImGui::EndChild();
 }
@@ -176,7 +175,7 @@ inline void topBar(const GLuint* Images, const float& displaySizeX, const float&
         ImGui::SameLine();
         ImGui::Text("PCXSense");
 
-        if (ImGui::Selectable("##Debug Menu")) ;
+        if (ImGui::Selectable("##Debug Menu")) debugOpen = true;;
         ImGui::SameLine(30);
         ImGui::Text("Debug Menu");
 
@@ -203,6 +202,10 @@ inline void topBar(const GLuint* Images, const float& displaySizeX, const float&
         ImGui::SameLine();
         ImGui::Text("Lightbar Settings");
 
+        if (ImGui::Selectable("##Device Hiding")); //Ligthbar Menu
+        ImGui::SameLine(30);
+        ImGui::Text("Device Hiding");
+
         if (ImGui::Selectable("##Adaptive Triggers")); //Ligthbar Menu
         ImGui::SameLine(30);
         ImGui::Text("Adaptive Triggers");
@@ -211,13 +214,8 @@ inline void topBar(const GLuint* Images, const float& displaySizeX, const float&
         ImGui::SameLine(30);
         ImGui::Text("Macros");
 
-
-
         ImGui::EndCombo();
     }
-
-
-
 
 }
 
@@ -232,6 +230,7 @@ void inline drawController(const float& displaySizeX, const float& displaySizeY,
         x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT,x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER,x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER
     };
     
+
     //Lightbar
     ImGui::SetCursorPos({ displaySizeX / 2.49f, displaySizeY / 3.935f });
     ImGui::Image((void*)Images[3], { (801 / 3) * displaySizeX / 1280,(388 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { x360Controller.RGB.red / 255,x360Controller.RGB.green / 255,x360Controller.RGB.blue / 255,lightbar }); //RGB
@@ -268,7 +267,4 @@ void inline drawController(const float& displaySizeX, const float& displaySizeY,
             }
         }
     }
-
 }
-
-
