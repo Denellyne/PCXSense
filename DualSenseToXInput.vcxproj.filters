@@ -87,6 +87,9 @@
     <ClCompile Include="customInclude\GUI\functionality.cpp">
       <Filter>Source Files\FrontEnd\GUI\Functionality</Filter>
     </ClCompile>
+    <ClCompile Include="customInclude\GUI\macro.cpp">
+      <Filter>Source Files\FrontEnd\GUI\Functionality</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\header\GLFW\glfw3.h">
@@ -148,6 +151,9 @@
     </ClInclude>
     <ClInclude Include="resource1.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="customInclude\GUI\macro.h">
+      <Filter>Source Files\FrontEnd\GUI\Functionality</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -229,6 +229,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
     <ClCompile Include="customInclude\ControllerIO\controllerIO.cpp" />
     <ClCompile Include="customInclude\GUI\functionality.cpp" />
     <ClCompile Include="customInclude\GUI\GUI.cpp" />
+    <ClCompile Include="customInclude\GUI\macro.cpp" />
     <ClCompile Include="customInclude\Misc\util.cpp" />
     <ClCompile Include="customInclude\Updater\update.cpp" />
     <ClCompile Include="imgui\cpp\imgui.cpp" />
@@ -245,6 +246,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
     <ClInclude Include="customInclude\GUI\functionality.h" />
     <ClInclude Include="customInclude\GUI\GUI.h" />
     <ClInclude Include="customInclude\GUI\include.h" />
+    <ClInclude Include="customInclude\GUI\macro.h" />
     <ClInclude Include="customInclude\Misc\util.h" />
     <ClInclude Include="customInclude\Updater\update.h" />
     <ClInclude Include="imgui\header\GLFW\glfw3.h" />

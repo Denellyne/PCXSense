@@ -4,5 +4,5 @@
 
 extern BOOL WINAPI exitFunction(_In_ DWORD dwCtrlType);
 
-int GUI(controller& x360Controller);
+int GUI(controller& x360Controller, std::vector<Macros>& Macro);
 

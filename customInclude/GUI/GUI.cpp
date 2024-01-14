@@ -1,16 +1,19 @@
 #include "GUI.h"
 #include "functionality.h"
+#include "macro.h"
 #include <conio.h>
 #define defaultWindowWidth 1280
 #define defaultWindowHeigth 720
 
-void app(controller& x360Controller,const GLuint* Images);
+void app(controller& x360Controller,const GLuint* Images, std::vector<Macros>& Macro);
 void inline drawController(const float& displaySizeX, const float& displaySizeY, float xMultiplier, float yMultiplier, const controller& x360Controller, const GLuint* Images);
 void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected,const int& batteryLevel,float& lightbar,const ImTextureID& updateButton);
 void inline topBar(const GLuint* Images, const float& displaySizeX, const float& displaySizeY,const float* RGB);
+void inline macroMenu(std::vector<Macros>& Macro);
 
 bool rumbleWindow = false;
 extern bool debugOpen = false;
+bool macroOpen = false;
 float lightbar = 0.0f;
 
 //const HWND thisProcess = FindWindow(NULL, L"PCXSense");
@@ -26,7 +29,7 @@ bool inline isFocus() {
 }
 */ //Needs testing
 
-int GUI(controller& x360Controller){
+int GUI(controller& x360Controller,std::vector<Macros>& Macro){
     GLuint Images[18];
     
     glfwInit();
@@ -54,7 +57,7 @@ int GUI(controller& x360Controller){
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        app(x360Controller, Images);
+        app(x360Controller, Images,Macro);
         ImGui::Render();
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
@@ -91,7 +94,7 @@ int GUI(controller& x360Controller){
     return 0;
 }
 
-void app(controller& x360Controller,const GLuint* Images) {
+void app(controller& x360Controller,const GLuint* Images, std::vector<Macros>& Macro) {
     //Boilerplate Window Code
 
     static ImGuiIO& io = ImGui::GetIO();
@@ -118,6 +121,7 @@ void app(controller& x360Controller,const GLuint* Images) {
 
     if (rumbleWindow) rumleTestWindow(rumbleWindow);
     if (debugOpen) debugMenu(x360Controller);
+    if (macroOpen) macroMenu(Macro);
 
     ImGui::PopStyleColor(3);
 
@@ -154,7 +158,7 @@ void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected,const 
     ImGui::EndChild();
 }
 
-inline void topBar(const GLuint* Images, const float& displaySizeX, const float& displaySizeY, const float* RGB) {
+void inline topBar(const GLuint* Images, const float& displaySizeX, const float& displaySizeY, const float* RGB) {
 
     ImGui::SetCursorPos({ displaySizeX-60,0 });
     ImVec2 combo_pos = ImGui::GetCursorScreenPos();
@@ -202,15 +206,15 @@ inline void topBar(const GLuint* Images, const float& displaySizeX, const float&
         ImGui::SameLine();
         ImGui::Text("Lightbar Settings");
 
-        if (ImGui::Selectable("##Device Hiding")); //Ligthbar Menu
+        if (ImGui::Selectable("##Device Hiding"));
         ImGui::SameLine(30);
         ImGui::Text("Device Hiding");
 
-        if (ImGui::Selectable("##Adaptive Triggers")); //Ligthbar Menu
+        if (ImGui::Selectable("##Adaptive Triggers"));
         ImGui::SameLine(30);
         ImGui::Text("Adaptive Triggers");
 
-        if (ImGui::Selectable("##Macros")); //Ligthbar Menu
+        if (ImGui::Selectable("##Macros"))  macroOpen = true; //Macro Editor
         ImGui::SameLine(30);
         ImGui::Text("Macros");
 
@@ -268,3 +272,19 @@ void inline drawController(const float& displaySizeX, const float& displaySizeY,
         }
     }
 }
+
+void inline macroMenu(std::vector<Macros>& Macro) {
+
+    if(ImGui::Begin("Macro Editor", &macroOpen)){
+        for (short int i = 0; i < Macro.size();i++) {
+            ImGui::PushID(&Macro[i]);
+            if (ImGui::Button(Macro[i].Name.c_str())) macroEditor(Macro[i]);
+            ImGui::SameLine();
+            if (ImGui::Button("Delete Macro")) Macro.erase(Macro.begin() + i);
+            ImGui::PopID();
+        }
+        if (ImGui::Button("Create new Macro")) Macro.push_back(macroMaker());
+    }
+    ImGui::End();
+}
+

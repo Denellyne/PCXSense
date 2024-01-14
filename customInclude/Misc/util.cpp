@@ -134,6 +134,10 @@ int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PV
 
 void inline loadMacros(std::vector<Macros>& Macro) {
 
+	for (Macros macro : Macro) {
+		macro.input[0].type = INPUT_KEYBOARD;
+		macro.input[1].type = INPUT_KEYBOARD;
+	}
 
 }
 
@@ -144,22 +148,20 @@ void asyncMacro(const controller& x360Controller,std::vector<Macros>& Macro) {
 	//This is here only for testS
 
 	Macro[0].Name = "Citra Speedup";
-	Macro[0].input[0].type = INPUT_KEYBOARD;
 	Macro[0].input[0].ki.wVk = VK_CONTROL;
-	Macro[0].input[1].type = INPUT_KEYBOARD;
 	Macro[0].input[1].ki.wVk = 'Z';
 	Macro[0].buttonCombination = 0x1000;
 
 	while (true) {
 		Sleep(20);
-		for (short int i = 0; i < Macro.size(); i++) {
-			if (Macro[i].buttonCombination == x360Controller.ControllerState.Gamepad.wButtons) {
-				SendInput(ARRAYSIZE(Macro[i].input), Macro[i].input, sizeof(INPUT));
-				Macro[i].input[0].ki.dwFlags = KEYEVENTF_KEYUP;
-				Macro[i].input[1].ki.dwFlags = KEYEVENTF_KEYUP;
-				SendInput(ARRAYSIZE(Macro[i].input), Macro[i].input, sizeof(INPUT));
-				Macro[i].input[0].ki.dwFlags = 0;
-				Macro[i].input[1].ki.dwFlags = 0;
+		for (Macros macro : Macro) {
+			if (macro.buttonCombination == x360Controller.ControllerState.Gamepad.wButtons) {
+				SendInput(ARRAYSIZE(macro.input), macro.input, sizeof(INPUT));
+				macro.input[0].ki.dwFlags = KEYEVENTF_KEYUP;
+				macro.input[1].ki.dwFlags = KEYEVENTF_KEYUP;
+				SendInput(ARRAYSIZE(macro.input), macro.input, sizeof(INPUT));
+				macro.input[0].ki.dwFlags = 0;
+				macro.input[1].ki.dwFlags = 0;
 				Sleep(1000);
 			}
 		}

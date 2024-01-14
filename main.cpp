@@ -89,7 +89,7 @@ int main() {
 	asyncOutputReport.detach();
 
 	asyncThreadPointer = &asyncOutputReport;
-	std::thread(GUI, std::ref(x360Controller)).detach();
+	std::thread(GUI, std::ref(x360Controller),std::ref(Macro)).detach();
 	std::thread(asyncMacro, std::ref(x360Controller),std::ref(Macro)).detach();
 
 #if _DEBUG
