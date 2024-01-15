@@ -2,3 +2,7 @@ Citra Speedup
 16384
 17
 Z
+TEST
+256
+18
+D

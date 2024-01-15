@@ -108,11 +108,7 @@ void debugMenu(controller& x360Controller) {
         ImGui::Text(std::format("RightJoystick Vertical    Value: {}", (int)(32767 - (x360Controller.inputBuffer[4 + x360Controller.bluetooth] * 257))).c_str());
         ImGui::Text(std::format("Left Trigger              Value: {}", (int)x360Controller.ControllerState.Gamepad.bLeftTrigger).c_str());
         ImGui::Text(std::format("Right Trigger             Value: {}", (int)x360Controller.ControllerState.Gamepad.bRightTrigger).c_str());
-
     }
     ImGui::End();
-
-
-
 
 }

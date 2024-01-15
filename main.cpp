@@ -65,12 +65,15 @@ extern BOOL WINAPI exitFunction(_In_ DWORD dwCtrlType) {
 	_exit(NULL);
 	return TRUE;
 }
-
 						
 int main() {
 #ifndef _DEBUG
 	autoUpdater();
 #endif
+
+	SetProcessShutdownParameters(2, 0);
+	SetConsoleCtrlHandler(exitFunction, TRUE);
+
 	//Initialize Fake Controller
 	controller x360Controller{};
 	std::vector<Macros> Macro;
@@ -78,27 +81,23 @@ int main() {
 	ptrMacros = &Macro;
 
 	ptrController = &x360Controller;
-
 	x360Controller.client = vigem_alloc();
-
-	SetProcessShutdownParameters(2, 0);
-
-	SetConsoleCtrlHandler(exitFunction, TRUE);
 
 	if (initializeFakeController(x360Controller.emulateX360, x360Controller.target, x360Controller.client) != 0) return -1;
 
+	//Start async threads
 	std::thread asyncOutputReport(sendOutputReport, std::ref(x360Controller));
 	asyncOutputReport.detach();
-
 	asyncThreadPointer = &asyncOutputReport;
+
 	std::thread(GUI, std::ref(x360Controller),std::ref(Macro)).detach();
 	std::thread(asyncMacro, std::ref(x360Controller),std::ref(Macro)).detach();
 
 #if _DEBUG
 	std::thread(asyncDataReport, std::ref(x360Controller)).detach(); // Displays controller info
 #endif
-	vigem_target_x360_register_notification(x360Controller.client, x360Controller.emulateX360, &getRumble, ptrController);
 
+	vigem_target_x360_register_notification(x360Controller.client, x360Controller.emulateX360, &getRumble, ptrController);
 
 	while (true) {
 

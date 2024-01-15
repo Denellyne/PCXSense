@@ -135,22 +135,5 @@ int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PV
 	return 0;
 }
 
-void asyncMacro(const controller& x360Controller,std::vector<Macros>& Macro) {
 
-	while (true) {
-		Sleep(20);
-		for (Macros macro : Macro) {
-			if (macro.buttonCombination == x360Controller.ControllerState.Gamepad.wButtons) {
-				SendInput(ARRAYSIZE(macro.input), macro.input, sizeof(INPUT));
-				macro.input[0].ki.dwFlags = KEYEVENTF_KEYUP;
-				macro.input[1].ki.dwFlags = KEYEVENTF_KEYUP;
-				SendInput(ARRAYSIZE(macro.input), macro.input, sizeof(INPUT));
-				macro.input[0].ki.dwFlags = 0;
-				macro.input[1].ki.dwFlags = 0;
-				Sleep(1000);
-			}
-		}
-	}
-
-}
 

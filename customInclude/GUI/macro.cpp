@@ -1,6 +1,7 @@
 #include "macro.h"
 #include "GUI/functionality.h"
 #include <fstream>
+bool makerOpen = false;
 
 void saveMacros(const std::vector<Macros> Macro) {
 	std::ofstream writeMacros("macros.txt");
@@ -36,8 +37,6 @@ void loadMacros(std::vector<Macros>& Macro){
 			currentMacro.buttonCombination = buttonCombination;
 			currentMacro.input[0].ki.wVk = input1;
 			currentMacro.input[1].ki.wVk = input2;
-			currentMacro.input[0].type = INPUT_KEYBOARD;
-			currentMacro.input[1].type = INPUT_KEYBOARD;
 
 			Macro.push_back(currentMacro);
 		}
@@ -48,7 +47,6 @@ void loadMacros(std::vector<Macros>& Macro){
 
 void macroEditor(bool& makerOpen, Macros& macro, const controller& x360Controller) {
 
-	const static char alphabet[26] = { 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
 	static std::string modifier;
 
 	switch (macro.input[0].ki.wVk) { //Makes adding different modifiers easier
@@ -82,11 +80,11 @@ void macroEditor(bool& makerOpen, Macros& macro, const controller& x360Controlle
 			if (ImGui::Selectable("None"))  macro.input[0].ki.wVk = 0;
 			ImGui::EndCombo();
 		}
-
+		
 		ImGui::Text("Set button combination");
 		ImGui::SameLine();
 		if (ImGui::SmallButton("Set")) {
-			Sleep(3000);
+			Sleep(3000); // Give time for the user to input the commands
 			macro.buttonCombination = x360Controller.ControllerState.Gamepad.wButtons;
 			std::cout << x360Controller.ControllerState.Gamepad.wButtons << '\n';
 			notificationOpen = true;
@@ -97,8 +95,54 @@ void macroEditor(bool& makerOpen, Macros& macro, const controller& x360Controlle
 			else ImGui::Text("Done");
 			ImGui::EndTooltip();
 		}
+	}
+	ImGui::End();
+}
 
+void macroMenu(std::vector<Macros>& Macro, const controller& x360Controller) {
+
+	static short int index{};
+	if (makerOpen) (macroEditor(makerOpen, Macro[index], x360Controller));
+
+	if (ImGui::Begin("Macro Editor", &macroOpen)) {
+		for (short int i = 0; i < Macro.size(); i++) {
+			ImGui::PushID(&Macro[i]);
+			if (ImGui::Button(Macro[i].Name.c_str())) {
+				makerOpen = true;
+				index = i;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Delete Macro")) {
+				makerOpen = false;
+				Macro.erase(Macro.begin() + i);
+			}
+			ImGui::PopID();
+		}
+		if (ImGui::Button("Create new Macro")) {
+			makerOpen = true;
+			Macros newMacro{};
+			Macro.push_back(newMacro);
+			index = Macro.size() - 1;
+		}
+	}
+	ImGui::End();
+}
+
+void asyncMacro(const controller& x360Controller, std::vector<Macros>& Macro) {
+
+	while (true) {
+		Sleep(20);
+		for (Macros macro : Macro) {
+			if (macro.buttonCombination == x360Controller.ControllerState.Gamepad.wButtons) {
+				SendInput(ARRAYSIZE(macro.input), macro.input, sizeof(INPUT));
+				macro.input[0].ki.dwFlags = KEYEVENTF_KEYUP;
+				macro.input[1].ki.dwFlags = KEYEVENTF_KEYUP;
+				SendInput(ARRAYSIZE(macro.input), macro.input, sizeof(INPUT));
+				macro.input[0].ki.dwFlags = 0;
+				macro.input[1].ki.dwFlags = 0;
+				Sleep(1000);
+			}
+		}
 	}
 
-	ImGui::End();
 }

@@ -1,25 +1,24 @@
 #include "GUI.h"
 #include "functionality.h"
-#include "macro.h"
 #include <conio.h>
-#define defaultWindowWidth 1280
-#define defaultWindowHeigth 720
-
-void app(controller& x360Controller,const GLuint* Images, std::vector<Macros>& Macro);
-void inline drawController(const float& displaySizeX, const float& displaySizeY, float xMultiplier, float yMultiplier, const controller& x360Controller, const GLuint* Images);
-void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected,const int& batteryLevel,float& lightbar,const ImTextureID& updateButton);
-void inline topBar(const GLuint* Images, const float& displaySizeX, const float& displaySizeY,const float* RGB);
-void inline macroMenu(std::vector<Macros>& Macro,const controller& x360Controller);
 
 bool rumbleWindow = false;
 extern bool debugOpen = false;
-bool macroOpen = false;
-bool makerOpen = false;
+extern bool macroOpen = false;
 float lightbar = 0.0f;
 
-//const HWND thisProcess = FindWindow(NULL, L"PCXSense");
+void app(controller& x360Controller,const GLuint* Images, std::vector<Macros>& Macro);
 
+void inline drawController(const float& displaySizeX, const float& displaySizeY, float xMultiplier, float yMultiplier, const controller& x360Controller, const GLuint* Images);
+
+void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected,const int& batteryLevel,float& lightbar,const ImTextureID& updateButton);
+
+void inline topBar(const GLuint* Images, const float& displaySizeX, const float& displaySizeY,const float* RGB);
+
+//Needs testing
 /*
+const HWND thisProcess = FindWindow(NULL, L"PCXSense");
+
 bool inline isFocus() {
     
     HWND activeWindow = GetActiveWindow();
@@ -28,7 +27,7 @@ bool inline isFocus() {
     return false;
 
 }
-*/ //Needs testing
+*/
 
 int GUI(controller& x360Controller,std::vector<Macros>& Macro){
     GLuint Images[18];
@@ -274,32 +273,5 @@ void inline drawController(const float& displaySizeX, const float& displaySizeY,
     }
 }
 
-void inline macroMenu(std::vector<Macros>& Macro,const controller& x360Controller) {
 
-    static short int index{};
-    if (makerOpen) (macroEditor(makerOpen,Macro[index],x360Controller));
-
-    if(ImGui::Begin("Macro Editor", &macroOpen)){
-        for (short int i = 0; i < Macro.size();i++) {
-            ImGui::PushID(&Macro[i]);
-            if (ImGui::Button(Macro[i].Name.c_str())) {
-                makerOpen = true;
-                index = i;
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Delete Macro")) {
-                makerOpen = false;
-                Macro.erase(Macro.begin() + i);
-            }
-            ImGui::PopID();
-        }
-        if (ImGui::Button("Create new Macro")) {
-            makerOpen = true;
-            Macros newMacro{};
-            Macro.push_back(newMacro);
-            index = Macro.size() - 1;
-        }
-    }
-    ImGui::End();
-}
 

@@ -3,8 +3,6 @@
 #include "Misc/util.h"
 extern bool debugOpen;
 
-
-
 bool loadTexture(GLuint* Images, GLFWwindow* window);
 void setColors();
 void rumleTestWindow(bool& rumbleWindow);
