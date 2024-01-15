@@ -5,6 +5,7 @@
 #include "misc\util.h"
 #include "GUI\GUI.h"
 #include "Updater\update.h"
+#include "GUI/macro.h"
 #include <thread>
 #include <format>
 
@@ -72,7 +73,8 @@ int main() {
 #endif
 	//Initialize Fake Controller
 	controller x360Controller{};
-	std::vector<Macros> Macro(1);
+	std::vector<Macros> Macro;
+	loadMacros(Macro);
 	ptrMacros = &Macro;
 
 	ptrController = &x360Controller;

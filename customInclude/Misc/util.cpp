@@ -12,13 +12,13 @@ bool isControllerConnected(controller& inputReport) {
 	inputReport.deviceHandle = CreateFileA(deviceInfo->path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
 	inputReport.bluetooth = deviceInfo->interface_number == -1;
 
-	if (inputReport.bluetooth) {
+	if (inputReport.bluetooth) { //Bluetooth
 		inputReport.bufferSize = 78;
-		inputReport.inputBuffer[0] = 0x31;
+		inputReport.inputBuffer[0] = 0x31; //Data report code
 	}
-	else {
+	else { //USB
 		inputReport.bufferSize = 64;
-		inputReport.inputBuffer[0] = 0x01;
+		inputReport.inputBuffer[0] = 0x01; //Data report code
 	}
 	hid_free_enumeration(deviceInfo);
 
@@ -31,6 +31,8 @@ bool isControllerConnected(controller& inputReport) {
 	return false;
 }
 
+
+#ifdef _DEBUG
 void asyncDataReport(controller &x360Controller) {
 
 	while (true) {
@@ -108,6 +110,7 @@ void asyncDataReport(controller &x360Controller) {
 		
 	}
 }
+#endif
 
 int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PVIGEM_CLIENT& client) {
 
@@ -132,25 +135,7 @@ int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PV
 	return 0;
 }
 
-void inline loadMacros(std::vector<Macros>& Macro) {
-
-	for (Macros macro : Macro) {
-		macro.input[0].type = INPUT_KEYBOARD;
-		macro.input[1].type = INPUT_KEYBOARD;
-	}
-
-}
-
 void asyncMacro(const controller& x360Controller,std::vector<Macros>& Macro) {
-
-	loadMacros(Macro);
-
-	//This is here only for testS
-
-	Macro[0].Name = "Citra Speedup";
-	Macro[0].input[0].ki.wVk = VK_CONTROL;
-	Macro[0].input[1].ki.wVk = 'Z';
-	Macro[0].buttonCombination = 0x1000;
 
 	while (true) {
 		Sleep(20);
@@ -169,4 +154,3 @@ void asyncMacro(const controller& x360Controller,std::vector<Macros>& Macro) {
 
 }
 
-void saveMacros(std::vector<Macros>& Macro){}

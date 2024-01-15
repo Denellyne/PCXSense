@@ -1,0 +1,4 @@
+Citra Speedup
+16384
+17
+Z
