@@ -286,6 +286,22 @@ void inline isEmulatorRunning(unsigned char* outputHID, int bluetooth, int& shor
 		return;
 	}
 
+	if (EnumWindows(FindWindowBySubstr, (LPARAM)L"Cemu") == false) {
+
+		shortTriggers = 0;
+		outputHID[11 + bluetooth] = 0x2;
+		outputHID[12 + bluetooth] = 30;
+		outputHID[13 + bluetooth] = 180;
+		outputHID[14 + bluetooth] = 50;
+
+		outputHID[22 + bluetooth] = 0x2;
+		outputHID[23 + bluetooth] = 23;
+		outputHID[24 + bluetooth] = 180;
+		outputHID[25 + bluetooth] = 50;
+
+		return;
+	}
+
 	if (EnumWindows(FindWindowBySubstr, (LPARAM)L"Dolphin ") == false) {
 
 		shortTriggers = 0;

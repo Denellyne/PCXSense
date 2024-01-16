@@ -30,7 +30,7 @@ bool inline isFocus() {
 */
 
 int GUI(controller& x360Controller,std::vector<Macros>& Macro){
-    GLuint Images[18];
+    GLuint Images[21];
     
     glfwInit();
     GLFWwindow* window = glfwCreateWindow(defaultWindowWidth, defaultWindowHeigth, "PCXSense", nullptr, nullptr);
@@ -239,12 +239,11 @@ void inline drawController(const float& displaySizeX, const float& displaySizeY,
     ImGui::SetCursorPos({ displaySizeX / 2.49f, displaySizeY / 3.935f });
     ImGui::Image((void*)Images[3], { (801 / 3) * displaySizeX / 1280,(388 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { x360Controller.RGB.red / 255,x360Controller.RGB.green / 255,x360Controller.RGB.blue / 255,lightbar }); //RGB
 
-
     //Controller
     ImGui::SetCursorPos(controllerPosition);
     ImGui::Image((void*)Images[1 - (bool)x360Controller.isConnected], controllerSize);
 
-
+    
     //Left  Analogic
     ImGui::SetCursorPos({ ((displaySizeX / 2.935f) + (((int)(x360Controller.ControllerState.Gamepad.sThumbLX + 32768) / 470)) * xMultiplier) ,
                         (displaySizeY / 2.62f) + (((32767 - (int)x360Controller.ControllerState.Gamepad.sThumbLY) / 470)) * yMultiplier });
@@ -252,6 +251,7 @@ void inline drawController(const float& displaySizeX, const float& displaySizeY,
     if (x360Controller.ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_THUMB)
         ImGui::Image((void*)Images[2], { (226 / 3) * displaySizeX / 1280,(226 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { 0.8f, 0.8f, 0.8f, 1 });
     else ImGui::Image((void*)Images[2], { (226 / 3) * displaySizeX / 1280,(226 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { 1,1,1, (float)x360Controller.isConnected });
+
 
     //Right Analogic
     ImGui::SetCursorPos({ ((displaySizeX / 1.99f) + ((int)(x360Controller.ControllerState.Gamepad.sThumbRX + 32768) / 470) * xMultiplier) ,

@@ -34,7 +34,7 @@ Bluetooth and USB mode
 
 Gamecube Triggers, (Triggers with [Dolphin](https://pt.dolphin-emu.org/) Emulator)
 
-Nintendo Switch Triggers, (Triggers with [Yuzu](https://yuzu-emu.org/) Emulator)
+Nintendo Triggers, (Triggers with [Yuzu](https://yuzu-emu.org/) Emulator and [Cemu](https://cemu.info/))
 
 Auto updater [PCXSense Updater](https://github.com/Denellyne/PCXSense-Updater)
 
