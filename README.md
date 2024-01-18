@@ -25,12 +25,11 @@
 
 ## Getting Started
 
-Go to [Releases](https://github.com/Denellyne/PCXSense/releases/tag/Latest) and download the latest version, unzip it and open the PCXSense.exe.
-Whenever a new version is released the app will automatically update with no extra input whatsoever 
-
-
+Go to [Releases](https://github.com/Denellyne/PCXSense/releases/tag/Latest) and download the latest version, then unzip and open PCXSense.exe , whenever a new version gets released the app will update with no extra input whatsoever.
 
 ## Features
+
+Easy to use Graphical Interface,
 
 Rumble support,
 
@@ -38,17 +37,20 @@ Bluetooth and USB mode
 
 Gamecube Triggers, (Triggers with [Dolphin](https://pt.dolphin-emu.org/) Emulator)
 
-Nintendo Triggers, (Triggers with [Yuzu](https://yuzu-emu.org/) Emulator and [Cemu](https://cemu.info/))
+Nintendo Switch Triggers, (Triggers with [Yuzu](https://yuzu-emu.org/) Emulator)
 
-Auto Updater [PCXSense Updater](https://github.com/Denellyne/PCXSense-Updater)
+Auto updater [PCXSense Updater](https://github.com/Denellyne/PCXSense-Updater)
 
-Adaptive Trigger Custom Profiles
+Macros,
 
-Custom Macros 
+ ![Macro](https://github.com/Denellyne/PCXSense/assets/56112881/c02f51c6-71c6-44a3-b470-1ac48c2ed94f)
 
-Easy to use Graphical Interface
+Adaptive Trigger Custom Profiles,
 
-Lightbar control (*To be implemented*),
+![AT](https://github.com/Denellyne/PCXSense/assets/56112881/97234900-d4d2-415d-8aa9-da85d5ce040a)
+
+
+Lightbar control(*To be fully implemented*),
 
 ## Goals
 
@@ -60,6 +62,10 @@ Enhancing your experience on emulators via the use of the Adaptive Triggers
 
 Joycons support (Merged),
 
+Touchpad support (*with Only Citra Mode Option*)
+
+Gyro support
+
 Device Hiding (*Blocks double inputs*)
 
 Multiple Controller Emulation
@@ -70,10 +76,14 @@ Please open an issue with as much detail as possible and the method to reproduce
 
 Also contributions are appreciated, if you want to contribute open a pull request  and I'll review it
 
+
 ## Support me
 
 All support and feedback is appreciated,
-Please check my other projects and maybe leave a star on this one :D
+Please check my other projects and leave a star on this one.
+
+[Denellyne](https://github.com/Denellyne)
+
 
 # Thanks to,
 
