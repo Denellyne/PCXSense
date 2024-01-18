@@ -77,6 +77,16 @@ Please open an issue with as much detail as possible and the method to reproduce
 Also contributions are appreciated, if you want to contribute open a pull request  and I'll review it
 
 
+## Regarding Virus Detections
+
+If your device detect this as a virus beware it's a false positive,things like these happen all the time.
+
+I've sent a sample to review to Microsoft and Malwarebytes and both of them confirmed its a false positive on the autoupdater ,in case of any problem just allow the file on your computer
+
+[Malwarebytes Confirms its a false Positive](https://forums.malwarebytes.com/topic/307011-false-positive-on-my-autoupdater/)
+
+
+
 ## Support me
 
 All support and feedback is appreciated,
