@@ -23,10 +23,13 @@
 
 &nbsp;
 
+## Getting Started
+
+Go to [Releases](https://github.com/Denellyne/PCXSense/releases/tag/Latest) and download the latest version, then unzip and open PCXSense.exe , whenever a new version gets released the app will update with no extra input whatsoever.
+
 ## Features
 
-
-Lightbar control,
+Easy to use Graphical Interface,
 
 Rumble support,
 
@@ -34,11 +37,20 @@ Bluetooth and USB mode
 
 Gamecube Triggers, (Triggers with [Dolphin](https://pt.dolphin-emu.org/) Emulator)
 
-Nintendo Triggers, (Triggers with [Yuzu](https://yuzu-emu.org/) Emulator and [Cemu](https://cemu.info/))
+Nintendo Switch Triggers, (Triggers with [Yuzu](https://yuzu-emu.org/) Emulator)
 
 Auto updater [PCXSense Updater](https://github.com/Denellyne/PCXSense-Updater)
 
-Macros (*Not Implemented Yet*)
+Macros,
+
+ ![Macro](https://github.com/Denellyne/PCXSense/assets/56112881/c02f51c6-71c6-44a3-b470-1ac48c2ed94f)
+
+Adaptive Trigger Custom Profiles,
+
+![AT](https://github.com/Denellyne/PCXSense/assets/56112881/97234900-d4d2-415d-8aa9-da85d5ce040a)
+
+
+Lightbar control(*To be fully implemented*),
 
 ## Goals
 
@@ -50,13 +62,13 @@ Enhancing your experience on emulators via the use of the Adaptive Triggers
 
 Joycons support (Merged),
 
-Easy to use Graphical Interface (*Currently being worked on*)
+Touchpad support (*with Only Citra Mode Option*)
+
+Gyro support
 
 Device Hiding (*Blocks double inputs*)
 
 Multiple Controller Emulation
-
-Adaptive Trigger Custom Profiles
 
 ## Found a bug
 
@@ -68,7 +80,9 @@ Also contributions are appreciated, if you want to contribute open a pull reques
 ## Support me
 
 All support and feedback is appreciated,
-Please check my other projects and maybe leave a star on this one :D
+Please check my other projects and leave a star on this one.
+
+[Denellyne](https://github.com/Denellyne)
 
 
 # Thanks to,
