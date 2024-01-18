@@ -46,6 +46,15 @@
     <Filter Include="Source Files\FrontEnd\GUI\Functionality">
       <UniqueIdentifier>{d0322e7e-d966-44bb-b052-740efb7d7693}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\FrontEnd\GUI\Functionality\Misc">
+      <UniqueIdentifier>{8861302c-117a-4bc2-aa0f-bd87473bcb3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FrontEnd\GUI\Functionality\Macros">
+      <UniqueIdentifier>{49974206-8831-41a1-8a3f-e136e9d693bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FrontEnd\GUI\Functionality\Adaptive Triggers">
+      <UniqueIdentifier>{f0ff02b0-9e9b-4904-9fd0-7fe437b724cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\cpp\imgui.cpp">
@@ -84,11 +93,14 @@
     <ClCompile Include="customInclude\GUI\GUI.cpp">
       <Filter>Source Files\FrontEnd\GUI\Main Window</Filter>
     </ClCompile>
-    <ClCompile Include="customInclude\GUI\functionality.cpp">
-      <Filter>Source Files\FrontEnd\GUI\Functionality</Filter>
+    <ClCompile Include="customInclude\GUI\Functions\Misc\functionality.cpp">
+      <Filter>Source Files\FrontEnd\GUI\Functionality\Misc</Filter>
     </ClCompile>
-    <ClCompile Include="customInclude\GUI\macro.cpp">
-      <Filter>Source Files\FrontEnd\GUI\Functionality</Filter>
+    <ClCompile Include="customInclude\GUI\Functions\Macros\macro.cpp">
+      <Filter>Source Files\FrontEnd\GUI\Functionality\Macros</Filter>
+    </ClCompile>
+    <ClCompile Include="customInclude\GUI\Functions\Adaptive Triggers\Adaptive Triggers.cpp">
+      <Filter>Source Files\FrontEnd\GUI\Functionality\Adaptive Triggers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -146,14 +158,20 @@
     <ClInclude Include="customInclude\GUI\include.h">
       <Filter>Source Files\FrontEnd\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="customInclude\GUI\functionality.h">
-      <Filter>Source Files\FrontEnd\GUI\Functionality</Filter>
-    </ClInclude>
     <ClInclude Include="resource1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="customInclude\GUI\macro.h">
-      <Filter>Source Files\FrontEnd\GUI\Functionality</Filter>
+    <ClInclude Include="customInclude\GUI\Functions\Misc\functionality.h">
+      <Filter>Source Files\FrontEnd\GUI\Functionality\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="customInclude\GUI\Functions\Macros\macro.h">
+      <Filter>Source Files\FrontEnd\GUI\Functionality\Macros</Filter>
+    </ClInclude>
+    <ClInclude Include="customInclude\GUI\Functions\Adaptive Triggers\Adaptive Triggers.h">
+      <Filter>Source Files\FrontEnd\GUI\Functionality\Adaptive Triggers</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

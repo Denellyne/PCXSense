@@ -6,6 +6,7 @@
 #include "ViGEm/Client.h"
 #include <hidapi.h>
 
+
 #ifdef _DEBUG
 #define EXPERIMENTAL true
 #else
@@ -22,6 +23,7 @@ struct RGB {
 	float blue;
 };
 extern UCHAR rumble[2];
+extern unsigned char ptrCurrentTriggerProfile[8];
 
 struct controller {
 
@@ -82,5 +84,5 @@ const uint32_t hashTable[256] = {
 };
 bool isControllerConnected(controller& inputReport);
 uint32_t computeCRC32(unsigned char* buffer, const size_t& len);
-void extern inline sendOutputReport(controller& inputReport);
+void extern inline sendOutputReport(controller& x360Controller);
 void extern inline getInputReport(controller& inputReport);

@@ -23,10 +23,14 @@
 
 &nbsp;
 
+## Getting Started
+
+Go to [Releases](https://github.com/Denellyne/PCXSense/releases/tag/Latest) and download the latest version, unzip it and open the PCXSense.exe.
+Whenever a new version is released the app will automatically update with no extra input whatsoever 
+
+
+
 ## Features
-
-
-Lightbar control,
 
 Rumble support,
 
@@ -36,9 +40,15 @@ Gamecube Triggers, (Triggers with [Dolphin](https://pt.dolphin-emu.org/) Emulato
 
 Nintendo Triggers, (Triggers with [Yuzu](https://yuzu-emu.org/) Emulator and [Cemu](https://cemu.info/))
 
-Auto updater [PCXSense Updater](https://github.com/Denellyne/PCXSense-Updater)
+Auto Updater [PCXSense Updater](https://github.com/Denellyne/PCXSense-Updater)
 
-Macros (*Not Implemented Yet*)
+Adaptive Trigger Custom Profiles
+
+Custom Macros 
+
+Easy to use Graphical Interface
+
+Lightbar control (*To be implemented*),
 
 ## Goals
 
@@ -50,13 +60,9 @@ Enhancing your experience on emulators via the use of the Adaptive Triggers
 
 Joycons support (Merged),
 
-Easy to use Graphical Interface (*Currently being worked on*)
-
 Device Hiding (*Blocks double inputs*)
 
 Multiple Controller Emulation
-
-Adaptive Trigger Custom Profiles
 
 ## Found a bug
 
@@ -64,12 +70,10 @@ Please open an issue with as much detail as possible and the method to reproduce
 
 Also contributions are appreciated, if you want to contribute open a pull request  and I'll review it
 
-
 ## Support me
 
 All support and feedback is appreciated,
 Please check my other projects and maybe leave a star on this one :D
-
 
 # Thanks to,
 

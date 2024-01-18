@@ -227,9 +227,10 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="customInclude\ControllerIO\controllerIO.cpp" />
-    <ClCompile Include="customInclude\GUI\functionality.cpp" />
+    <ClCompile Include="customInclude\GUI\Functions\Adaptive Triggers\Adaptive Triggers.cpp" />
+    <ClCompile Include="customInclude\GUI\Functions\Macros\macro.cpp" />
+    <ClCompile Include="customInclude\GUI\Functions\Misc\functionality.cpp" />
     <ClCompile Include="customInclude\GUI\GUI.cpp" />
-    <ClCompile Include="customInclude\GUI\macro.cpp" />
     <ClCompile Include="customInclude\Misc\util.cpp" />
     <ClCompile Include="customInclude\Updater\update.cpp" />
     <ClCompile Include="imgui\cpp\imgui.cpp" />
@@ -243,10 +244,11 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="customInclude\ControllerIO\controllerIO.h" />
-    <ClInclude Include="customInclude\GUI\functionality.h" />
+    <ClInclude Include="customInclude\GUI\Functions\Adaptive Triggers\Adaptive Triggers.h" />
+    <ClInclude Include="customInclude\GUI\Functions\Macros\macro.h" />
+    <ClInclude Include="customInclude\GUI\Functions\Misc\functionality.h" />
     <ClInclude Include="customInclude\GUI\GUI.h" />
     <ClInclude Include="customInclude\GUI\include.h" />
-    <ClInclude Include="customInclude\GUI\macro.h" />
     <ClInclude Include="customInclude\Misc\util.h" />
     <ClInclude Include="customInclude\Updater\update.h" />
     <ClInclude Include="imgui\header\GLFW\glfw3.h" />
@@ -262,6 +264,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
     <ClInclude Include="imgui\header\imstb_textedit.h" />
     <ClInclude Include="imgui\header\imstb_truetype.h" />
     <ClInclude Include="imgui\header\stb_image.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="resource1.h" />
   </ItemGroup>
   <ItemGroup>

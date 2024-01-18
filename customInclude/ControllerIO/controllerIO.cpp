@@ -1,6 +1,8 @@
 #include "controllerIO.h"
 #include <tlhelp32.h>
 #include <tchar.h>
+#include "GUI/Functions/Adaptive Triggers/Adaptive Triggers.h"
+
 
 BOOL CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring)
 {
@@ -14,7 +16,7 @@ BOOL CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring)
 	return true;
 }
 
-void inline isEmulatorRunning(unsigned char* outputHID, int bluetooth, int& shortTriggers);
+void inline adaptiveTriggersProfile(unsigned char* outputHID, int bluetooth, int& shortTriggers);
 
 void extern inline sendOutputReport(controller& x360Controller) {
 	float Red{ 210 }, Green{}, Blue{ 90 };
@@ -25,7 +27,6 @@ void extern inline sendOutputReport(controller& x360Controller) {
 		Sleep(4);
 		if (x360Controller.bluetooth) {
 			ZeroMemory(outputHID, 547);
-
 
 			outputHID[0] = 0x31;
 			outputHID[1] = 0x02;
@@ -93,7 +94,7 @@ void extern inline sendOutputReport(controller& x360Controller) {
 				break;
 			}
 
-			isEmulatorRunning(outputHID, x360Controller.bluetooth, x360Controller.shortTriggers);
+			adaptiveTriggersProfile(outputHID, x360Controller.bluetooth, x360Controller.shortTriggers);
 
 			if (x360Controller.rainbow) {
 				if (Red == 255) AddRed = false;
@@ -166,7 +167,7 @@ void extern inline sendOutputReport(controller& x360Controller) {
 				break;
 			}
 
-			isEmulatorRunning(outputHID, x360Controller.bluetooth, x360Controller.shortTriggers);
+			adaptiveTriggersProfile(outputHID, x360Controller.bluetooth, x360Controller.shortTriggers);
 
 			if (x360Controller.rainbow) {
 				if (Red == 255) AddRed = false;
@@ -203,11 +204,13 @@ void inline getInputReport(controller& x360Controller) {
 
 	bool readSuccess = ReadFile(x360Controller.deviceHandle, x360Controller.inputBuffer, x360Controller.bufferSize, NULL, NULL);
 
+
 	x360Controller.batteryLevel = (x360Controller.inputBuffer[53 + x360Controller.bluetooth] & 15) * 12.5; /* Hex 0x35 (USB) to get Battery / Hex 0x36 (Bluetooth) to get Battery
 																									 because if bluetooth == true then bluetooth == 1 so we can just add bluetooth
 																									 to the hex value of USB to get the battery reading
 																									 */
 
+	x360Controller.batteryLevel = x360Controller.batteryLevel > 100 ? 100 : x360Controller.batteryLevel; //Because of a bug on the HID this needs to be implemented or else battery might display higher than 100%
 
 	if (bool(x360Controller.shortTriggers)) {
 		x360Controller.ControllerState.Gamepad.bLeftTrigger = (x360Controller.inputBuffer[5 + x360Controller.bluetooth]) * 0.25 + 190;
@@ -269,8 +272,10 @@ void inline getInputReport(controller& x360Controller) {
 	}
 }
 
-void inline isEmulatorRunning(unsigned char* outputHID, int bluetooth, int& shortTriggers) {
-	if (EnumWindows(FindWindowBySubstr, (LPARAM)L"yuzu") == false) {
+void inline adaptiveTriggersProfile(unsigned char* outputHID, int bluetooth, int& shortTriggers) {
+
+	//Emulator Profiles
+	if (EnumWindows(FindWindowBySubstr, (LPARAM)L"yuzu") == false) { //Switch Triggers
 
 		shortTriggers = 190;
 		outputHID[11 + bluetooth] = 0x2;
@@ -286,7 +291,7 @@ void inline isEmulatorRunning(unsigned char* outputHID, int bluetooth, int& shor
 		return;
 	}
 
-	if (EnumWindows(FindWindowBySubstr, (LPARAM)L"Cemu") == false) {
+	if (EnumWindows(FindWindowBySubstr, (LPARAM)L"Cemu") == false) { //WiiU Triggers
 
 		shortTriggers = 0;
 		outputHID[11 + bluetooth] = 0x2;
@@ -302,7 +307,7 @@ void inline isEmulatorRunning(unsigned char* outputHID, int bluetooth, int& shor
 		return;
 	}
 
-	if (EnumWindows(FindWindowBySubstr, (LPARAM)L"Dolphin ") == false) {
+	if (EnumWindows(FindWindowBySubstr, (LPARAM)L"Dolphin ") == false) { //Wii Triggers
 
 		shortTriggers = 0;
 		outputHID[11 + bluetooth] = 0x2; //Mode Motor Right
@@ -324,11 +329,9 @@ void inline isEmulatorRunning(unsigned char* outputHID, int bluetooth, int& shor
 		//	outputHID[31 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
 		return;
 	}
-
-	
-
-	ZeroMemory(outputHID, 0);
 	shortTriggers = 0;
+	memcpy(&outputHID[11 + bluetooth], &ptrCurrentTriggerProfile, 8);
+	memcpy(&outputHID[22 + bluetooth], &ptrCurrentTriggerProfile, 8);
 }
 
 
@@ -338,7 +341,6 @@ uint32_t computeCRC32(unsigned char* buffer, const size_t& len)
 	for (size_t i = 0; i < len; i++)
 		// Compute crc
 		result = hashTable[((unsigned char)result) ^ ((unsigned char)buffer[i])] ^ (result >> 8);
-
 	// Return result
 	return result;
 }

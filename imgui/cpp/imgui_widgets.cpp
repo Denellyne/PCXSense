@@ -3139,7 +3139,7 @@ bool ImGui::SliderAngle(const char* label, float* v_rad, float v_degrees_min, fl
 
 bool ImGui::SliderInt(const char* label, int* v, int v_min, int v_max, const char* format, ImGuiSliderFlags flags)
 {
-    return SliderScalar(label, ImGuiDataType_S32, v, &v_min, &v_max, format, flags);
+    return SliderScalar(label, ImGuiDataType_U8, v, &v_min, &v_max, format, flags);
 }
 
 bool ImGui::SliderInt2(const char* label, int v[2], int v_min, int v_max, const char* format, ImGuiSliderFlags flags)
