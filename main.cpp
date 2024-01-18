@@ -20,7 +20,7 @@ int main() {
 	loadTrigger(triggers);
 	loadMacros(Macro);
 	
-
+	
 	ptrController = &x360Controller;
 	x360Controller.client = vigem_alloc();
 
