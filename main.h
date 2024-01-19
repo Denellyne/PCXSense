@@ -68,3 +68,21 @@ extern BOOL WINAPI exitFunction(_In_ DWORD dwCtrlType) {
 	_exit(NULL);
 	return TRUE;
 }
+
+
+/*
+	To add:
+	Make so macros can Enable AT
+	//Create the macro inside of the AT profile
+
+	Turn off bluetooth on USB
+
+	Enable custom lightbar
+
+	Per Game Profile
+
+	Make so Rumble Motor Speed can affect the triggers
+
+
+
+*/
