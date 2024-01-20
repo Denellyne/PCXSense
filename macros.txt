@@ -1,4 +1,0 @@
-Citra Speedup
-288
-17
-Z
