@@ -39,7 +39,7 @@ Gamecube Triggers, (Triggers with [Dolphin](https://pt.dolphin-emu.org/) Emulato
 
 Nintendo Switch Triggers, (Triggers with [Yuzu](https://yuzu-emu.org/) Emulator)
 
-Auto updater [PCXSense Updater](https://github.com/Denellyne/PCXSense-Updater)
+Update Checker (It doesn't download the update but warns the user whenever a new update is released)
 
 Macros,
 
