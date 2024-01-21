@@ -8,7 +8,6 @@ extern bool macroOpen = false;
 extern bool profileOpen = false;
 float lightbar = 0.0f;
 
-
 void inline app(controller& x360Controller,const GLuint* Images, std::vector<Macros>& Macro, std::vector<gameProfile>& gameProfiles);
 
 void inline drawController(const float& displaySizeX, const float& displaySizeY, float xMultiplier, float yMultiplier, const controller& x360Controller, const GLuint* Images);
@@ -40,6 +39,7 @@ int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameP
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
     while (!glfwWindowShouldClose(window)) { // Render
+
         glfwPollEvents();
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -52,7 +52,7 @@ int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameP
         glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        glfwSwapBuffers(window);      
+        glfwSwapBuffers(window);   
 
     }
 

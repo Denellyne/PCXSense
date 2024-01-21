@@ -31,7 +31,7 @@ int main() {
 	std::thread(asyncGameProfile,std::ref(gameProfiles) , std::ref(x360Controller)).detach();
 
 #if _DEBUG
-	//std::thread(asyncDataReport, std::ref(x360Controller)).detach(); // Displays controller info
+	std::thread(debugData, std::ref(x360Controller)).detach(); // Displays controller info
 #endif
 
 	asyncThreadPointer = &asyncOutputReport;

@@ -1,5 +1,5 @@
 #pragma once
-#include "Misc\util.h"
+
 #include "Updater\update.h"
 #include "User Settings/Macros/macro.h"
 #include "User Settings/Game Profiles/gameProfile.h"

@@ -86,6 +86,9 @@ bool isControllerConnected(controller& inputReport);
 uint32_t computeCRC32(unsigned char* buffer, const size_t& len);
 void extern inline sendOutputReport(controller& x360Controller);
 void extern inline getInputReport(controller& inputReport);
+int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PVIGEM_CLIENT& client);
+
+
 
 /*
 outputHID[11 + bluetooth] = 0x2; //Mode Motor Right

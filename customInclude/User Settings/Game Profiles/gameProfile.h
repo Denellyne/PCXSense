@@ -1,12 +1,14 @@
 #pragma once
-#include "User Settings/Macros/macro.h"
-#include "User Settings/Adaptive Triggers/Adaptive Triggers.h"
+
 #include <tchar.h>
 #include <fstream>
 #include <filesystem>
+#include "User Settings/Macros/macro.h"
+
 
 extern unsigned char ptrCurrentTriggerProfile[8];
 extern bool profileOpen;
+
 
 class gameProfile {
 public:

@@ -2,6 +2,8 @@
 #include <format>
 #include <string>
 #include "GUI\Functions\Misc\functionality.h"
+#include "User Settings/Macros/macro.h"
+#include "User Settings/Adaptive Triggers/Adaptive Triggers.h"
 
 extern bool gameProfileSet = false;
 
@@ -144,16 +146,20 @@ void inline checkMacro(Macros& macro, const controller& x360Controller) {
 }
 
 void asyncGameProfile(std::vector<gameProfile>& gameProfiles, const controller& x360Controller){
-	
+
 	while (true) {
 		
 		Sleep(500);
+
 		for (gameProfile profile : gameProfiles) {
 			while (profile.isOpen()) {
+
 				memcpy(&ptrCurrentTriggerProfile, &profile.gameTriggerProfile, 8);
 				gameProfileSet = true;
+
 				Sleep(20);
 				for (Macros macro : profile.gameMacros) checkMacro(macro, x360Controller);
+
 			}
 			gameProfileSet = false;
 		}

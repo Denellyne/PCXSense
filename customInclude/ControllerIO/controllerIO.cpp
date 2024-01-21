@@ -11,7 +11,58 @@ constexpr DWORD TITLE_SIZE = 1024;
 int emulator{};
 extern bool gameProfileSet;
 
+int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PVIGEM_CLIENT& client) {
 
+	if (client == nullptr)
+	{
+		std::cerr << "Uh, not enough memory to do that?!" << std::endl;
+		return -1;
+	}
+
+	const auto retval = vigem_connect(client);
+
+	if (!VIGEM_SUCCESS(retval))
+	{
+		std::cerr << "ViGEm Bus connection failed with error code: 0x" << std::hex << retval << std::endl;
+		return -1;
+	}
+
+	emulateX360 = vigem_target_x360_alloc();
+
+	target = vigem_target_add(client, emulateX360);
+
+	return 0;
+}
+
+
+bool inline isControllerConnected(controller& inputReport) {
+	Sleep(50);
+	hid_device_info* deviceInfo = hid_enumerate(DS_VENDOR_ID, DS_PRODUCT_ID);
+	if (deviceInfo == nullptr) {
+		inputReport.isConnected = false;
+		return false;
+	}
+	inputReport.deviceHandle = CreateFileA(deviceInfo->path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
+	inputReport.bluetooth = deviceInfo->interface_number == -1;
+
+	if (inputReport.bluetooth) { //Bluetooth
+		inputReport.bufferSize = 78;
+		inputReport.inputBuffer[0] = 0x31; //Data report code
+	}
+	else { //USB
+		inputReport.bufferSize = 64;
+		inputReport.inputBuffer[0] = 0x01; //Data report code
+	}
+	hid_free_enumeration(deviceInfo);
+
+	if ((bool)inputReport.deviceHandle) {
+		inputReport.isConnected = true;
+		return true;
+	}
+	else inputReport.isConnected = false;
+
+	return false;
+}
 
 BOOL inline static CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring){
 	TCHAR windowTitle[TITLE_SIZE];

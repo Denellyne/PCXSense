@@ -1,43 +1,12 @@
 #pragma once
 #include "Misc\util.h"
-#include <tlhelp32.h>
-
-bool isControllerConnected(controller& inputReport) {
-	Sleep(50);
-	hid_device_info* deviceInfo = hid_enumerate(DS_VENDOR_ID, DS_PRODUCT_ID);
-	if (deviceInfo == nullptr) {
-		inputReport.isConnected = false;
-		return false;
-	}
-	inputReport.deviceHandle = CreateFileA(deviceInfo->path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
-	inputReport.bluetooth = deviceInfo->interface_number == -1;
-
-	if (inputReport.bluetooth) { //Bluetooth
-		inputReport.bufferSize = 78;
-		inputReport.inputBuffer[0] = 0x31; //Data report code
-	}
-	else { //USB
-		inputReport.bufferSize = 64;
-		inputReport.inputBuffer[0] = 0x01; //Data report code
-	}
-	hid_free_enumeration(deviceInfo);
-
-	if ((bool)inputReport.deviceHandle) {
-		inputReport.isConnected = true;
-		return true;
-	}
-	else inputReport.isConnected = false;
-
-	return false;
-}
-
 
 #ifdef _DEBUG
-void asyncDataReport(controller &x360Controller) {
+void debugData(controller &x360Controller) {
 
 	while (true) {
 
-		Sleep(1);
+		Sleep(20);
 		system("cls"); //Clear console
 
 		std::cout << "\nLeftJoystick Horizontal Value: " << (int)((x360Controller.inputBuffer[1 + x360Controller.bluetooth] * 257) - 32768) << '\n';
@@ -92,48 +61,14 @@ void asyncDataReport(controller &x360Controller) {
 
 		if ((bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & 0x02)) DEBUG("Toutchpad Click\n");
 
-
-		
-		
-		while (!x360Controller.isConnected) {
-			std::cout << "Failed to get Device State\n";
-			std::cout << "Reconnecting";
-			Sleep(500);
-			std::cout << '.';
-			Sleep(500);
-			std::cout << '.';
-			Sleep(500);
-			std::cout << '.';
-			Sleep(500);
-			system("cls");
-		}	
+		if (!x360Controller.isConnected)
+			DEBUG("Failed to get device state");
+			
 		
 	}
 }
 #endif
 
-int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PVIGEM_CLIENT& client) {
-
-	if (client == nullptr)
-	{
-		std::cerr << "Uh, not enough memory to do that?!" << std::endl;
-		return -1;
-	}
-
-	const auto retval = vigem_connect(client);
-
-	if (!VIGEM_SUCCESS(retval))
-	{
-		std::cerr << "ViGEm Bus connection failed with error code: 0x" << std::hex << retval << std::endl;
-		return -1;
-	}
-
-	emulateX360 = vigem_target_x360_alloc();
-
-	target = vigem_target_add(client, emulateX360);
-
-	return 0;
-}
 
 
 

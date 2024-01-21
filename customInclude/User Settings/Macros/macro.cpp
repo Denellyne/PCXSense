@@ -2,6 +2,8 @@
 #include "GUI\Functions\Misc\functionality.h"
 #include <fstream>
 
+
+
 void saveMacros(const std::vector<Macros> Macro) {
 	std::ofstream writeMacros("macros.txt");
 	if(writeMacros.is_open()){
@@ -211,6 +213,7 @@ void asyncMacro(const controller& x360Controller, std::vector<Macros>& Macro) {
 
 	while (true) {
 		Sleep(20);
+
 		for (Macros macro : Macro) {
 			if (macro.buttonCombination == x360Controller.ControllerState.Gamepad.wButtons) {
 				SendInput(ARRAYSIZE(macro.input), macro.input, sizeof(INPUT));

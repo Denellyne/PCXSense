@@ -1,9 +1,10 @@
 #pragma once
 #ifndef _DEBUG
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#else
+#include "misc\util.h"
 #endif
 
-#include "misc\util.h"
 #include "GUI\GUI.h"
 #include "Updater\update.h"
 #include "User Settings/Macros/macro.h"
