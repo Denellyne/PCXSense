@@ -1,45 +1,65 @@
 #include "controllerIO.h"
 #include <tlhelp32.h>
 #include <tchar.h>
-#include "GUI/Functions/Adaptive Triggers/Adaptive Triggers.h"
+#include "User Settings/Adaptive Triggers/Adaptive Triggers.h"
+#include "User Settings/Game Profiles/gameProfile.h"
+
+float Red{ 210 }, Green{}, Blue{ 90 };
+int AddRed{ 1 }, AddGreen{ 1 }, AddBlue{ 1 };
+unsigned char outputHID[547]{};
+constexpr DWORD TITLE_SIZE = 1024;
+int emulator{};
+extern bool gameProfileSet;
 
 
-BOOL CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring)
-{
-	const DWORD TITLE_SIZE = 1024;
+
+BOOL inline static CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring){
 	TCHAR windowTitle[TITLE_SIZE];
 
-	if (GetWindowText(hwnd, windowTitle, TITLE_SIZE))
-		if (_tcsstr(windowTitle, LPCTSTR(substring)) != NULL)
+	if (GetWindowText(hwnd, windowTitle, TITLE_SIZE)) {
+		if (_tcsstr(windowTitle, L"yuzu") != NULL) {
+			emulator = 1;
 			return false;
+		}
+			
+		if (_tcsstr(windowTitle, L"Cemu") != NULL) {
+			emulator = 2;
+			return false;
+		}
 
+		if (_tcsstr(windowTitle, L"Dolphin") != NULL) {
+			emulator = 3;
+			return false;
+		}
+	}
+
+	emulator = 0;
 	return true;
 }
 
-void inline adaptiveTriggersProfile(unsigned char* outputHID, int bluetooth, int& shortTriggers);
+void inline adaptiveTriggersProfile(bool& bluetooth, int& shortTriggers);
 
 void extern inline sendOutputReport(controller& x360Controller) {
-	float Red{ 210 }, Green{}, Blue{ 90 };
-	bool AddRed{ true }, AddGreen{ true }, AddBlue{ true };
-	unsigned char outputHID[547]{};
-
+	
 	while (true) {
 		Sleep(4);
-		if (x360Controller.bluetooth) {
-			ZeroMemory(outputHID, 547);
+		ZeroMemory(outputHID, 547);
 
+		outputHID[3 + x360Controller.bluetooth] = rumble[0]; //Low Rumble
+		outputHID[4 + x360Controller.bluetooth] = rumble[1]; //High Rumble
+
+		outputHID[9 + x360Controller.bluetooth] = 0x00; //LED Controls
+		outputHID[39 + x360Controller.bluetooth] = 0x02;
+		outputHID[42 + x360Controller.bluetooth] = 0x02;
+		outputHID[43 + x360Controller.bluetooth] = 0x02;
+
+		adaptiveTriggersProfile(x360Controller.bluetooth, x360Controller.shortTriggers);
+
+		if (x360Controller.bluetooth) {
 			outputHID[0] = 0x31;
 			outputHID[1] = 0x02;
 			outputHID[2] = 0x03 | 0x04 | 0x08;
 			outputHID[3] = 0x55;
-
-			outputHID[4] = rumble[0]; //Low Rumble
-			outputHID[5] = rumble[1]; //High Rumble
-
-			outputHID[10] = 0x00;
-			outputHID[40] = 0x02;
-			outputHID[43] = 0x02;
-			outputHID[44] = 0x02;
 
 			switch (x360Controller.batteryLevel) {
 			case 0:
@@ -94,28 +114,6 @@ void extern inline sendOutputReport(controller& x360Controller) {
 				break;
 			}
 
-			adaptiveTriggersProfile(outputHID, x360Controller.bluetooth, x360Controller.shortTriggers);
-
-			if (x360Controller.rainbow) {
-				if (Red == 255) AddRed = false;
-				if (Red == 0) AddRed = true;
-				if (Green == 255) AddGreen = false;
-				if (Green == 0) AddGreen = true;
-				if (Blue == 255) AddBlue = false;
-				if (Blue == 0) AddBlue = true;
-
-				if (AddRed) Red+=2.5f;
-				else Red -= 2.5f;
-				if (AddGreen) Green += 5;
-				else Green -= 5;
-				if (AddBlue) Blue += 2.5f;
-				else Blue -= 2.5f;
-
-				outputHID[46] = Red; //Red
-				outputHID[47] = Green; //Green
-				outputHID[48] = Blue; //Blue
-			}
-
 			const UINT32 crc = computeCRC32(outputHID, 74);
 
 			outputHID[74] = (crc & 0x000000FF);
@@ -123,26 +121,14 @@ void extern inline sendOutputReport(controller& x360Controller) {
 			outputHID[76] = ((crc & 0x00FF0000) >> 16UL);
 			outputHID[77] = ((crc & 0xFF000000) >> 24UL);
 
-			x360Controller.RGB.red = outputHID[46];
-			x360Controller.RGB.green = outputHID[47];
-			x360Controller.RGB.blue = outputHID[48];
-
 			WriteFile(x360Controller.deviceHandle, outputHID, 547, NULL, NULL);
+
 		}
 		else {
-			ZeroMemory(outputHID, 547);
-
+			//USB
 			outputHID[0] = 0x02;
 			outputHID[1] = 0x03 | 0x04 | 0x08;
 			outputHID[2] = 0x55;
-
-			outputHID[3] = rumble[0]; //Low Rumble
-			outputHID[4] = rumble[1]; //High Rumble
-
-			outputHID[9] = 0x00; //LED Controls
-			outputHID[39] = 0x02;
-			outputHID[42] = 0x02;
-			outputHID[43] = 0x02;
 
 			switch (x360Controller.batteryLevel) {
 			case 75:
@@ -167,43 +153,43 @@ void extern inline sendOutputReport(controller& x360Controller) {
 				break;
 			}
 
-			adaptiveTriggersProfile(outputHID, x360Controller.bluetooth, x360Controller.shortTriggers);
+			WriteFile(x360Controller.deviceHandle, outputHID, 64, NULL, NULL);
+		}
 
-			if (x360Controller.rainbow) {
-				if (Red == 255) AddRed = false;
-				if (Red == 0) AddRed = true;
-				if (Green == 255) AddGreen = false;
-				if (Green == 0) AddGreen = true;
-				if (Blue == 255) AddBlue = false;
-				if (Blue == 0) AddBlue = true;
+		x360Controller.RGB.red = outputHID[45 + x360Controller.bluetooth];
+		x360Controller.RGB.green = outputHID[46 + x360Controller.bluetooth];
+		x360Controller.RGB.blue = outputHID[47 + x360Controller.bluetooth];
+	}
 
-				if (AddRed) Red += 2.5f;
-				else Red -= 2.5f;
-				if (AddGreen) Green += 5;
-				else Green -= 5;
-				if (AddBlue) Blue += 2.5f;
-				else Blue -= 2.5f;
+	/*if (x360Controller.rainbow) {
+				if (Red == 255) AddRed = -1;
+				if (Red == 0) AddRed = 1;
+				if (Green == 255) AddGreen = -1;
+				if (Green == 0) AddGreen = 1;
+				if (Blue == 255) AddBlue = -1;
+				if (Blue == 0) AddBlue = 1;
+
+				Red += 2.5f * AddRed;
+				Green += 2.5f * AddGreen;
+				Blue += 2.5f * AddBlue;
 
 				outputHID[45] = Red; //Red
 				outputHID[46] = Green; //Green
 				outputHID[47] = Blue; //Blue
-			}
-			x360Controller.RGB.red = outputHID[45];
-			x360Controller.RGB.green = outputHID[46];
-			x360Controller.RGB.blue = outputHID[47];
-
-			WriteFile(x360Controller.deviceHandle, outputHID, 64, NULL, NULL);
-		}
-	}
+			}*/
 
 }
 
 void inline getInputReport(controller& x360Controller) {
 
-	static uint8_t isCharging = (x360Controller.inputBuffer[53 + x360Controller.bluetooth] & 0xf0) >> 0x4;
+	//static uint8_t isCharging = (x360Controller.inputBuffer[53 + x360Controller.bluetooth] & 0xf0) >> 0x4;
 
 	bool readSuccess = ReadFile(x360Controller.deviceHandle, x360Controller.inputBuffer, x360Controller.bufferSize, NULL, NULL);
 
+	if (!readSuccess) {
+		CloseHandle(x360Controller.deviceHandle);
+		while (!isControllerConnected(x360Controller)) {}
+	}
 
 	x360Controller.batteryLevel = (x360Controller.inputBuffer[53 + x360Controller.bluetooth] & 15) * 12.5; /* Hex 0x35 (USB) to get Battery / Hex 0x36 (Bluetooth) to get Battery
 																									 because if bluetooth == true then bluetooth == 1 so we can just add bluetooth
@@ -265,77 +251,73 @@ void inline getInputReport(controller& x360Controller) {
 
 	case 7: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_UP + XINPUT_GAMEPAD_DPAD_LEFT; break;
 	}
-
-	if (!readSuccess) {
-		CloseHandle(x360Controller.deviceHandle);
-		while (!isControllerConnected(x360Controller)) {}
-	}
 }
 
-void inline adaptiveTriggersProfile(unsigned char* outputHID, int bluetooth, int& shortTriggers) {
+void inline adaptiveTriggersProfile(bool& bluetooth, int& shortTriggers) {
+		EnumWindows(FindWindowBySubstr, NULL);
 
-	//Emulator Profiles
-	if (EnumWindows(FindWindowBySubstr, (LPARAM)L"yuzu") == false) { //Switch Triggers
+		switch (emulator) {
+		case 0:
+			shortTriggers = 0;
+			if (!gameProfileSet) break;
 
-		shortTriggers = 190;
-		outputHID[11 + bluetooth] = 0x2;
-		outputHID[12 + bluetooth] = 30;
-		outputHID[13 + bluetooth] = 180;
-		outputHID[14 + bluetooth] = 50;
+			memcpy(&outputHID[11 + bluetooth], &ptrCurrentTriggerProfile, 7);
+			memcpy(&outputHID[22 + bluetooth], &ptrCurrentTriggerProfile, 7);
+			outputHID[20 + bluetooth] = ptrCurrentTriggerProfile[7];
+			outputHID[31 + bluetooth] = ptrCurrentTriggerProfile[7];
+			break;
 
-		outputHID[22 + bluetooth] = 0x2;
-		outputHID[23 + bluetooth] = 23;
-		outputHID[24 + bluetooth] = 180;
-		outputHID[25 + bluetooth] = 50;
+		case 1: //Yuzu
+			shortTriggers = 190;
+			outputHID[11 + bluetooth] = 0x2;
+			outputHID[12 + bluetooth] = 30;
+			outputHID[13 + bluetooth] = 180;
+			outputHID[14 + bluetooth] = 50;
 
-		return;
-	}
+			outputHID[22 + bluetooth] = 0x2;
+			outputHID[23 + bluetooth] = 23;
+			outputHID[24 + bluetooth] = 180;
+			outputHID[25 + bluetooth] = 50;
 
-	if (EnumWindows(FindWindowBySubstr, (LPARAM)L"Cemu") == false) { //WiiU Triggers
+			break;
+		case 2: // Cemu
+			shortTriggers = 0;
+			outputHID[11 + bluetooth] = 0x2;
+			outputHID[12 + bluetooth] = 30;
+			outputHID[13 + bluetooth] = 180;
+			outputHID[14 + bluetooth] = 50;
 
-		shortTriggers = 0;
-		outputHID[11 + bluetooth] = 0x2;
-		outputHID[12 + bluetooth] = 30;
-		outputHID[13 + bluetooth] = 180;
-		outputHID[14 + bluetooth] = 50;
+			outputHID[22 + bluetooth] = 0x2;
+			outputHID[23 + bluetooth] = 23;
+			outputHID[24 + bluetooth] = 180;
+			outputHID[25 + bluetooth] = 50;
 
-		outputHID[22 + bluetooth] = 0x2;
-		outputHID[23 + bluetooth] = 23;
-		outputHID[24 + bluetooth] = 180;
-		outputHID[25 + bluetooth] = 50;
+			break;
+		case 3: //Dolphin
 
-		return;
-	}
+			shortTriggers = 0;
+			outputHID[11 + bluetooth] = 0x2;
+			outputHID[12 + bluetooth] = 0x90;
+			outputHID[13 + bluetooth] = 0xA0;
+			outputHID[14 + bluetooth] = 0xFF;
 
-	if (EnumWindows(FindWindowBySubstr, (LPARAM)L"Dolphin ") == false) { //Wii Triggers
+			outputHID[22 + bluetooth] = 0x2;
+			outputHID[23 + bluetooth] = 0x90;
+			outputHID[24 + bluetooth] = 0xA0;
+			outputHID[25 + bluetooth] = 0xFF;
 
-		shortTriggers = 0;
-		outputHID[11 + bluetooth] = 0x2; //Mode Motor Right
-		outputHID[12 + bluetooth] = 0x90; //right trigger start of resistance section
-		outputHID[13 + bluetooth] = 0xA0; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
-		outputHID[14 + bluetooth] = 0xFF; //right trigger force exerted in range (mode2)
-		//	outputHID[15 + bluetooth] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
-			//outputHID[16 + bluetooth] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
-		//	outputHID[17 + bluetooth] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
-	//		outputHID[20 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+			break;
+		default:
+			//Else set Current Trigger Profile
+			shortTriggers = 0;
+			memcpy(&outputHID[11 + bluetooth], &ptrCurrentTriggerProfile, 8);
+			memcpy(&outputHID[22 + bluetooth], &ptrCurrentTriggerProfile, 8);
+			break;
+		}
 
-		outputHID[22 + bluetooth] = 0x2; //Mode Motor Left
-		outputHID[23 + bluetooth] = 0x90; //Left trigger start of resistance section
-		outputHID[24 + bluetooth] = 0xA0; //Left trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
-		outputHID[25 + bluetooth] = 0xFF; //Left trigger force exerted in range (mode2)
-		//	outputHID[26 + bluetooth] = 0x0; // strength of effect near release state (requires supplement modes 4 and 20)
-		//	outputHID[27 + bluetooth] = 0x0; // strength of effect near middle (requires supplement modes 4 and 20)
-		//	outputHID[28 + bluetooth] = 0x0; // strength of effect at pressed state (requires supplement modes 4 and 20)
-		//	outputHID[31 + bluetooth] = 0x0; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
-		return;
-	}
-	shortTriggers = 0;
-	memcpy(&outputHID[11 + bluetooth], &ptrCurrentTriggerProfile, 8);
-	memcpy(&outputHID[22 + bluetooth], &ptrCurrentTriggerProfile, 8);
 }
 
-
-uint32_t computeCRC32(unsigned char* buffer, const size_t& len)
+uint32_t inline computeCRC32(unsigned char* buffer, const size_t& len)
 {
 	UINT32 result = crcSeed;
 	for (size_t i = 0; i < len; i++)

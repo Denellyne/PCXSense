@@ -9,12 +9,11 @@ void autoUpdater() {
 }
 #else
 void autoUpdater() {
-    DownloadProgress downloadStatus;
+   // DownloadProgress downloadStatus;
 
-    std::cout << "Checking if new update is avaiable\n";
-
-    URLDownloadToFile(NULL, L"https://github.com/Denellyne/PCXSense/releases/download/Latest/Version.txt", L"Version.txt", 0, static_cast<IBindStatusCallback*>(&downloadStatus));
-    downloadStatus.Release();
+   // URLDownloadToFile(NULL, L"https://github.com/Denellyne/PCXSense/releases/download/Latest/Version.txt", L"Version.txt", 0,NULL);
+   // downloadStatus.Release();
+    system("curl https://github.com/Denellyne/PCXSense/releases/download/Latest/Version.txt -o Version.txt -L");
 
     std::ifstream checkVersion("Version.txt");
     char gitVersion[16];
@@ -22,12 +21,11 @@ void autoUpdater() {
     checkVersion.close();
     DeleteFile(L"Version.txt");
 
-    if (!strcmp(gitVersion, Version.c_str())) {
-        std::cout << "You're up to date\n";
-    }
-    else {
-        ShellExecute(NULL, L"open", L"PCXSenseUpdater.exe", NULL, NULL, SW_SHOWDEFAULT);;
-        _exit(NULL);
-    }
+    if (!strcmp(gitVersion, Version.c_str())) return;
+
+    if (MessageBox(NULL, L"A new update was found do you wish to update?", L"New Update", MB_YESNO | MB_TASKMODAL) == IDNO) return;
+
+    ShellExecute(0, 0, L"https://github.com/Denellyne/PCXSense/releases/tag/Latest", 0, 0, SW_SHOW);
+    _exit(NULL);
 }
 #endif // _DEBUG

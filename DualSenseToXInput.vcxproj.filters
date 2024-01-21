@@ -49,11 +49,17 @@
     <Filter Include="Source Files\FrontEnd\GUI\Functionality\Misc">
       <UniqueIdentifier>{8861302c-117a-4bc2-aa0f-bd87473bcb3f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\FrontEnd\GUI\Functionality\Macros">
+    <Filter Include="Source Files\Backend\User Settings">
+      <UniqueIdentifier>{57f1b13b-65a5-439a-8f00-5e364984b008}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Backend\User Settings\Adaptive Triggers">
+      <UniqueIdentifier>{f0ff02b0-9e9b-4904-9fd0-7fe437b724cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Backend\User Settings\Macros">
       <UniqueIdentifier>{49974206-8831-41a1-8a3f-e136e9d693bf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\FrontEnd\GUI\Functionality\Adaptive Triggers">
-      <UniqueIdentifier>{f0ff02b0-9e9b-4904-9fd0-7fe437b724cd}</UniqueIdentifier>
+    <Filter Include="Source Files\Backend\User Settings\Game Profile">
+      <UniqueIdentifier>{a891a2a3-4b22-4a53-ab2e-029a96940890}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -96,11 +102,14 @@
     <ClCompile Include="customInclude\GUI\Functions\Misc\functionality.cpp">
       <Filter>Source Files\FrontEnd\GUI\Functionality\Misc</Filter>
     </ClCompile>
-    <ClCompile Include="customInclude\GUI\Functions\Macros\macro.cpp">
-      <Filter>Source Files\FrontEnd\GUI\Functionality\Macros</Filter>
+    <ClCompile Include="customInclude\User Settings\Game Profiles\gameProfile.cpp">
+      <Filter>Source Files\Backend\User Settings\Game Profile</Filter>
     </ClCompile>
-    <ClCompile Include="customInclude\GUI\Functions\Adaptive Triggers\Adaptive Triggers.cpp">
-      <Filter>Source Files\FrontEnd\GUI\Functionality\Adaptive Triggers</Filter>
+    <ClCompile Include="customInclude\User Settings\Adaptive Triggers\Adaptive Triggers.cpp">
+      <Filter>Source Files\Backend\User Settings\Adaptive Triggers</Filter>
+    </ClCompile>
+    <ClCompile Include="customInclude\User Settings\Macros\macro.cpp">
+      <Filter>Source Files\Backend\User Settings\Macros</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -164,14 +173,17 @@
     <ClInclude Include="customInclude\GUI\Functions\Misc\functionality.h">
       <Filter>Source Files\FrontEnd\GUI\Functionality\Misc</Filter>
     </ClInclude>
-    <ClInclude Include="customInclude\GUI\Functions\Macros\macro.h">
-      <Filter>Source Files\FrontEnd\GUI\Functionality\Macros</Filter>
-    </ClInclude>
-    <ClInclude Include="customInclude\GUI\Functions\Adaptive Triggers\Adaptive Triggers.h">
-      <Filter>Source Files\FrontEnd\GUI\Functionality\Adaptive Triggers</Filter>
-    </ClInclude>
     <ClInclude Include="main.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="customInclude\User Settings\Game Profiles\gameProfile.h">
+      <Filter>Source Files\Backend\User Settings\Game Profile</Filter>
+    </ClInclude>
+    <ClInclude Include="customInclude\User Settings\Adaptive Triggers\Adaptive Triggers.h">
+      <Filter>Source Files\Backend\User Settings\Adaptive Triggers</Filter>
+    </ClInclude>
+    <ClInclude Include="customInclude\User Settings\Macros\macro.h">
+      <Filter>Source Files\Backend\User Settings\Macros</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -170,9 +170,7 @@
       </Inputs>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>copy /y "$(SolutionDir)Include\unrar.exe" "$(TargetDir)\unrar.exe"
-copy /y "$(SolutionDir)Include\unrar3.dll" "$(TargetDir)\unrar3.dll"
-copy /y "$(SolutionDir)Include\ViGEm\ViGEmClient.dll" "$(TargetDir)\ViGEmClient.dll"
+      <Command>copy /y "$(SolutionDir)Include\ViGEm\ViGEmClient.dll" "$(TargetDir)\ViGEmClient.dll"
 copy /y "$(SolutionDir)imgui\header\GLFW\glfw3.dll" "$(TargetDir)\glfw3.dll"
 copy /y "$(SolutionDir)Include\hidapi.dll" "$(TargetDir)\hidapi.dll"
 xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
@@ -199,6 +197,8 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
+      <OmitFramePointers>true</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -216,9 +216,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
       </Inputs>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>copy /y "$(SolutionDir)Include\unrar.exe" "$(TargetDir)\unrar.exe"
-copy /y "$(SolutionDir)Include\unrar3.dll" "$(TargetDir)\unrar3.dll"
-copy /y "$(SolutionDir)Include\ViGEm\ViGEmClient.dll" "$(TargetDir)\ViGEmClient.dll"
+      <Command>copy /y "$(SolutionDir)Include\ViGEm\ViGEmClient.dll" "$(TargetDir)\ViGEmClient.dll"
 copy /y "$(SolutionDir)imgui\header\GLFW\glfw3.dll" "$(TargetDir)\glfw3.dll"
 copy /y "$(SolutionDir)Include\hidapi.dll" "$(TargetDir)\hidapi.dll"
 xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
@@ -227,12 +225,13 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="customInclude\ControllerIO\controllerIO.cpp" />
-    <ClCompile Include="customInclude\GUI\Functions\Adaptive Triggers\Adaptive Triggers.cpp" />
-    <ClCompile Include="customInclude\GUI\Functions\Macros\macro.cpp" />
     <ClCompile Include="customInclude\GUI\Functions\Misc\functionality.cpp" />
     <ClCompile Include="customInclude\GUI\GUI.cpp" />
     <ClCompile Include="customInclude\Misc\util.cpp" />
     <ClCompile Include="customInclude\Updater\update.cpp" />
+    <ClCompile Include="customInclude\User Settings\Adaptive Triggers\Adaptive Triggers.cpp" />
+    <ClCompile Include="customInclude\User Settings\Game Profiles\gameProfile.cpp" />
+    <ClCompile Include="customInclude\User Settings\Macros\macro.cpp" />
     <ClCompile Include="imgui\cpp\imgui.cpp" />
     <ClCompile Include="imgui\cpp\imgui_draw.cpp" />
     <ClCompile Include="imgui\cpp\imgui_impl_glfw.cpp" />
@@ -244,13 +243,14 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="customInclude\ControllerIO\controllerIO.h" />
-    <ClInclude Include="customInclude\GUI\Functions\Adaptive Triggers\Adaptive Triggers.h" />
-    <ClInclude Include="customInclude\GUI\Functions\Macros\macro.h" />
     <ClInclude Include="customInclude\GUI\Functions\Misc\functionality.h" />
     <ClInclude Include="customInclude\GUI\GUI.h" />
     <ClInclude Include="customInclude\GUI\include.h" />
     <ClInclude Include="customInclude\Misc\util.h" />
     <ClInclude Include="customInclude\Updater\update.h" />
+    <ClInclude Include="customInclude\User Settings\Adaptive Triggers\Adaptive Triggers.h" />
+    <ClInclude Include="customInclude\User Settings\Game Profiles\gameProfile.h" />
+    <ClInclude Include="customInclude\User Settings\Macros\macro.h" />
     <ClInclude Include="imgui\header\GLFW\glfw3.h" />
     <ClInclude Include="imgui\header\GLFW\glfw3native.h" />
     <ClInclude Include="imgui\header\imconfig.h" />

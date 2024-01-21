@@ -17,6 +17,7 @@ const char alphabet[26] = { 'A','B','C','D','E','F','G','H','I','J','K','L','M',
 
 void macroEditor(bool& makerOpen, Macros& macro, const controller& x360Controller);
 void saveMacros(const std::vector<Macros> Macro);
-void macroMenu(std::vector<Macros>& Macro, const controller& x360Controller);
 void loadMacros(std::vector<Macros>& Macro);
 void asyncMacro(const controller& x360Controller, std::vector<Macros>& Macro);
+void macroMenu(bool& profileMacroOpen, std::vector<Macros>& Macro, const controller& x360Controller);
+void macroMenu(std::vector<Macros>& Macro, const controller& x360Controller);

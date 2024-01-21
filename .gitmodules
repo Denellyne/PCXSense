@@ -1,4 +1,0 @@
-[submodule "PCXSense-Updater"]
-	url = https://github.com/Denellyne/PCXSense-Updater/
-	branch = Module
-	path = PCXSense-Updater

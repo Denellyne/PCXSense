@@ -5,7 +5,7 @@
 #include <Xinput.h>
 #include "ViGEm/Client.h"
 #include <hidapi.h>
-
+#include <vector>
 
 #ifdef _DEBUG
 #define EXPERIMENTAL true
@@ -86,3 +86,23 @@ bool isControllerConnected(controller& inputReport);
 uint32_t computeCRC32(unsigned char* buffer, const size_t& len);
 void extern inline sendOutputReport(controller& x360Controller);
 void extern inline getInputReport(controller& inputReport);
+
+/*
+outputHID[11 + bluetooth] = 0x2; //Mode Motor Right
+		outputHID[12 + bluetooth]; //right trigger start of resistance section
+		outputHID[13 + bluetooth]; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+		outputHID[14 + bluetooth]; //right trigger force exerted in range (mode2)
+		outputHID[15 + bluetooth]; // strength of effect near release state (requires supplement modes 4 and 20)
+		outputHID[16 + bluetooth]; // strength of effect near middle (requires supplement modes 4 and 20)
+		outputHID[17 + bluetooth]; // strength of effect at pressed state (requires supplement modes 4 and 20)
+		outputHID[20 + bluetooth]; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+
+		outputHID[22 + bluetooth]; //Mode Motor Left
+		outputHID[23 + bluetooth]; //Left trigger start of resistance section
+		outputHID[24 + bluetooth]; //Left trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
+		outputHID[25 + bluetooth; //Left trigger force exerted in range (mode2)
+		outputHID[26 + bluetooth]; // strength of effect near release state (requires supplement modes 4 and 20)
+		outputHID[27 + bluetooth]; // strength of effect near middle (requires supplement modes 4 and 20)
+		outputHID[28 + bluetooth]; // strength of effect at pressed state (requires supplement modes 4 and 20)
+		outputHID[31 + bluetooth]; // effect actuation frequency in Hz (requires supplement modes 4 and 20)
+		*/

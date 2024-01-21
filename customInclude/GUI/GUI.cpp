@@ -5,11 +5,11 @@
 bool rumbleWindow = false;
 extern bool debugOpen = false;
 extern bool macroOpen = false;
-extern bool triggerOpen = false;
-
+extern bool profileOpen = false;
 float lightbar = 0.0f;
 
-void app(controller& x360Controller,const GLuint* Images, std::vector<Macros>& Macro, std::vector<triggerProfile>& triggers);
+
+void inline app(controller& x360Controller,const GLuint* Images, std::vector<Macros>& Macro, std::vector<gameProfile>& gameProfiles);
 
 void inline drawController(const float& displaySizeX, const float& displaySizeY, float xMultiplier, float yMultiplier, const controller& x360Controller, const GLuint* Images);
 
@@ -17,21 +17,7 @@ void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected,const 
 
 void inline topBar(const GLuint* Images, const float& displaySizeX, const float& displaySizeY,const float* RGB);
 
-//Needs testing
-/*
-const HWND thisProcess = FindWindow(NULL, L"PCXSense");
-
-bool inline isFocus() {
-    
-    HWND activeWindow = GetActiveWindow();
-
-    if (thisProcess != activeWindow) return true;
-    return false;
-
-}
-*/
-
-int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<triggerProfile>& triggers){
+int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameProfile>& gameProfiles){
     GLuint Images[21];
     
     glfwInit();
@@ -55,36 +41,18 @@ int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<trigg
     ImGui_ImplOpenGL3_Init("#version 330");
     while (!glfwWindowShouldClose(window)) { // Render
         glfwPollEvents();
-   
+
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        app(x360Controller, Images,Macro,triggers);
+        app(x360Controller,Images,Macro,gameProfiles);
         ImGui::Render();
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
         glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        glfwSwapBuffers(window);
-/*
-        if (isFocus()) {
-            
-            ImGui_ImplOpenGL3_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-            ImGui::NewFrame();
-            app(x360Controller, Images);
-            ImGui::Render();
-            int display_w, display_h;
-            glfwGetFramebufferSize(window, &display_w, &display_h);
-            glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-            glClear(GL_COLOR_BUFFER_BIT);
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-            glfwSwapBuffers(window);
-            
-
-        }
- */      
+        glfwSwapBuffers(window);      
 
     }
 
@@ -96,7 +64,7 @@ int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<trigg
     return 0;
 }
 
-void app(controller& x360Controller,const GLuint* Images, std::vector<Macros>& Macro, std::vector<triggerProfile>& triggers) {
+void inline app(controller& x360Controller,const GLuint* Images, std::vector<Macros>& Macro, std::vector<gameProfile>& gameProfiles) {
     //Boilerplate Window Code
     float RGB[3] = { x360Controller.RGB.red / 255,x360Controller.RGB.green / 255,x360Controller.RGB.blue / 255 };
     static ImGuiIO& io = ImGui::GetIO();
@@ -122,7 +90,7 @@ void app(controller& x360Controller,const GLuint* Images, std::vector<Macros>& M
     if (rumbleWindow) rumleTestWindow(rumbleWindow);
     if (debugOpen) debugMenu(x360Controller);
     if (macroOpen) macroMenu(Macro,x360Controller);
-    if (triggerOpen) triggerMenu(triggers);
+    if (profileOpen) profileMenu(profileOpen, gameProfiles, x360Controller);
 
     ImGui::PopStyleColor(3);
 
@@ -165,18 +133,18 @@ void inline topBar(const GLuint* Images, const float& displaySizeX, const float&
     ImVec2 combo_pos = ImGui::GetCursorScreenPos();
     ImGuiStyle& style = ImGui::GetStyle();
     ImGui::SetCursorScreenPos(ImVec2(combo_pos.x + style.FramePadding.x, combo_pos.y));
-    float h = ImGui::GetTextLineHeightWithSpacing() - style.FramePadding.y;
+    float iconSize = ImGui::GetTextLineHeightWithSpacing() - style.FramePadding.y;
 
     if (ImGui::BeginCombo("##Misc","Misc", ImGuiComboFlags_WidthFitPreview | ImGuiComboFlags_PopupAlignLeft)) {
         if(ImGui::Selectable("##Github")) ShellExecute(0, 0, L"https://github.com/Denellyne", 0, 0, SW_SHOW);
         ImGui::SameLine(7);
-        ImGui::Image((void*)Images[17], { h,h });
+        ImGui::Image((void*)Images[17], { iconSize,iconSize });
         ImGui::SameLine();
         ImGui::Text("Github");
 
         if (ImGui::Selectable("##PCXSense")) ShellExecute(0, 0, L"https://github.com/Denellyne/PCXSense", 0, 0, SW_SHOW);
         ImGui::SameLine(7);
-        ImGui::Image((void*)Images[18], { h,h });
+        ImGui::Image((void*)Images[18], { iconSize,iconSize });
         ImGui::SameLine();
         ImGui::Text("PCXSense");
 
@@ -187,8 +155,6 @@ void inline topBar(const GLuint* Images, const float& displaySizeX, const float&
         if (ImGui::Selectable("##Update")) autoUpdater();
         ImGui::SameLine(30);
         ImGui::Text("Update");
-
-
 
         ImGui::EndCombo();
     }
@@ -203,17 +169,17 @@ void inline topBar(const GLuint* Images, const float& displaySizeX, const float&
 
         if (ImGui::Selectable("##Lightbar Settings")); //Ligthbar Menu
         ImGui::SameLine(7);
-        ImGui::ColorButton("Lightbar", { RGB[0],RGB[1],RGB[2],1 },0, {h,h});
+        ImGui::ColorButton("Lightbar", { RGB[0],RGB[1],RGB[2],1 },0, {iconSize,iconSize});
         ImGui::SameLine();
         ImGui::Text("Lightbar Settings");
+
+        if (ImGui::Selectable("##Game Profiles")) profileOpen = true;
+        ImGui::SameLine(30);
+        ImGui::Text("Game Profiles");
 
      //   if (ImGui::Selectable("##Device Hiding"));
      //   ImGui::SameLine(30);
       //  ImGui::Text("Device Hiding");
-
-        if (ImGui::Selectable("##Adaptive Triggers")) triggerOpen = true;
-        ImGui::SameLine(30);
-        ImGui::Text("Adaptive Triggers");
 
         if (ImGui::Selectable("##Macros"))  macroOpen = true; //Macro Editor
         ImGui::SameLine(30);

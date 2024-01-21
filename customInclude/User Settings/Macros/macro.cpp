@@ -1,7 +1,6 @@
 #include "macro.h"
 #include "GUI\Functions\Misc\functionality.h"
 #include <fstream>
-bool makerOpen = false;
 
 void saveMacros(const std::vector<Macros> Macro) {
 	std::ofstream writeMacros("macros.txt");
@@ -61,7 +60,7 @@ void macroEditor(bool& makerOpen, Macros& macro, const controller& x360Controlle
 		break;
 	}
 
-	if(ImGui::Begin("Macro Maker", &makerOpen)){
+	if(ImGui::Begin("Macro Maker##", &makerOpen)){
 		static int notificationTimer = 0;
 		static bool notificationOpen = false;
 		if (notificationTimer == 1000) notificationOpen = false;
@@ -86,7 +85,58 @@ void macroEditor(bool& makerOpen, Macros& macro, const controller& x360Controlle
 		if (ImGui::SmallButton("Set")) {
 			Sleep(3000); // Give time for the user to input the commands
 			macro.buttonCombination = x360Controller.ControllerState.Gamepad.wButtons;
-			std::cout << x360Controller.ControllerState.Gamepad.wButtons << '\n';
+			notificationOpen = true;
+			notificationTimer = 0;
+		}
+		if (ImGui::BeginItemTooltip()) {
+			if (!notificationOpen) ImGui::Text("Press the buttons on the controller and wait 3 seconds");
+			else ImGui::Text("Done");
+			ImGui::EndTooltip();
+		}
+	}
+	ImGui::End();
+}
+
+void inline macroEditor(Macros& macro, bool& makerOpen, const controller& x360Controller) {
+	static std::string modifier;
+
+	switch (macro.input[0].ki.wVk) { //Makes adding different modifiers easier
+	case VK_CONTROL:
+		modifier = "Control";
+		break;
+	case VK_MENU:
+		modifier = "Alt";
+		break;
+	default:
+		modifier = "None";
+		break;
+	}
+
+	if (ImGui::Begin("Macro Maker##Non Overloaded", &makerOpen)) {
+		static int notificationTimer = 0;
+		static bool notificationOpen = false;
+		if (notificationTimer == 1000) notificationOpen = false;
+		else notificationTimer++;
+
+		ImGui::InputText("Macro name", &macro.Name);
+		if (ImGui::BeginCombo("Key", std::format("{}", (char)macro.input[1].ki.wVk).c_str())) {
+			for (int i = 0; i < 26; i++) {
+				if (ImGui::Selectable(std::format("{}", alphabet[i]).c_str())) macro.input[1].ki.wVk = alphabet[i];
+			}
+			ImGui::EndCombo();
+		}
+		if (ImGui::BeginCombo("Modifier", modifier.c_str())) {
+			if (ImGui::Selectable("Control"))  macro.input[0].ki.wVk = VK_CONTROL;
+			if (ImGui::Selectable("Alt"))  macro.input[0].ki.wVk = VK_MENU;
+			if (ImGui::Selectable("None"))  macro.input[0].ki.wVk = 0;
+			ImGui::EndCombo();
+		}
+
+		ImGui::Text("Set button combination");
+		ImGui::SameLine();
+		if (ImGui::SmallButton("Set")) {
+			Sleep(3000); // Give time for the user to input the commands
+			macro.buttonCombination = x360Controller.ControllerState.Gamepad.wButtons;
 			notificationOpen = true;
 			notificationTimer = 0;
 		}
@@ -100,11 +150,40 @@ void macroEditor(bool& makerOpen, Macros& macro, const controller& x360Controlle
 }
 
 void macroMenu(std::vector<Macros>& Macro, const controller& x360Controller) {
+	bool static makerOpenOverload = false;
+	static short int index{};
+	if (makerOpenOverload) (macroEditor(Macro[index], makerOpenOverload, x360Controller));
 
+	if (ImGui::Begin("Macro Editor", &macroOpen)) {
+		for (short int i = 0; i < Macro.size(); i++) {
+			ImGui::PushID(&Macro[i]);
+			if (ImGui::Button(Macro[i].Name.c_str())) {
+				makerOpenOverload = true;
+				index = i;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Delete Macro")) {
+				makerOpenOverload = false;
+				Macro.erase(Macro.begin() + i);
+			}
+			ImGui::PopID();
+		}
+		if (ImGui::Button("Create new Macro")) {
+			makerOpenOverload = true;
+			Macros newMacro{};
+			Macro.push_back(newMacro);
+			index = Macro.size() - 1;
+		}
+	}
+	ImGui::End();
+}
+
+void macroMenu(bool& profileMacroOpen,std::vector<Macros>& Macro, const controller& x360Controller) {
+	bool static makerOpen = false;
 	static short int index{};
 	if (makerOpen) (macroEditor(makerOpen, Macro[index], x360Controller));
 
-	if (ImGui::Begin("Macro Editor", &macroOpen)) {
+	if (ImGui::Begin("Game Profile Macro Editor", &profileMacroOpen)) {
 		for (short int i = 0; i < Macro.size(); i++) {
 			ImGui::PushID(&Macro[i]);
 			if (ImGui::Button(Macro[i].Name.c_str())) {

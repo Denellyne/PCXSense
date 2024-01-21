@@ -6,15 +6,16 @@
 #include "misc\util.h"
 #include "GUI\GUI.h"
 #include "Updater\update.h"
-#include "GUI\Functions\Macros\macro.h"
-#include "GUI\Functions\Adaptive Triggers\Adaptive Triggers.h"
+#include "User Settings/Macros/macro.h"
+#include "User Settings/Adaptive Triggers/Adaptive Triggers.h"
+#include "User Settings/Game Profiles/gameProfile.h"
 #include <thread>
 #include <format>
 
 LPVOID ptrController;
 LPVOID asyncThreadPointer;
 LPVOID ptrMacros;
-LPVOID ptrTriggers;
+LPVOID ptrProfiles;
 extern UCHAR rumble[2]{};
 
 
@@ -57,8 +58,8 @@ void zeroOutputReport() {
 extern BOOL WINAPI exitFunction(_In_ DWORD dwCtrlType) {
 	reinterpret_cast<std::thread*>(asyncThreadPointer)->~thread();
 	zeroOutputReport();
+	saveProfiles(*reinterpret_cast<std::vector<gameProfile>*>(ptrProfiles));
 	saveMacros(*reinterpret_cast<std::vector<Macros>*>(ptrMacros));
-	saveTrigger(*reinterpret_cast<std::vector<triggerProfile>*>(ptrTriggers));
 
 	//Cleanup	
 	vigem_target_remove(reinterpret_cast<controller*>(ptrController)->client, reinterpret_cast<controller*>(ptrController)->emulateX360);
