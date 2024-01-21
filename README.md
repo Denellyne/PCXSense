@@ -37,7 +37,7 @@ Bluetooth and USB mode
 
 Gamecube Triggers, (Triggers with [Dolphin](https://pt.dolphin-emu.org/) Emulator)
 
-Nintendo Switch Triggers, (Triggers with [Yuzu](https://yuzu-emu.org/) Emulator)
+Nintendo Switch Triggers, (Triggers with [Yuzu](https://yuzu-emu.org/) and [Cemu](https://cemu.info/) Emulators)
 
 Update Checker (It doesn't download the update but warns the user whenever a new update is released)
 
