@@ -72,7 +72,7 @@ Multiple Controller Emulation
 
 ## Found a bug
 
-Please open an issue with as much detail as possible and the method to reproduce it
+Please open an [issue](https://github.com/Denellyne/PCXSense/issues) with as much detail as possible and the method to reproduce it
 
 Also contributions are appreciated, if you want to contribute open a pull request  and I'll review it
 
