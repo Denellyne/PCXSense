@@ -144,7 +144,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\Include\tray;.\imgui\cpp;.\imgui\header;.\imgui\header\GLFW;.\src\;.\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Include\;.\Include\imgui\cpp;.\Include\imgui\header;.\Include\imgui\header\GLFW;.\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/sdl /w34996 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerOutput>NoListing</AssemblerOutput>
       <TreatWarningAsError>false</TreatWarningAsError>
@@ -156,7 +156,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;Urlmon.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\Include\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;Urlmon.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Driver>NotSet</Driver>
       <AllowIsolation>false</AllowIsolation>
       <Profile>true</Profile>
@@ -171,7 +171,7 @@
     </CustomBuildStep>
     <PostBuildEvent>
       <Command>copy /y "$(SolutionDir)Include\ViGEm\ViGEmClient.dll" "$(TargetDir)\ViGEmClient.dll"
-copy /y "$(SolutionDir)imgui\header\GLFW\glfw3.dll" "$(TargetDir)\glfw3.dll"
+copy /y "$(SolutionDir)Include\imgui\header\GLFW\glfw3.dll" "$(TargetDir)\glfw3.dll"
 copy /y "$(SolutionDir)Include\hidapi.dll" "$(TargetDir)\hidapi.dll"
 xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
 </Command>
@@ -185,7 +185,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\Include\tray;.\imgui\cpp;.\imgui\header;.\imgui\header\GLFW;.\src\;.\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Include\;.\Include\imgui\cpp;.\Include\imgui\header;.\Include\imgui\header\GLFW;.\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <DebugInformationFormat>None</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -205,7 +205,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;Urlmon.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\Include\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;Urlmon.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Driver>NotSet</Driver>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <DelayLoadDLLs>
@@ -217,20 +217,20 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
     </CustomBuildStep>
     <PostBuildEvent>
       <Command>copy /y "$(SolutionDir)Include\ViGEm\ViGEmClient.dll" "$(TargetDir)\ViGEmClient.dll"
-copy /y "$(SolutionDir)imgui\header\GLFW\glfw3.dll" "$(TargetDir)\glfw3.dll"
+copy /y "$(SolutionDir)Include\imgui\header\GLFW\glfw3.dll" "$(TargetDir)\glfw3.dll"
 copy /y "$(SolutionDir)Include\hidapi.dll" "$(TargetDir)\hidapi.dll"
 xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="imgui\cpp\imgui.cpp" />
-    <ClCompile Include="imgui\cpp\imgui_draw.cpp" />
-    <ClCompile Include="imgui\cpp\imgui_impl_glfw.cpp" />
-    <ClCompile Include="imgui\cpp\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="imgui\cpp\imgui_stdlib.cpp" />
-    <ClCompile Include="imgui\cpp\imgui_tables.cpp" />
-    <ClCompile Include="imgui\cpp\imgui_widgets.cpp" />
+    <ClCompile Include="Include\imgui\cpp\imgui.cpp" />
+    <ClCompile Include="Include\imgui\cpp\imgui_draw.cpp" />
+    <ClCompile Include="Include\imgui\cpp\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Include\imgui\cpp\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Include\imgui\cpp\imgui_stdlib.cpp" />
+    <ClCompile Include="Include\imgui\cpp\imgui_tables.cpp" />
+    <ClCompile Include="Include\imgui\cpp\imgui_widgets.cpp" />
     <ClCompile Include="src\ControllerIO\controllerIO.cpp" />
     <ClCompile Include="src\GUI\Functions\Misc\functionality.cpp" />
     <ClCompile Include="src\GUI\GUI.cpp" />
@@ -243,19 +243,19 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
     <ClCompile Include="src\User Settings\Macros\macro.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="imgui\header\GLFW\glfw3.h" />
-    <ClInclude Include="imgui\header\GLFW\glfw3native.h" />
-    <ClInclude Include="imgui\header\imconfig.h" />
-    <ClInclude Include="imgui\header\imgui.h" />
-    <ClInclude Include="imgui\header\imgui_impl_glfw.h" />
-    <ClInclude Include="imgui\header\imgui_impl_opengl3.h" />
-    <ClInclude Include="imgui\header\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="imgui\header\imgui_internal.h" />
-    <ClInclude Include="imgui\header\imgui_stdlib.h" />
-    <ClInclude Include="imgui\header\imstb_rectpack.h" />
-    <ClInclude Include="imgui\header\imstb_textedit.h" />
-    <ClInclude Include="imgui\header\imstb_truetype.h" />
-    <ClInclude Include="imgui\header\stb_image.h" />
+    <ClInclude Include="Include\imgui\header\GLFW\glfw3.h" />
+    <ClInclude Include="Include\imgui\header\GLFW\glfw3native.h" />
+    <ClInclude Include="Include\imgui\header\imconfig.h" />
+    <ClInclude Include="Include\imgui\header\imgui.h" />
+    <ClInclude Include="Include\imgui\header\imgui_impl_glfw.h" />
+    <ClInclude Include="Include\imgui\header\imgui_impl_opengl3.h" />
+    <ClInclude Include="Include\imgui\header\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="Include\imgui\header\imgui_internal.h" />
+    <ClInclude Include="Include\imgui\header\imgui_stdlib.h" />
+    <ClInclude Include="Include\imgui\header\imstb_rectpack.h" />
+    <ClInclude Include="Include\imgui\header\imstb_textedit.h" />
+    <ClInclude Include="Include\imgui\header\imstb_truetype.h" />
+    <ClInclude Include="Include\imgui\header\stb_image.h" />
     <ClInclude Include="resource1.h" />
     <ClInclude Include="src\ControllerIO\controllerIO.h" />
     <ClInclude Include="src\GUI\Functions\Misc\functionality.h" />
