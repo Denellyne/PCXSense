@@ -58,6 +58,8 @@ This project aims to make using your Dualsense as easy and hassle-free as possib
 
 Enhancing your experience on emulators via the use of the Adaptive Triggers
 
+Be a source to help another developers develop projects like this
+
 ## Yet to implement
 
 Joycons support (Merged),
