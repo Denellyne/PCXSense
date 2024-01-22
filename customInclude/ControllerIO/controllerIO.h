@@ -17,15 +17,17 @@
 #define DS_PRODUCT_ID 0x0ce6
 #define DS_VENDOR_ID 0x054c
 
-struct RGB {
-	float red;
-	float green;
-	float blue;
-};
+
 extern UCHAR rumble[2];
 extern unsigned char ptrCurrentTriggerProfile[8];
 
 struct controller {
+
+	struct RGB {
+		float red;
+		float green;
+		float blue;
+	};
 
 	int shortTriggers = 0;
 	bool rainbow = false;
@@ -82,6 +84,8 @@ const uint32_t hashTable[256] = {
 	0x6fbf1d91, 0x18b82d07, 0x81b17cbd, 0xf6b64c2b, 0x68d2d988, 0x1fd5e91e, 0x86dcb8a4, 0xf1db8832,
 	0x616495a3, 0x1663a535, 0x8f6af48f, 0xf86dc419, 0x660951ba, 0x110e612c, 0x88073096, 0xff000000,
 };
+
+
 bool isControllerConnected(controller& inputReport);
 uint32_t computeCRC32(unsigned char* buffer, const size_t& len);
 void extern inline sendOutputReport(controller& x360Controller);

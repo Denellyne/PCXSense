@@ -8,7 +8,7 @@ int main() {
 
 	SetProcessShutdownParameters(2, 0);
 	SetConsoleCtrlHandler(exitFunction, TRUE);
-
+	
 	//Initialize Fake Controller
 	controller x360Controller{};
 
@@ -28,7 +28,7 @@ int main() {
 	asyncOutputReport.detach();
 	std::thread(GUI, std::ref(x360Controller),std::ref(Macro),std::ref(gameProfiles)).detach();
 	std::thread(asyncMacro, std::ref(x360Controller),std::ref(Macro)).detach();
-	std::thread(asyncGameProfile,std::ref(gameProfiles) , std::ref(x360Controller)).detach();
+	std::thread(asyncGameProfile,std::ref(gameProfiles),std::ref(x360Controller)).detach();
 
 #if _DEBUG
 	std::thread(debugData, std::ref(x360Controller)).detach(); // Displays controller info
