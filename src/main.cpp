@@ -1,5 +1,5 @@
 #include "main.h"
-extern std::string Version = "PCXSenseBeta0.5";
+extern std::string Version = "PCXSenseBeta0.6";
 
 int main() {
 #ifndef _DEBUG
@@ -18,10 +18,19 @@ int main() {
 	loadMacros(Macro);
 	loadProfiles(gameProfiles);
 	
-	ptrController = &x360Controller;
 	x360Controller.client = vigem_alloc();
 
-	if (initializeFakeController(x360Controller.emulateX360, x360Controller.target, x360Controller.client) != 0) return -1;
+	if (x360Controller.client == NULL) {
+		if (MessageBox(NULL, L"The app couldn't start, please install VigemBusDriver ,if this error persists please open an issue on github", L"Vigem bus", MB_YESNO | MB_TASKMODAL) == IDNO) return -1;
+		ShellExecute(0, 0, L"https://github.com/nefarius/ViGEmBus/releases/tag/v1.22.0", 0, 0, SW_SHOW);
+		return -1;
+	}
+	
+	if (initializeFakeController(x360Controller.emulateX360, x360Controller.target, x360Controller.client) != 0) {
+		if (MessageBox(NULL, L"The app couldn't start, please install VigemBusDriver ,if this error persists please open an issue on github", L"Vigem bus", MB_YESNO | MB_TASKMODAL) == IDNO) return -1;
+		ShellExecute(0, 0, L"https://github.com/nefarius/ViGEmBus/releases/tag/v1.22.0", 0, 0, SW_SHOW);
+		return -1;
+	}
 
 	//Start async threads
 	std::thread asyncOutputReport(sendOutputReport, std::ref(x360Controller));
@@ -34,6 +43,7 @@ int main() {
 	std::thread(debugData, std::ref(x360Controller)).detach(); // Displays controller info
 #endif
 
+	ptrController = &x360Controller;
 	asyncThreadPointer = &asyncOutputReport;
 	ptrMacros = &Macro;
 	ptrProfiles = &gameProfiles;

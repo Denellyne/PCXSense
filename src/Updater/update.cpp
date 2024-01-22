@@ -9,10 +9,7 @@ void autoUpdater() {
 }
 #else
 void autoUpdater() {
-   // DownloadProgress downloadStatus;
 
-   // URLDownloadToFile(NULL, L"https://github.com/Denellyne/PCXSense/releases/download/Latest/Version.txt", L"Version.txt", 0,NULL);
-   // downloadStatus.Release();
     system("curl https://github.com/Denellyne/PCXSense/releases/download/Latest/Version.txt -o Version.txt -L");
 
     std::ifstream checkVersion("Version.txt");
