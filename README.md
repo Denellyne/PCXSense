@@ -25,7 +25,7 @@
 
 ## Getting Started
 
-Go to [Releases](https://github.com/Denellyne/PCXSense/releases/tag/Latest) and download the latest version, then unzip and open PCXSense.exe , whenever a new version gets released the app will update with no extra input whatsoever.
+Download [VigemBus](https://github.com/nefarius/ViGEmBus/releases/tag/v1.22.0) then go to [Releases](https://github.com/Denellyne/PCXSense/releases/tag/Latest) and download the latest version, then unzip and open PCXSense.exe , whenever a new version gets released the app will update with no extra input whatsoever.
 
 ## Features
 
