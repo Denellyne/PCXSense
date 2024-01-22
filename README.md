@@ -72,6 +72,17 @@ Device Hiding (*Blocks double inputs*)
 
 Multiple Controller Emulation
 
+## Roadmap
+
+### Game Profiles - Lightbar - Rumble to AT - Button Remapping
+
+### Launch at startup - Bluetooth disconnect - Device Hiding
+
+### Gyro Support - Citra Toutchpad - Start/Select ToutchPad Option
+
+### Theme Switcher - DirectInput Mode
+
+
 ## Found a bug
 
 Please open an [issue](https://github.com/Denellyne/PCXSense/issues) with as much detail as possible and the method to reproduce it
