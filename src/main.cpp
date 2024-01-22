@@ -10,7 +10,7 @@ int main() {
 	SetConsoleCtrlHandler(exitFunction, TRUE);
 	
 	//Initialize Fake Controller
-	controller x360Controller{};
+	register controller x360Controller{};
 
 	std::vector<Macros> Macro;
 	std::vector<gameProfile> gameProfiles;
@@ -40,7 +40,7 @@ int main() {
 	std::thread(asyncGameProfile,std::ref(gameProfiles),std::ref(x360Controller)).detach();
 
 #if _DEBUG
-	std::thread(debugData, std::ref(x360Controller)).detach(); // Displays controller info
+	//std::thread(debugData, std::ref(x360Controller)).detach(); // Displays controller info
 #endif
 
 	ptrController = &x360Controller;

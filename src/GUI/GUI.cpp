@@ -17,7 +17,7 @@ void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected,const 
 void inline topBar(const GLuint* Images, const float& displaySizeX, const float& displaySizeY,const float* RGB);
 
 int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameProfile>& gameProfiles){
-    GLuint Images[21];
+    register GLuint Images[21];
     
     glfwInit();
     GLFWwindow* window = glfwCreateWindow(defaultWindowWidth, defaultWindowHeigth, "PCXSense", nullptr, nullptr);
@@ -35,7 +35,7 @@ int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameP
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
     ImGui::StyleColorsDark();
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    const ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
     while (!glfwWindowShouldClose(window)) { // Render
@@ -47,7 +47,7 @@ int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameP
         ImGui::NewFrame();
         app(x360Controller,Images,Macro,gameProfiles);
         ImGui::Render();
-        int display_w, display_h;
+        register int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
         glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -66,7 +66,7 @@ int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameP
 
 void inline app(controller& x360Controller,const GLuint* Images, std::vector<Macros>& Macro, std::vector<gameProfile>& gameProfiles) {
     //Boilerplate Window Code
-    float RGB[3] = { x360Controller.RGB.red / 255,x360Controller.RGB.green / 255,x360Controller.RGB.blue / 255 };
+    register float RGB[3] = { x360Controller.RGB.red / 255,x360Controller.RGB.green / 255,x360Controller.RGB.blue / 255 };
     static ImGuiIO& io = ImGui::GetIO();
     if (lightbar >= 1) lightbar = 1;
     if (lightbar < 0) lightbar = 0;

@@ -29,22 +29,24 @@ struct controller {
 		float blue;
 	};
 
+	unsigned char inputBuffer[78]{};
+
+    int batteryLevel;
+	int bufferSize;
+
 	int shortTriggers = 0;
+
 	bool rainbow = false;
 	bool isConnected;
 	bool bluetooth;
 
-	unsigned char inputBuffer[78]{};
-
-	int bufferSize;
-	int batteryLevel;
+	RGB RGB;
 
 	HANDLE deviceHandle;
 	PVIGEM_CLIENT client;
 	PVIGEM_TARGET emulateX360;
 	XINPUT_STATE ControllerState;
 	VIGEM_ERROR target;
-	RGB RGB;
 
 };
 

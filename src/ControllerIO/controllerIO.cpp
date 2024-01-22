@@ -11,6 +11,7 @@ constexpr DWORD TITLE_SIZE = 1024;
 int emulator{};
 extern bool gameProfileSet;
 
+
 int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PVIGEM_CLIENT& client) {
 
 	if (client == nullptr)
@@ -69,6 +70,7 @@ BOOL inline static CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring){
 
 	if (GetWindowText(hwnd, windowTitle, TITLE_SIZE)) {
 		if (_tcsstr(windowTitle, L"yuzu") != NULL) {
+			
 			emulator = 1;
 			return false;
 		}
@@ -308,16 +310,6 @@ void inline adaptiveTriggersProfile(bool& bluetooth, int& shortTriggers) {
 		EnumWindows(FindWindowBySubstr, NULL);
 
 		switch (emulator) {
-		case 0:
-			shortTriggers = 0;
-			if (!gameProfileSet) break;
-
-			memcpy(&outputHID[11 + bluetooth], &ptrCurrentTriggerProfile, 7);
-			memcpy(&outputHID[22 + bluetooth], &ptrCurrentTriggerProfile, 7);
-			outputHID[20 + bluetooth] = ptrCurrentTriggerProfile[7];
-			outputHID[31 + bluetooth] = ptrCurrentTriggerProfile[7];
-			break;
-
 		case 1: //Yuzu
 			shortTriggers = 190;
 			outputHID[11 + bluetooth] = 0x2;
@@ -361,8 +353,12 @@ void inline adaptiveTriggersProfile(bool& bluetooth, int& shortTriggers) {
 		default:
 			//Else set Current Trigger Profile
 			shortTriggers = 0;
-			memcpy(&outputHID[11 + bluetooth], &ptrCurrentTriggerProfile, 8);
-			memcpy(&outputHID[22 + bluetooth], &ptrCurrentTriggerProfile, 8);
+			if (!gameProfileSet) break;
+
+			memcpy(&outputHID[11 + bluetooth], &ptrCurrentTriggerProfile, 7);
+			memcpy(&outputHID[22 + bluetooth], &ptrCurrentTriggerProfile, 7);
+			outputHID[20 + bluetooth] = ptrCurrentTriggerProfile[7];
+			outputHID[31 + bluetooth] = ptrCurrentTriggerProfile[7];
 			break;
 		}
 

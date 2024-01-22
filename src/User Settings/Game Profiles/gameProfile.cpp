@@ -123,9 +123,9 @@ void loadProfiles(std::vector<gameProfile>& gameProfiles) {
 
 	namespace fs = std::filesystem;
 
-	if (!fs::exists("Game Profiles")) return;
+	if (!fs::is_directory(fs::path(".//Game Profiles"))) return;
 
-	for (const auto& dirEntry : fs::directory_iterator("Game Profiles")) {
+	for (const auto& dirEntry : fs::directory_iterator(".//Game Profiles")) {
 		gameProfile currentProfile;
 		writeProfiles(dirEntry.path().string(), currentProfile);
 		gameProfiles.push_back(currentProfile);
@@ -151,14 +151,14 @@ void asyncGameProfile(std::vector<gameProfile>& gameProfiles, const controller& 
 		
 		Sleep(500);
 
-		for (gameProfile profile : gameProfiles) {
-			while (profile.isOpen()) {
+		for (int i = 0; i < gameProfiles.size();i++) {
+			while (gameProfiles[i].isOpen()) {
 
-				memcpy(&ptrCurrentTriggerProfile, &profile.gameTriggerProfile, 8);
+				memcpy(&ptrCurrentTriggerProfile, &gameProfiles[i].gameTriggerProfile, 8);
 				gameProfileSet = true;
-
+				
 				Sleep(20);
-				for (Macros macro : profile.gameMacros) checkMacro(macro, x360Controller);
+				for (Macros macro : gameProfiles[i].gameMacros) checkMacro(macro, x360Controller);
 
 			}
 			gameProfileSet = false;
@@ -184,6 +184,7 @@ void profileEditor(bool& makerOpen,gameProfile& currentProfile, const controller
 
 		if (ImGui::Button("Edit Trigger Profile")) triggerMaker = true;
 		if (ImGui::Button("Edit Macro Profile")) profileMacroOpen = true;
+
 
 		ImGui::End();
 	}

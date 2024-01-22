@@ -5,7 +5,7 @@
 
 #ifdef _DEBUG
 void autoUpdater() {
-    Sleep(3000);
+    Sleep(3);
 }
 #else
 void autoUpdater() {
