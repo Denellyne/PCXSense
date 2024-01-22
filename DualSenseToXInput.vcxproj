@@ -144,7 +144,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\Include\tray;.\imgui\cpp;.\imgui\header;.\imgui\header\GLFW;.\customInclude\;.\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Include\tray;.\imgui\cpp;.\imgui\header;.\imgui\header\GLFW;.\src\;.\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/sdl /w34996 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerOutput>NoListing</AssemblerOutput>
       <TreatWarningAsError>false</TreatWarningAsError>
@@ -185,7 +185,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\Include\tray;.\imgui\cpp;.\imgui\header;.\imgui\header\GLFW;.\customInclude\;.\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Include\tray;.\imgui\cpp;.\imgui\header;.\imgui\header\GLFW;.\src\;.\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <DebugInformationFormat>None</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -224,14 +224,6 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="customInclude\ControllerIO\controllerIO.cpp" />
-    <ClCompile Include="customInclude\GUI\Functions\Misc\functionality.cpp" />
-    <ClCompile Include="customInclude\GUI\GUI.cpp" />
-    <ClCompile Include="customInclude\Misc\util.cpp" />
-    <ClCompile Include="customInclude\Updater\update.cpp" />
-    <ClCompile Include="customInclude\User Settings\Adaptive Triggers\Adaptive Triggers.cpp" />
-    <ClCompile Include="customInclude\User Settings\Game Profiles\gameProfile.cpp" />
-    <ClCompile Include="customInclude\User Settings\Macros\macro.cpp" />
     <ClCompile Include="imgui\cpp\imgui.cpp" />
     <ClCompile Include="imgui\cpp\imgui_draw.cpp" />
     <ClCompile Include="imgui\cpp\imgui_impl_glfw.cpp" />
@@ -239,18 +231,18 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
     <ClCompile Include="imgui\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="imgui\cpp\imgui_tables.cpp" />
     <ClCompile Include="imgui\cpp\imgui_widgets.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\ControllerIO\controllerIO.cpp" />
+    <ClCompile Include="src\GUI\Functions\Misc\functionality.cpp" />
+    <ClCompile Include="src\GUI\GUI.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Misc\util.cpp" />
+    <ClCompile Include="src\Updater\update.cpp" />
+    <ClCompile Include="src\User Settings\Adaptive Triggers\Adaptive Triggers.cpp" />
+    <ClCompile Include="src\User Settings\Game Profiles\gameProfile.cpp" />
+    <ClCompile Include="src\User Settings\Lightbar\Lightbar.cpp" />
+    <ClCompile Include="src\User Settings\Macros\macro.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="customInclude\ControllerIO\controllerIO.h" />
-    <ClInclude Include="customInclude\GUI\Functions\Misc\functionality.h" />
-    <ClInclude Include="customInclude\GUI\GUI.h" />
-    <ClInclude Include="customInclude\GUI\include.h" />
-    <ClInclude Include="customInclude\Misc\util.h" />
-    <ClInclude Include="customInclude\Updater\update.h" />
-    <ClInclude Include="customInclude\User Settings\Adaptive Triggers\Adaptive Triggers.h" />
-    <ClInclude Include="customInclude\User Settings\Game Profiles\gameProfile.h" />
-    <ClInclude Include="customInclude\User Settings\Macros\macro.h" />
     <ClInclude Include="imgui\header\GLFW\glfw3.h" />
     <ClInclude Include="imgui\header\GLFW\glfw3native.h" />
     <ClInclude Include="imgui\header\imconfig.h" />
@@ -264,8 +256,18 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
     <ClInclude Include="imgui\header\imstb_textedit.h" />
     <ClInclude Include="imgui\header\imstb_truetype.h" />
     <ClInclude Include="imgui\header\stb_image.h" />
-    <ClInclude Include="main.h" />
     <ClInclude Include="resource1.h" />
+    <ClInclude Include="src\ControllerIO\controllerIO.h" />
+    <ClInclude Include="src\GUI\Functions\Misc\functionality.h" />
+    <ClInclude Include="src\GUI\GUI.h" />
+    <ClInclude Include="src\GUI\include.h" />
+    <ClInclude Include="src\main.h" />
+    <ClInclude Include="src\Misc\util.h" />
+    <ClInclude Include="src\Updater\update.h" />
+    <ClInclude Include="src\User Settings\Adaptive Triggers\Adaptive Triggers.h" />
+    <ClInclude Include="src\User Settings\Game Profiles\gameProfile.h" />
+    <ClInclude Include="src\User Settings\Lightbar\Lightbar.h" />
+    <ClInclude Include="src\User Settings\Macros\macro.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PCXSense.rc" />

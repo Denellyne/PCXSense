@@ -61,6 +61,9 @@
     <Filter Include="Source Files\Backend\User Settings\Game Profile">
       <UniqueIdentifier>{a891a2a3-4b22-4a53-ab2e-029a96940890}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Backend\User Settings\Lightbar">
+      <UniqueIdentifier>{a78ffa3c-8c73-4344-aec9-d3827c9828dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\cpp\imgui.cpp">
@@ -84,32 +87,35 @@
     <ClCompile Include="imgui\cpp\imgui_widgets.cpp">
       <Filter>Source Files\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="customInclude\ControllerIO\controllerIO.cpp">
-      <Filter>Source Files\Backend\Controller\Controller IO</Filter>
-    </ClCompile>
-    <ClCompile Include="customInclude\Updater\update.cpp">
-      <Filter>Source Files\Backend\Updater</Filter>
-    </ClCompile>
-    <ClCompile Include="customInclude\Misc\util.cpp">
-      <Filter>Source Files\Backend\Controller\Misc</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="customInclude\GUI\GUI.cpp">
-      <Filter>Source Files\FrontEnd\GUI\Main Window</Filter>
-    </ClCompile>
-    <ClCompile Include="customInclude\GUI\Functions\Misc\functionality.cpp">
+    <ClCompile Include="src\GUI\Functions\Misc\functionality.cpp">
       <Filter>Source Files\FrontEnd\GUI\Functionality\Misc</Filter>
     </ClCompile>
-    <ClCompile Include="customInclude\User Settings\Game Profiles\gameProfile.cpp">
-      <Filter>Source Files\Backend\User Settings\Game Profile</Filter>
+    <ClCompile Include="src\GUI\GUI.cpp">
+      <Filter>Source Files\FrontEnd\GUI\Main Window</Filter>
     </ClCompile>
-    <ClCompile Include="customInclude\User Settings\Adaptive Triggers\Adaptive Triggers.cpp">
+    <ClCompile Include="src\ControllerIO\controllerIO.cpp">
+      <Filter>Source Files\Backend\Controller\Controller IO</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Misc\util.cpp">
+      <Filter>Source Files\Backend\Controller\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Updater\update.cpp">
+      <Filter>Source Files\Backend\Updater</Filter>
+    </ClCompile>
+    <ClCompile Include="src\User Settings\Adaptive Triggers\Adaptive Triggers.cpp">
       <Filter>Source Files\Backend\User Settings\Adaptive Triggers</Filter>
     </ClCompile>
-    <ClCompile Include="customInclude\User Settings\Macros\macro.cpp">
+    <ClCompile Include="src\User Settings\Game Profiles\gameProfile.cpp">
+      <Filter>Source Files\Backend\User Settings\Game Profile</Filter>
+    </ClCompile>
+    <ClCompile Include="src\User Settings\Macros\macro.cpp">
       <Filter>Source Files\Backend\User Settings\Macros</Filter>
+    </ClCompile>
+    <ClCompile Include="src\User Settings\Lightbar\Lightbar.cpp">
+      <Filter>Source Files\Backend\User Settings\Lightbar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -152,38 +158,41 @@
     <ClInclude Include="imgui\header\stb_image.h">
       <Filter>Source Files\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="customInclude\ControllerIO\controllerIO.h">
-      <Filter>Source Files\Backend\Controller\Controller IO</Filter>
-    </ClInclude>
-    <ClInclude Include="customInclude\Updater\update.h">
-      <Filter>Source Files\Backend\Updater</Filter>
-    </ClInclude>
-    <ClInclude Include="customInclude\Misc\util.h">
-      <Filter>Source Files\Backend\Controller\Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="customInclude\GUI\GUI.h">
-      <Filter>Source Files\FrontEnd\GUI\Main Window</Filter>
-    </ClInclude>
-    <ClInclude Include="customInclude\GUI\include.h">
-      <Filter>Source Files\FrontEnd\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="resource1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="customInclude\GUI\Functions\Misc\functionality.h">
-      <Filter>Source Files\FrontEnd\GUI\Functionality\Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="main.h">
+    <ClInclude Include="src\main.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="customInclude\User Settings\Game Profiles\gameProfile.h">
-      <Filter>Source Files\Backend\User Settings\Game Profile</Filter>
+    <ClInclude Include="src\GUI\Functions\Misc\functionality.h">
+      <Filter>Source Files\FrontEnd\GUI\Functionality\Misc</Filter>
     </ClInclude>
-    <ClInclude Include="customInclude\User Settings\Adaptive Triggers\Adaptive Triggers.h">
+    <ClInclude Include="src\GUI\GUI.h">
+      <Filter>Source Files\FrontEnd\GUI\Main Window</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\include.h">
+      <Filter>Source Files\FrontEnd\GUI\Main Window</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ControllerIO\controllerIO.h">
+      <Filter>Source Files\Backend\Controller\Controller IO</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Misc\util.h">
+      <Filter>Source Files\Backend\Controller\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Updater\update.h">
+      <Filter>Source Files\Backend\Updater</Filter>
+    </ClInclude>
+    <ClInclude Include="src\User Settings\Adaptive Triggers\Adaptive Triggers.h">
       <Filter>Source Files\Backend\User Settings\Adaptive Triggers</Filter>
     </ClInclude>
-    <ClInclude Include="customInclude\User Settings\Macros\macro.h">
+    <ClInclude Include="src\User Settings\Game Profiles\gameProfile.h">
+      <Filter>Source Files\Backend\User Settings\Game Profile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\User Settings\Macros\macro.h">
       <Filter>Source Files\Backend\User Settings\Macros</Filter>
+    </ClInclude>
+    <ClInclude Include="src\User Settings\Lightbar\Lightbar.h">
+      <Filter>Source Files\Backend\User Settings\Lightbar</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
