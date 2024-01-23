@@ -24,26 +24,29 @@ struct RGB {
 	short int red;
 	short int green;
 	short int blue;
+	short int microhponeLed;
 };
 
 
 struct controller {
 	
+	//Data order per thread
 	unsigned char inputBuffer[78]{};
-	int bufferSize;
-
-    short int batteryLevel;
-	int shortTriggers = 0;
-	RGB RGB;
-
-	bool rainbow = false;
-	bool isConnected;
-	bool bluetooth;
-
-	HANDLE deviceHandle;
 	PVIGEM_CLIENT client;
 	PVIGEM_TARGET emulateX360;
 	XINPUT_STATE ControllerState;
+	short int batteryLevel;
+
+
+	int bufferSize;
+	bool bluetooth;
+	int shortTriggers{};
+
+	RGB RGB[10]{};
+	bool isConnected;
+	bool rainbow{};
+
+	HANDLE deviceHandle;
 	VIGEM_ERROR target;
 };
 

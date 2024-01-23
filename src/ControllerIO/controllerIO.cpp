@@ -117,11 +117,11 @@ void extern inline sendOutputReport(controller& x360Controller) {
 
 			switch (x360Controller.batteryLevel) {
 			case 0:
-				outputHID[10] = 0x02;
+				outputHID[10] = 0x02; // Microphone Button Pulsating
 				outputHID[46] = 255; //Red
 				break;
 			case 12:
-				outputHID[10] = 0x01;
+				outputHID[10] = 0x01; // Microphone button On
 				outputHID[46] = 200; //Red
 				outputHID[47] = 0; //Green
 				outputHID[48] = 55; //Blue
@@ -210,9 +210,9 @@ void extern inline sendOutputReport(controller& x360Controller) {
 			WriteFile(x360Controller.deviceHandle, outputHID, 64, NULL, NULL);
 		}
 
-		x360Controller.RGB.red = outputHID[45 + x360Controller.bluetooth];
-		x360Controller.RGB.green = outputHID[46 + x360Controller.bluetooth];
-		x360Controller.RGB.blue = outputHID[47 + x360Controller.bluetooth];
+		x360Controller.RGB[0].red = outputHID[45 + x360Controller.bluetooth];
+		x360Controller.RGB[0].green = outputHID[46 + x360Controller.bluetooth];
+		x360Controller.RGB[0].blue = outputHID[47 + x360Controller.bluetooth];
 	}
 
 	/*if (x360Controller.rainbow) {

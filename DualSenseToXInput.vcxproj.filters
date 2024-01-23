@@ -64,6 +64,9 @@
     <Filter Include="Source Files\FrontEnd\ImGui">
       <UniqueIdentifier>{cebe3235-338e-4573-92a3-fb0489e937e3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\FrontEnd\GUI\Functionality\Sub Menus">
+      <UniqueIdentifier>{5875696c-e945-4e34-842b-b8730ff7f510}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -116,6 +119,9 @@
     </ClCompile>
     <ClCompile Include="Include\imgui\cpp\imgui_widgets.cpp">
       <Filter>Source Files\FrontEnd\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\Sub Menus\subMenus.cpp">
+      <Filter>Source Files\FrontEnd\GUI\Functionality\Sub Menus</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +199,9 @@
     </ClInclude>
     <ClInclude Include="Include\imgui\header\stb_image.h">
       <Filter>Source Files\FrontEnd\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\Sub Menus\subMenus.h">
+      <Filter>Source Files\FrontEnd\GUI\Functionality\Sub Menus</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -237,6 +237,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
     <ClCompile Include="src\ControllerIO\controllerIO.cpp" />
     <ClCompile Include="src\GUI\Functions\Misc\functionality.cpp" />
     <ClCompile Include="src\GUI\GUI.cpp" />
+    <ClCompile Include="src\GUI\Sub Menus\subMenus.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Misc\util.cpp" />
     <ClCompile Include="src\Updater\update.cpp" />
@@ -264,6 +265,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
     <ClInclude Include="src\GUI\Functions\Misc\functionality.h" />
     <ClInclude Include="src\GUI\GUI.h" />
     <ClInclude Include="src\GUI\include.h" />
+    <ClInclude Include="src\GUI\Sub Menus\subMenus.h" />
     <ClInclude Include="src\main.h" />
     <ClInclude Include="src\Misc\util.h" />
     <ClInclude Include="src\Updater\update.h" />

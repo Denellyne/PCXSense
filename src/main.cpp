@@ -10,7 +10,7 @@ int main() {
 	SetConsoleCtrlHandler(exitFunction, TRUE);
 	
 	//Initialize Fake Controller
-	register controller x360Controller{};
+	controller x360Controller{};
 
 	std::vector<Macros> Macro;
 	std::vector<gameProfile> gameProfiles;
