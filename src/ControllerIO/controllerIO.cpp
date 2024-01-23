@@ -5,13 +5,11 @@
 #include "User Settings/Game Profiles/gameProfile.h"
 #include <iostream>
 
-float Red{ 210 }, Green{}, Blue{ 90 };
-int AddRed{ 1 }, AddGreen{ 1 }, AddBlue{ 1 };
+
 unsigned char outputHID[547]{};
 constexpr DWORD TITLE_SIZE = 1024;
 int emulator{};
 extern bool gameProfileSet;
-
 
 int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PVIGEM_CLIENT& client) {
 
@@ -94,80 +92,61 @@ BOOL inline static CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring){
 void inline adaptiveTriggersProfile(bool& bluetooth, int& shortTriggers);
 
 void extern inline sendOutputReport(controller& x360Controller) {
-	
+	extern bool profileOpen;
+	extern bool lightbarOpen;
+	extern bool profileEdit;
+
 	while (true) {
 		Sleep(4);
 		ZeroMemory(outputHID, 547);
 
+		//USB Report ID or BT additional Flag
+		outputHID[0 + x360Controller.bluetooth] = 0x02;
+
+		//Trigger Flags
+		outputHID[1 + x360Controller.bluetooth] = 0x03 | 0x04 | 0x08;
+		outputHID[2 + x360Controller.bluetooth] = 0x55;
+
 		outputHID[3 + x360Controller.bluetooth] = rumble[0]; //Low Rumble
 		outputHID[4 + x360Controller.bluetooth] = rumble[1]; //High Rumble
 
-		outputHID[9 + x360Controller.bluetooth] = 0x00; //LED Controls
+		adaptiveTriggersProfile(x360Controller.bluetooth, x360Controller.shortTriggers);
+
+		//LED Controls
+		if (lightbarOpen || gameProfileSet || profileEdit) goto LightEditorOpened; //Go-tos are bad ,
+																			      //a better solution is needed 
+
+		switch (x360Controller.batteryLevel) { //Chooses Lightbar Profile
+		case 0: x360Controller.RGB[0].Index = 1; break;
+		case 12: x360Controller.RGB[0].Index = 2; break;
+		case 27: x360Controller.RGB[0].Index = 3; break;
+		case 37: x360Controller.RGB[0].Index = 4; break;
+		case 50: x360Controller.RGB[0].Index = 5; break;
+		case 62: x360Controller.RGB[0].Index = 6; break;
+		case 75: x360Controller.RGB[0].Index = 7; break;
+		case 87: x360Controller.RGB[0].Index = 8; break;
+		case 100: x360Controller.RGB[0].Index = 9; break;
+		default: x360Controller.RGB[0].Index = 0; break;
+		}
+
+LightEditorOpened:
+
+		outputHID[9 + x360Controller.bluetooth] = x360Controller.RGB[x360Controller.RGB[0].Index].microhponeLed;
 		outputHID[39 + x360Controller.bluetooth] = 0x02;
 		outputHID[42 + x360Controller.bluetooth] = 0x02;
 		outputHID[43 + x360Controller.bluetooth] = 0x02;
 
-		adaptiveTriggersProfile(x360Controller.bluetooth, x360Controller.shortTriggers);
+
+		for (int i = 0; i < 3; i++) {
+			outputHID[45 + x360Controller.bluetooth + i] = x360Controller.RGB[x360Controller.RGB[0].Index].colors[i] * 255;
+			x360Controller.RGB[0].colors[i] = x360Controller.RGB[x360Controller.RGB[0].Index].colors[i];
+		}
+
+		//Send Output Report
 
 		if (x360Controller.bluetooth) {
-			outputHID[0] = 0x31;
-			outputHID[1] = 0x02;
-			outputHID[2] = 0x03 | 0x04 | 0x08;
-			outputHID[3] = 0x55;
-
-			switch (x360Controller.batteryLevel) {
-			case 0:
-				outputHID[10] = 0x02; // Microphone Button Pulsating
-				outputHID[46] = 255; //Red
-				break;
-			case 12:
-				outputHID[10] = 0x01; // Microphone button On
-				outputHID[46] = 200; //Red
-				outputHID[47] = 0; //Green
-				outputHID[48] = 55; //Blue
-				break;
-			case 27:
-				outputHID[46] = 230; //Red
-				outputHID[47] = 90; //Green
-				outputHID[48] = 0; //Blue
-				break;
-			case 37:
-				outputHID[46] = 230; //Red
-				outputHID[47] = 130; //Green
-				outputHID[48] = 0; //Blue
-				break;
-			case 50:
-				outputHID[46] = 140; //Red
-				outputHID[47] = 30; //Green
-				outputHID[48] = 90; //Blue
-				break;
-			case 67:
-				outputHID[46] = 90; //Red
-				outputHID[47] = 0; //Green
-				outputHID[48] = 140; //Blue
-				break;
-			case 75:
-				outputHID[46] = 90; //Red
-				outputHID[47] = 0; //Green
-				outputHID[48] = 80; //Blue
-				break;
-			case 87:
-				outputHID[46] = 110; //Red
-				outputHID[47] = 0; //Green
-				outputHID[48] = 80; //Blue
-				break;
-			case 100:
-				outputHID[46] = 200; //Red
-				outputHID[47] = 0; //Green
-				outputHID[48] = 229; //Blue
-				break;
-			default:
-				outputHID[46] = 255; //Red
-				outputHID[47] = 140; //Green
-				outputHID[48] = 0; //Blue
-				break;
-			}
-
+			outputHID[0] = 0x31; // BT Report ID
+			
 			const UINT32 crc = computeCRC32(outputHID, 74);
 
 			outputHID[74] = (crc & 0x000000FF);
@@ -178,44 +157,17 @@ void extern inline sendOutputReport(controller& x360Controller) {
 			WriteFile(x360Controller.deviceHandle, outputHID, 547, NULL, NULL);
 
 		}
-		else {
-			//USB
-			outputHID[0] = 0x02;
-			outputHID[1] = 0x03 | 0x04 | 0x08;
-			outputHID[2] = 0x55;
-
-			switch (x360Controller.batteryLevel) {
-			case 75:
-				outputHID[45] = 20; //Red
-				outputHID[46] = 170; //Green
-				outputHID[47] = 150; //Blue
-				break;
-			case 87:
-				outputHID[45] = 20; //Red
-				outputHID[46] = 170; //Green
-				outputHID[47] = 150; //Blue
-				break;
-			case 100:
-				outputHID[45] = 130; //Red
-				outputHID[46] = 30; //Green
-				outputHID[47] = 255; //Blue
-				break;
-			default:
-				outputHID[45] = 255; //Red
-				outputHID[46] = 140; //Green
-				outputHID[47] = 0; //Blue
-				break;
-			}
-
+		else 
+		//USB
 			WriteFile(x360Controller.deviceHandle, outputHID, 64, NULL, NULL);
-		}
-
-		x360Controller.RGB[0].red = outputHID[45 + x360Controller.bluetooth];
-		x360Controller.RGB[0].green = outputHID[46 + x360Controller.bluetooth];
-		x360Controller.RGB[0].blue = outputHID[47 + x360Controller.bluetooth];
+			
 	}
 
 	/*if (x360Controller.rainbow) {
+	* 
+	* //static float Red{ 210 }, Green{}, Blue{ 90 };
+	  //static int AddRed{ 1 }, AddGreen{ 1 }, AddBlue{ 1 };
+	* 
 				if (Red == 255) AddRed = -1;
 				if (Red == 0) AddRed = 1;
 				if (Green == 255) AddGreen = -1;

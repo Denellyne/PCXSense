@@ -6,6 +6,7 @@
 #include "User Settings/Adaptive Triggers/Adaptive Triggers.h"
 
 extern bool gameProfileSet = false;
+extern bool profileEdit = false;
 
 BOOL inline CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring){
 	const DWORD TITLE_SIZE = 1024;
@@ -145,17 +146,23 @@ void inline checkMacro(Macros& macro, const controller& x360Controller) {
 	}
 }
 
-void asyncGameProfile(std::vector<gameProfile>& gameProfiles, const controller& x360Controller){
+void asyncGameProfile(std::vector<gameProfile>& gameProfiles,controller& x360Controller){
 
 	while (true) {
-		
+		while (profileEdit) Sleep(1000);
 		Sleep(500);
 
 		for (int i = 0; i < gameProfiles.size();i++) {
 			while (gameProfiles[i].isOpen()) {
 
+				//Set profile
+
 				memcpy(&ptrCurrentTriggerProfile, &gameProfiles[i].gameTriggerProfile, 8);
 				gameProfileSet = true;
+				x360Controller.RGB[0].Index = 0;
+				x360Controller.RGB[0].colors[0] = gameProfiles[i].Lightbar.colors[0];
+				x360Controller.RGB[0].colors[1] = gameProfiles[i].Lightbar.colors[1];
+				x360Controller.RGB[0].colors[2] = gameProfiles[i].Lightbar.colors[2];
 				
 				Sleep(20);
 				for (Macros macro : gameProfiles[i].gameMacros) checkMacro(macro, x360Controller);
@@ -166,14 +173,23 @@ void asyncGameProfile(std::vector<gameProfile>& gameProfiles, const controller& 
 	}
 }
 
-void profileEditor(bool& makerOpen,gameProfile& currentProfile, const controller& x360Controller){
+void profileEditor(bool& profileEdit,gameProfile& currentProfile, controller& x360Controller){
 
-	static bool triggerMaker{ false }, profileMacroOpen{ false };
+	ImVec2 combo_pos = ImGui::GetCursorScreenPos();
+	ImGuiStyle& style = ImGui::GetStyle();
+	ImGui::SetCursorScreenPos(ImVec2(combo_pos.x + style.FramePadding.x, combo_pos.y));
+	float iconSize = ImGui::GetTextLineHeightWithSpacing() - style.FramePadding.y;
+
+	static bool triggerMaker{ false }, profileMacroOpen{ false }, lightEditor{false};
 	if (triggerMaker) (triggerEditor(triggerMaker, currentProfile.gameTriggerProfile));
 	if (profileMacroOpen) (macroMenu(profileMacroOpen,currentProfile.gameMacros, x360Controller));
 
 
-	if(ImGui::Begin("Profile Editor",&makerOpen)) {
+	if(ImGui::Begin("Profile Editor",&profileEdit)) {
+		x360Controller.RGB[0].Index = 0;
+		x360Controller.RGB[0].colors[0] = currentProfile.Lightbar.colors[0];
+		x360Controller.RGB[0].colors[1] = currentProfile.Lightbar.colors[1];
+		x360Controller.RGB[0].colors[2] = currentProfile.Lightbar.colors[2];
 
 		ImGui::InputText("Profile Name", &currentProfile.profileName);
 		ImGui::InputText("Application Name", &currentProfile.appNameLiteral);
@@ -184,38 +200,45 @@ void profileEditor(bool& makerOpen,gameProfile& currentProfile, const controller
 
 		if (ImGui::Button("Edit Trigger Profile")) triggerMaker = true;
 		if (ImGui::Button("Edit Macro Profile")) profileMacroOpen = true;
+		if (ImGui::ColorButton("Lightbar", { (float)(currentProfile.Lightbar.colors[0]),(float)(currentProfile.Lightbar.colors[1]),(float)(currentProfile.Lightbar.colors[2]),1 }, 0, { iconSize,iconSize }))
+			lightEditor = !lightEditor;
 
+		if (lightEditor) {
+			ImGui::PushItemWidth(150);
+			ImGui::SameLine();
+			ImGui::ColorPicker3("##RGB Editor GameProfile", &currentProfile.Lightbar.colors[0], ImGuiColorEditFlags_Float | ImGuiColorEditFlags_NoSmallPreview | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoAlpha);
+		}
+			
 
-		ImGui::End();
 	}
+	ImGui::End();
 	currentProfile.appName = std::wstring(&currentProfile.appNameLiteral[0], &currentProfile.appNameLiteral[currentProfile.appNameLiteral.length()]);
 
 }
 
-void profileMenu(bool& profileOpen, std::vector<gameProfile>& gameProfiles, const controller& x360Controller) {
+void profileMenu(bool& profileOpen, std::vector<gameProfile>& gameProfiles, controller& x360Controller) {
 
-	static bool makerOpen = false;
 	static int index{};
 
-	if (makerOpen) profileEditor(makerOpen,gameProfiles[index], x360Controller);
+	if (profileEdit) profileEditor(profileEdit,gameProfiles[index], x360Controller);
 
 	if (ImGui::Begin("Game Profile Menu", &profileOpen)) {
 		for (short int i = 0; i < gameProfiles.size(); i++) {
 			ImGui::PushID(&gameProfiles[i]);
 			if (ImGui::Button(gameProfiles[i].profileName.c_str())) {
-				makerOpen = true;
+				profileEdit = true;
 				index = i;
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Delete Profile")) {
-				makerOpen = false;
+				profileEdit = false;
 				std::filesystem::remove_all(std::format("Game Profiles/{}", gameProfiles[i].profileName).c_str());
 				gameProfiles.erase(gameProfiles.begin() + i);
 			}
 			ImGui::PopID();
 		}
 		if (ImGui::Button("Create new trigger Profile")) {
-			makerOpen = true;
+			profileEdit = true;
 			gameProfile newProfile{};
 			gameProfiles.push_back(newProfile);
 			index = gameProfiles.size() - 1;

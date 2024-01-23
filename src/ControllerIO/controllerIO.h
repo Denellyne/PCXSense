@@ -21,12 +21,10 @@ extern UCHAR rumble[2];
 extern unsigned char ptrCurrentTriggerProfile[8];
 
 struct RGB {
-	short int red;
-	short int green;
-	short int blue;
+	float colors[3]{}; //Red Green Blue
 	short int microhponeLed;
+	int Index;
 };
-
 
 struct controller {
 	
@@ -44,7 +42,7 @@ struct controller {
 
 	RGB RGB[10]{};
 	bool isConnected;
-	bool rainbow{};
+	//bool rainbow{};
 
 	HANDLE deviceHandle;
 	VIGEM_ERROR target;
@@ -97,7 +95,10 @@ int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PV
 
 
 /*
-outputHID[11 + bluetooth] = 0x2; //Mode Motor Right
+*		Triggers Documentation
+* 
+* 
+		outputHID[11 + bluetooth]; //Mode Motor Right
 		outputHID[12 + bluetooth]; //right trigger start of resistance section
 		outputHID[13 + bluetooth]; //right trigger (mode1) amount of force exerted (mode2) end of resistance section supplemental mode 4+20) flag(s?) 0x02 = do not pause effect when fully presse
 		outputHID[14 + bluetooth]; //right trigger force exerted in range (mode2)

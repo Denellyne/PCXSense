@@ -17,15 +17,14 @@ public:
 	std::wstring appName{};
 	std::vector<Macros> gameMacros;
 	unsigned char gameTriggerProfile[8]{};
-  //  Lightbar Color;
+  	RGB Lightbar;
 
     bool inline isOpen();
 
-
 };
 
-void asyncGameProfile(std::vector<gameProfile>& gameProfiles, const controller& x360Controller);
+void asyncGameProfile(std::vector<gameProfile>& gameProfiles, controller& x360Controller);
 void loadProfiles(std::vector<gameProfile>& gameProfiles);
 void saveProfiles(const std::vector<gameProfile> gameProfiles);
-void profileEditor(bool& makerOpen, gameProfile& currentProfile, const controller& x360Controller);
-void profileMenu(bool& profileOpen, std::vector<gameProfile>& gameProfiles, const controller& x360Controller);
+void profileEditor(bool& makerOpen, gameProfile& currentProfile, controller& x360Controller);
+void profileMenu(bool& profileOpen, std::vector<gameProfile>& gameProfiles, controller& x360Controller);

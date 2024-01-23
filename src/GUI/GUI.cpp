@@ -1,12 +1,14 @@
 #include "GUI.h"
 #include "Functions\Misc\functionality.h"
 #include "Sub Menus\subMenus.h"
+#include "User Settings/Lightbar/Lightbar.h"
 #include <conio.h>
 
 bool rumbleWindow = false;
 extern bool debugOpen = false;
 extern bool macroOpen = false;
 extern bool profileOpen = false;
+extern bool lightbarOpen = false;
 float lightbar = 0.0f;
 
 void inline app(controller& x360Controller,const GLuint* Images, std::vector<Macros>& Macro, std::vector<gameProfile>& gameProfiles);
@@ -15,7 +17,7 @@ void inline drawController(const float& displaySizeX, const float& displaySizeY,
 
 void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected,const int& batteryLevel);
 
-void inline topBar(const GLuint* Images, const float& displaySizeX,const RGB& RGB);
+void inline topBar(const GLuint* Images, const float& displaySizeX, const float* RGB);
 
 int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameProfile>& gameProfiles){
     GLuint Images[21];
@@ -79,7 +81,7 @@ void inline app(controller& x360Controller,const GLuint* Images, std::vector<Mac
 
     //Setting colors for child window
     setColors();
-    topBar(Images,io.DisplaySize.x,x360Controller.RGB[0]);
+    topBar(Images,io.DisplaySize.x,x360Controller.RGB[0].colors);
     notificationBar({ io.DisplaySize.x , io.DisplaySize.y - 35 }, x360Controller.isConnected, x360Controller.batteryLevel);
 
     drawController(io.DisplaySize.x, io.DisplaySize.y, xMultiplier, yMultiplier, x360Controller, Images);
@@ -88,6 +90,7 @@ void inline app(controller& x360Controller,const GLuint* Images, std::vector<Mac
     if (debugOpen) debugMenu(x360Controller);
     if (macroOpen) macroMenu(Macro,x360Controller);
     if (profileOpen) profileMenu(profileOpen, gameProfiles, x360Controller);
+    if (lightbarOpen) lightbarEditor(lightbarOpen, x360Controller.RGB);
 
     ImGui::PopStyleColor(3);
 
@@ -124,7 +127,7 @@ void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected,const 
     ImGui::EndChild();
 }
 
-void inline topBar(const GLuint* Images, const float& displaySizeX,const RGB& RGB) {
+void inline topBar(const GLuint* Images, const float& displaySizeX,const float* RGB) {
 
     ImGui::SetCursorPos({ displaySizeX-60,0 });
     ImVec2 combo_pos = ImGui::GetCursorScreenPos();
@@ -164,9 +167,9 @@ void inline topBar(const GLuint* Images, const float& displaySizeX,const RGB& RG
         ImGui::SameLine(30);
         ImGui::Text("Rumble Test");
 
-        if (ImGui::Selectable("##Lightbar Settings")); //Ligthbar Menu
+        if (ImGui::Selectable("##Lightbar Settings")) lightbarOpen = true; //Ligthbar Menu
         ImGui::SameLine(7);
-        ImGui::ColorButton("Lightbar", { (float)(RGB.red << 8),(float)(RGB.green << 8),(float)(RGB.blue << 8),1 },0, {iconSize,iconSize});
+        ImGui::ColorButton("Lightbar", { (RGB[0]),(RGB[1]),(RGB[2]),1 },0, {iconSize,iconSize});
         ImGui::SameLine();
         ImGui::Text("Lightbar Settings");
 
@@ -201,7 +204,7 @@ void inline drawController(const float& displaySizeX, const float& displaySizeY,
 
     //Lightbar
     ImGui::SetCursorPos({ displaySizeX / 2.49f, displaySizeY / 3.935f });
-    ImGui::Image((void*)Images[3], { (801 / 3) * displaySizeX / 1280,(388 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { (float)(x360Controller.RGB[0].red << 8),(float)(x360Controller.RGB[0].green << 8),(float)(x360Controller.RGB[0].blue << 8),lightbar }); //RGB
+    ImGui::Image((void*)Images[3], { (801 / 3) * displaySizeX / 1280,(388 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { (x360Controller.RGB[0].colors[0] ),(x360Controller.RGB[0].colors[1]),(x360Controller.RGB[0].colors[2]),lightbar }); //RGB
 
     //Controller
     ImGui::SetCursorPos(controllerPosition);
