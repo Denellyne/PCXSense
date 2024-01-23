@@ -63,3 +63,18 @@ int main() {
 	return 0;
 }
 
+
+//Should fix performance
+
+#pragma warning(disable:4073) // initializers put in library initialization area
+#pragma init_seg(lib)
+
+#if _MSC_VER < 2200
+struct VS2013_threading_fix
+{
+	VS2013_threading_fix()
+	{
+		_Cnd_do_broadcast_at_thread_exit();
+	}
+} threading_fix;
+#endif

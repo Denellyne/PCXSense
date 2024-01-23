@@ -13,6 +13,7 @@
 #include <thread>
 #include <format>
 
+
 LPVOID ptrController;
 LPVOID asyncThreadPointer;
 LPVOID ptrMacros;

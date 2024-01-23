@@ -14,7 +14,7 @@ void inline drawController(const float& displaySizeX, const float& displaySizeY,
 
 void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected,const int& batteryLevel,float& lightbar,const ImTextureID& updateButton);
 
-void inline topBar(const GLuint* Images, const float& displaySizeX, const float& displaySizeY,const float* RGB);
+void inline topBar(const GLuint* Images, const float& displaySizeX, const float& displaySizeY,const RGB& RGB);
 
 int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameProfile>& gameProfiles){
     register GLuint Images[21];
@@ -22,11 +22,11 @@ int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameP
     glfwInit();
     GLFWwindow* window = glfwCreateWindow(defaultWindowWidth, defaultWindowHeigth, "PCXSense", nullptr, nullptr);
     if (window == nullptr) return 1;
+    
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
 
     loadTexture(Images,window);
-
     // GUI BoilerPlate
 
     IMGUI_CHECKVERSION();
@@ -39,8 +39,7 @@ int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameP
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
     while (!glfwWindowShouldClose(window)) { // Render
-
-        glfwPollEvents();
+        glfwWaitEventsTimeout(0.01666666666f); //60 fps
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -53,7 +52,6 @@ int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameP
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(window);   
-
     }
 
     glfwTerminate();
@@ -66,7 +64,6 @@ int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameP
 
 void inline app(controller& x360Controller,const GLuint* Images, std::vector<Macros>& Macro, std::vector<gameProfile>& gameProfiles) {
     //Boilerplate Window Code
-    register float RGB[3] = { x360Controller.RGB.red / 255,x360Controller.RGB.green / 255,x360Controller.RGB.blue / 255 };
     static ImGuiIO& io = ImGui::GetIO();
     if (lightbar >= 1) lightbar = 1;
     if (lightbar < 0) lightbar = 0;
@@ -77,12 +74,12 @@ void inline app(controller& x360Controller,const GLuint* Images, std::vector<Mac
     ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, io.DisplaySize.y));
     ImGui::SetNextWindowPos(ImVec2(0, 0));
 
-    ImGui::Begin("PSXSense", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus);
+    ImGui::Begin("PCXSense", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus);
 
 
     //Setting colors for child window
     setColors();
-    topBar(Images,io.DisplaySize.x,io.DisplaySize.y,RGB);
+    topBar(Images,io.DisplaySize.x,io.DisplaySize.y,x360Controller.RGB);
     notificationBar({ io.DisplaySize.x , io.DisplaySize.y - 35 }, x360Controller.isConnected, x360Controller.batteryLevel, lightbar, (void*)Images[16]);
 
     drawController(io.DisplaySize.x, io.DisplaySize.y, xMultiplier, yMultiplier, x360Controller, Images);
@@ -127,7 +124,7 @@ void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected,const 
     ImGui::EndChild();
 }
 
-void inline topBar(const GLuint* Images, const float& displaySizeX, const float& displaySizeY, const float* RGB) {
+void inline topBar(const GLuint* Images, const float& displaySizeX, const float& displaySizeY,const RGB& RGB) {
 
     ImGui::SetCursorPos({ displaySizeX-60,0 });
     ImVec2 combo_pos = ImGui::GetCursorScreenPos();
@@ -169,7 +166,7 @@ void inline topBar(const GLuint* Images, const float& displaySizeX, const float&
 
         if (ImGui::Selectable("##Lightbar Settings")); //Ligthbar Menu
         ImGui::SameLine(7);
-        ImGui::ColorButton("Lightbar", { RGB[0],RGB[1],RGB[2],1 },0, {iconSize,iconSize});
+        ImGui::ColorButton("Lightbar", { (float)(RGB.red << 8),(float)(RGB.green << 8),(float)(RGB.blue << 8),1 },0, {iconSize,iconSize});
         ImGui::SameLine();
         ImGui::Text("Lightbar Settings");
 
@@ -204,7 +201,7 @@ void inline drawController(const float& displaySizeX, const float& displaySizeY,
 
     //Lightbar
     ImGui::SetCursorPos({ displaySizeX / 2.49f, displaySizeY / 3.935f });
-    ImGui::Image((void*)Images[3], { (801 / 3) * displaySizeX / 1280,(388 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { x360Controller.RGB.red / 255,x360Controller.RGB.green / 255,x360Controller.RGB.blue / 255,lightbar }); //RGB
+    ImGui::Image((void*)Images[3], { (801 / 3) * displaySizeX / 1280,(388 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { (float)(x360Controller.RGB.red << 8),(float)(x360Controller.RGB.green << 8),(float)(x360Controller.RGB.blue << 8),lightbar }); //RGB
 
     //Controller
     ImGui::SetCursorPos(controllerPosition);

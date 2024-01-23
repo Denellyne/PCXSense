@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 #include <string>
 #include <windows.h>
 #include <Xinput.h>
@@ -21,33 +20,31 @@
 extern UCHAR rumble[2];
 extern unsigned char ptrCurrentTriggerProfile[8];
 
+struct RGB {
+	short int red;
+	short int green;
+	short int blue;
+};
+
+
 struct controller {
-
-	struct RGB {
-		float red;
-		float green;
-		float blue;
-	};
-
+	
 	unsigned char inputBuffer[78]{};
-
-    int batteryLevel;
 	int bufferSize;
 
+    short int batteryLevel;
 	int shortTriggers = 0;
+	RGB RGB;
 
 	bool rainbow = false;
 	bool isConnected;
 	bool bluetooth;
-
-	RGB RGB;
 
 	HANDLE deviceHandle;
 	PVIGEM_CLIENT client;
 	PVIGEM_TARGET emulateX360;
 	XINPUT_STATE ControllerState;
 	VIGEM_ERROR target;
-
 };
 
 const UINT32 crcSeed = 0xeada2d49;

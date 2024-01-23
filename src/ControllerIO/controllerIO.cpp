@@ -3,6 +3,7 @@
 #include <tchar.h>
 #include "User Settings/Adaptive Triggers/Adaptive Triggers.h"
 #include "User Settings/Game Profiles/gameProfile.h"
+#include <iostream>
 
 float Red{ 210 }, Green{}, Blue{ 90 };
 int AddRed{ 1 }, AddGreen{ 1 }, AddBlue{ 1 };

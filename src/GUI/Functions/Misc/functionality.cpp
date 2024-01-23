@@ -100,7 +100,7 @@ void debugMenu(controller& x360Controller) {
     static ImGuiIO& io = ImGui::GetIO();
 
     if (ImGui::Begin("Debug Menu", &debugOpen, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings)) {
-        ImGui::Text(std::format("Framerate: {}", (int)io.Framerate).c_str());
+        ImGui::Text(std::format("Framerate: {}", (int)io.Framerate << 1).c_str()); //glfwWaitEventsTimeout makes so the reading is halved
         ImGui::Text("Controller Readings:");
         ImGui::Text(std::format("Left Joystick Horizontal  Value: {}", (int)((x360Controller.inputBuffer[1 + x360Controller.bluetooth] * 257) - 32768)).c_str());
         ImGui::Text(std::format("Left Joystick Vertical    Value: {}", (int)(32767 - (x360Controller.inputBuffer[2 + x360Controller.bluetooth] * 257))).c_str());
