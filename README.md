@@ -82,6 +82,9 @@ Multiple Controller Emulation
 
 ### Theme Switcher - DirectInput Mode
 
+## Want to ask me about something
+
+Go to [Discussion](https://github.com/Denellyne/PCXSense/discussions/6) and tag me with @Denellyne 
 
 ## Found a bug
 
