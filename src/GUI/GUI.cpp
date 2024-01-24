@@ -21,8 +21,9 @@ void inline topBar(const GLuint* Images, const float& displaySizeX, const float*
 
 int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameProfile>& gameProfiles){
     GLuint Images[21];
-    
+
     glfwInit();
+
     GLFWwindow* window = glfwCreateWindow(defaultWindowWidth, defaultWindowHeigth, "PCXSense", nullptr, nullptr);
     if (window == nullptr) return 1;
     
@@ -57,10 +58,11 @@ int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameP
         glfwSwapBuffers(window);   
     }
 
-    glfwTerminate();
+   
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+    glfwTerminate(); 
     exitFunction(2);
     return 0;
 }

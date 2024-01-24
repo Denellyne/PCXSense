@@ -7,6 +7,8 @@
 
 extern bool gameProfileSet = false;
 extern bool profileEdit = false;
+extern UCHAR rumble[2];
+
 
 BOOL inline CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring){
 	const DWORD TITLE_SIZE = 1024;
@@ -29,32 +31,39 @@ void saveProfiles(const std::vector<gameProfile> gameProfiles) {
 	for (gameProfile profile : gameProfiles) {
 		std::filesystem::create_directory(std::format("Game Profiles/{}",profile.profileName));
 
-		//Write Profile Strings and Trigger Profile
+		//Write Profile Strings and Trigger Profile and Lightbar Profile
 
-		std::ofstream writeProfile(std::format("Game Profiles/{}/profile.txt",profile.profileName));
-		if (writeProfile.is_open()) {
+		std::ofstream saveProfile(std::format("Game Profiles/{}/profile.txt",profile.profileName));
+		if (saveProfile.is_open()) {
 
-			writeProfile << profile.profileName << '\n';
-			for(short int i = 0;i < profile.appName.length();i++) writeProfile << (char*)(&profile.appName[i]);
-			writeProfile << '\n';
+			saveProfile << profile.profileName << '\n';
+			for(short int i = 0;i < profile.appName.length();i++) saveProfile << (char*)(&profile.appName[i]);
+			saveProfile << '\n';
 
 			//Write triggers
-			for (short int i = 0; i < 8; i++) writeProfile << (int)profile.gameTriggerProfile[i] << '\n';
+			for (short int i = 0; i < 8; i++) saveProfile << (int)profile.gameTriggerProfile[i] << '\n';
 
-			writeProfile.close();
+			saveProfile << profile.rumbleTriggers << '\n';
+			
+			saveProfile << profile.Lightbar.colors[0] << '\n';
+			saveProfile << profile.Lightbar.colors[1] << '\n';
+			saveProfile << profile.Lightbar.colors[2] << '\n';
+			saveProfile << profile.Lightbar.microhponeLed << '\n';
+
+			saveProfile.close();
 		}
 
 		//Write Macro Vector
 
-		std::ofstream writeMacros(std::format("Game Profiles/{}/macros.txt", profile.profileName));
-		if (writeMacros.is_open()) {
+		std::ofstream saveMacro(std::format("Game Profiles/{}/macros.txt", profile.profileName));
+		if (saveMacro.is_open()) {
 			for (Macros macro : profile.gameMacros) {
-				writeMacros << macro.Name << '\n';
-				writeMacros << macro.buttonCombination << '\n';
-				writeMacros << macro.input[0].ki.wVk << '\n';
-				writeMacros << (char)macro.input[1].ki.wVk << '\n';
+				saveMacro << macro.Name << '\n';
+				saveMacro << macro.buttonCombination << '\n';
+				saveMacro << macro.input[0].ki.wVk << '\n';
+				saveMacro << (char)macro.input[1].ki.wVk << '\n';
 			}
-			writeMacros.close();
+			saveMacro.close();
 		}
 
 	}
@@ -68,7 +77,8 @@ void inline writeProfiles(std::string dirEntry, gameProfile& currentProfile) {
 	if (writeStrings.is_open()) {
 		std::string profileName{};
 		std::string appName{};
-		int trigger[8]{};
+		int trigger[9]{};
+		RGB Lightbar{};
 
 		while (writeStrings.good()) {
 
@@ -82,9 +92,21 @@ void inline writeProfiles(std::string dirEntry, gameProfile& currentProfile) {
 			currentProfile.appNameLiteral = appName;
 
 
-			for (short int i = 0; i < 8; i++) writeStrings >> trigger[i];
+			for (short int i = 0; i < 9; i++) writeStrings >> trigger[i];
 
 			for (short int i = 0; i < 8; i++) currentProfile.gameTriggerProfile[i] = trigger[i];
+			currentProfile.rumbleTriggers = (bool)trigger[8];
+
+			writeStrings >> Lightbar.colors[0];
+			writeStrings >> Lightbar.colors[1];
+			writeStrings >> Lightbar.colors[2];
+			writeStrings >> Lightbar.microhponeLed;
+
+			currentProfile.Lightbar.colors[0] = Lightbar.colors[0];
+			currentProfile.Lightbar.colors[1] = Lightbar.colors[1];
+			currentProfile.Lightbar.colors[2] = Lightbar.colors[2];
+			currentProfile.Lightbar.microhponeLed = Lightbar.microhponeLed;
+
 		}
 		writeStrings.close();
 	}
@@ -163,6 +185,12 @@ void asyncGameProfile(std::vector<gameProfile>& gameProfiles,controller& x360Con
 				x360Controller.RGB[0].colors[0] = gameProfiles[i].Lightbar.colors[0];
 				x360Controller.RGB[0].colors[1] = gameProfiles[i].Lightbar.colors[1];
 				x360Controller.RGB[0].colors[2] = gameProfiles[i].Lightbar.colors[2];
+
+				if (gameProfiles[i].rumbleTriggers) {
+					ptrCurrentTriggerProfile[1] += (int)rumble[0] >> 4;
+					ptrCurrentTriggerProfile[2] += (int)rumble[1] >> 4;
+					if ((int)rumble[0] >= 230) ptrCurrentTriggerProfile[3] = 220;
+				}
 				
 				Sleep(20);
 				for (Macros macro : gameProfiles[i].gameMacros) checkMacro(macro, x360Controller);
@@ -181,7 +209,7 @@ void profileEditor(bool& profileEdit,gameProfile& currentProfile, controller& x3
 	float iconSize = ImGui::GetTextLineHeightWithSpacing() - style.FramePadding.y;
 
 	static bool triggerMaker{ false }, profileMacroOpen{ false }, lightEditor{false};
-	if (triggerMaker) (triggerEditor(triggerMaker, currentProfile.gameTriggerProfile));
+	if (triggerMaker) (triggerEditor(triggerMaker, currentProfile.gameTriggerProfile,currentProfile.rumbleTriggers));
 	if (profileMacroOpen) (macroMenu(profileMacroOpen,currentProfile.gameMacros, x360Controller));
 
 

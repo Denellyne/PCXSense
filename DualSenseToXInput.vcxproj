@@ -168,8 +168,7 @@
       </IgnoreSpecificDefaultLibraries>
     </Link>
     <CustomBuildStep>
-      <Inputs>
-      </Inputs>
+      <Inputs>%(Inputs)</Inputs>
     </CustomBuildStep>
     <PostBuildEvent>
       <Command>copy /y "$(SolutionDir)Include\ViGEm\ViGEmClient.dll" "$(TargetDir)\ViGEmClient.dll"
@@ -215,8 +214,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
       </DelayLoadDLLs>
     </Link>
     <CustomBuildStep>
-      <Inputs>
-      </Inputs>
+      <Inputs>%(Inputs)</Inputs>
     </CustomBuildStep>
     <PostBuildEvent>
       <Command>copy /y "$(SolutionDir)Include\ViGEm\ViGEmClient.dll" "$(TargetDir)\ViGEmClient.dll"

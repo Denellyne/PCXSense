@@ -4,9 +4,9 @@
 extern unsigned char ptrCurrentTriggerProfile[8]{};
 extern bool gameProfileSet;
 
-void triggerEditor(bool& makerOpen, unsigned char* trigger) {
+void triggerEditor(bool& makerOpen, unsigned char* trigger,bool& rumbleTriggers) {
 
-	static const short int triggerModes[9] = {  0x0, //Off
+	static const short int triggerModes[9] = { 0x0, //Off
 												0x1, //Rigid
 												0x2, //Pulse
 												0x1 | 0x20, //Rigid_A
@@ -21,13 +21,33 @@ void triggerEditor(bool& makerOpen, unsigned char* trigger) {
 		memcpy(&ptrCurrentTriggerProfile, &*trigger, 8);
 
 		if (ImGui::BeginCombo("Trigger Mode", std::format("{}", (int)trigger[0]).c_str())) {
-			for (short int i = 0; i < 9; i++) if (ImGui::Selectable(std::format("{}", triggerModes[i]).c_str())) trigger[0] = triggerModes[i];
+			for (short int i = 0; i < IM_ARRAYSIZE(triggerModes); i++) if (ImGui::Selectable(std::format("{}", triggerModes[i]).c_str())) trigger[0] = triggerModes[i];
 			ImGui::EndCombo();
 		}
 		if (ImGui::BeginItemTooltip()) {
-			ImGui::Text("0 = Off\n1 = Rigid\n2 = Pulse\n33 = Rigid_A\n5 = Rigid_B\n37 = Rigid_AB\n34 = Pulse_A\n6 = Pulse_B\n38 = Pulse_AB");
+			ImGui::Text("0 = Off\n1 = Rigid\n2 = Pulse\n33 = Rigid_A\n5 = Rigid_B\n37 = Rigid_AB\n34 = Pulse_A\n6 = Pulse_B - Rumble affects Triggers\n38 = Pulse_AB\n");
 			ImGui::EndTooltip();
 		}
+
+		if (trigger[0] == (0x2 | 0x04)) {
+			if (ImGui::RadioButton("Dinamic Rumble to Triggers", rumbleTriggers)) 
+				rumbleTriggers = !rumbleTriggers;
+
+			if (rumbleTriggers) {
+
+				ImGui::SliderInt("##2", (int*)&trigger[1], 0, 15);
+				ImGui::SliderInt("##3", (int*)&trigger[2], 0, 200);
+
+				ImGui::End();
+				return;
+			}
+			
+		}
+				
+		else
+			rumbleTriggers = false;
+
+		
 
 		//Changed SliderInt Datatype so it displays the values properly
 		ImGui::SliderInt("##2", (int*)&trigger[1], 0, 255);

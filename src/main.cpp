@@ -6,6 +6,7 @@ int main() {
 	autoUpdater();
 #endif
 
+
 	SetProcessShutdownParameters(2, 0);
 	SetConsoleCtrlHandler(exitFunction, TRUE);
 	
@@ -17,6 +18,7 @@ int main() {
 
 	loadMacros(Macro);
 	loadProfiles(gameProfiles);
+	loadLightSettings(x360Controller);
 	
 	x360Controller.client = vigem_alloc();
 

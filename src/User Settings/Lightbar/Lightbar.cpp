@@ -1,7 +1,43 @@
 #include "Lightbar.h"
 #include "GUI/include.h"
+#include <fstream>
 
 extern bool lightbarOpen;
+
+void saveLightSettings(const controller& controller){
+
+	std::ofstream writeLight("light.txt");
+	if (writeLight.is_open()) {
+		for(int i = 1;i < 10;i++){
+			writeLight << controller.RGB[i].colors[0] << '\n';
+			writeLight << controller.RGB[i].colors[1] << '\n';
+			writeLight << controller.RGB[i].colors[2] << '\n';
+			writeLight << controller.RGB[i].microhponeLed << '\n';
+		}
+
+		writeLight.close();
+	}
+
+}
+
+void loadLightSettings(controller& controller) {
+
+	std::ifstream loadLight("light.txt");
+	if (loadLight.is_open()) {
+
+		for (int i = 1; i < 10; i++) {
+			loadLight >> controller.RGB[i].colors[0];
+			loadLight >> controller.RGB[i].colors[1];
+			loadLight >> controller.RGB[i].colors[2];
+			loadLight >> controller.RGB[i].microhponeLed;
+		}
+
+		loadLight.close();
+
+	}
+
+
+}
 
 void lightbarEditor(bool& lightbarOpen,RGB* RGB) {
 	ImVec2 combo_pos = ImGui::GetCursorScreenPos();

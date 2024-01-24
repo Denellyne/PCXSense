@@ -1,3 +1,3 @@
 #pragma once
 
-void triggerEditor(bool& makerOpen, unsigned char* trigger);
+void triggerEditor(bool& makerOpen, unsigned char* trigger, bool& rumbleTriggers);

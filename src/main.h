@@ -10,6 +10,7 @@
 #include "User Settings/Macros/macro.h"
 #include "User Settings/Adaptive Triggers/Adaptive Triggers.h"
 #include "User Settings/Game Profiles/gameProfile.h"
+#include "User Settings/Lightbar/Lightbar.h"
 #include <thread>
 #include <format>
 
@@ -60,8 +61,9 @@ void zeroOutputReport() {
 extern BOOL WINAPI exitFunction(_In_ DWORD dwCtrlType) {
 	reinterpret_cast<std::thread*>(asyncThreadPointer)->~thread();
 	zeroOutputReport();
-	saveProfiles(*reinterpret_cast<std::vector<gameProfile>*>(ptrProfiles));
 	saveMacros(*reinterpret_cast<std::vector<Macros>*>(ptrMacros));
+	saveLightSettings(*reinterpret_cast<controller*>(ptrController));
+	saveProfiles(*reinterpret_cast<std::vector<gameProfile>*>(ptrProfiles));
 
 	//Cleanup	
 	vigem_target_remove(reinterpret_cast<controller*>(ptrController)->client, reinterpret_cast<controller*>(ptrController)->emulateX360);

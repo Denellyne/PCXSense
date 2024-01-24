@@ -17,6 +17,7 @@ public:
 	std::wstring appName{};
 	std::vector<Macros> gameMacros;
 	unsigned char gameTriggerProfile[8]{};
+	bool rumbleTriggers = 0;
   	RGB Lightbar;
 
     bool inline isOpen();
