@@ -4,6 +4,7 @@
 #include "GUI\Functions\Misc\functionality.h"
 #include "User Settings/Macros/macro.h"
 #include "User Settings/Adaptive Triggers/Adaptive Triggers.h"
+#include <iostream>
 
 extern bool gameProfileSet = false;
 extern bool profileEdit = false;
@@ -20,23 +21,28 @@ BOOL inline CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring){
 
 	return true;
 }
-
 bool inline gameProfile::isOpen() {
+	if (appName.length() == 0) return false;
 	if (EnumWindows(FindWindowBySubstr, (LPARAM)appName.c_str()) == false) return true;
 	return false;
 }
 
 void saveProfiles(const std::vector<gameProfile> gameProfiles) {
+	std::filesystem::remove_all("Game Profiles");
 	std::filesystem::create_directory("Game Profiles");
 	for (gameProfile profile : gameProfiles) {
-		std::filesystem::create_directory(std::format("Game Profiles/{}",profile.profileName));
+
+		if (strlen(profile.profileName.c_str()) == 0) profile.profileName = "NULL";
+		if (profile.appName.length() == 0) profile.appName = L"NULL";
+
+		std::filesystem::create_directory(std::format("Game Profiles/{}",profile.profileName.c_str()));
 
 		//Write Profile Strings and Trigger Profile and Lightbar Profile
 
-		std::ofstream saveProfile(std::format("Game Profiles/{}/profile.txt",profile.profileName));
+		std::ofstream saveProfile(std::format("Game Profiles/{}/profile.txt",profile.profileName.c_str()));
 		if (saveProfile.is_open()) {
 
-			saveProfile << profile.profileName << '\n';
+			saveProfile << profile.profileName.c_str() << '\n';
 			for(short int i = 0;i < profile.appName.length();i++) saveProfile << (char*)(&profile.appName[i]);
 			saveProfile << '\n';
 
@@ -55,10 +61,11 @@ void saveProfiles(const std::vector<gameProfile> gameProfiles) {
 
 		//Write Macro Vector
 
-		std::ofstream saveMacro(std::format("Game Profiles/{}/macros.txt", profile.profileName));
+		std::ofstream saveMacro(std::format("Game Profiles/{}/macros.txt", profile.profileName.c_str()));
 		if (saveMacro.is_open()) {
 			for (Macros macro : profile.gameMacros) {
-				saveMacro << macro.Name << '\n';
+				if (strlen(macro.Name.c_str()) == 0) macro.Name = "NULL";
+				saveMacro << macro.Name.c_str() << '\n';
 				saveMacro << macro.buttonCombination << '\n';
 				saveMacro << macro.input[0].ki.wVk << '\n';
 				saveMacro << (char)macro.input[1].ki.wVk << '\n';

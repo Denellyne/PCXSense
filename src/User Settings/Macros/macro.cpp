@@ -8,7 +8,8 @@ void saveMacros(const std::vector<Macros> Macro) {
 	std::ofstream writeMacros("macros.txt");
 	if(writeMacros.is_open()){
 		for (Macros macro : Macro) {
-			writeMacros << macro.Name << '\n';
+			if (strlen(macro.Name.c_str()) == 0) macro.Name = "NULL";
+			writeMacros << macro.Name.c_str() << '\n';
 			writeMacros << macro.buttonCombination << '\n';
 			writeMacros << macro.input[0].ki.wVk << '\n';
 			writeMacros << (char)macro.input[1].ki.wVk << '\n';
