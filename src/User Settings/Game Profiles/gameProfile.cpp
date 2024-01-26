@@ -69,6 +69,7 @@ void saveProfiles(const std::vector<gameProfile> gameProfiles) {
 	}
 }
 
+
 void inline writeProfiles(std::string dirEntry, gameProfile& currentProfile) {
 
 	//Write strings and TriggerProfile
@@ -81,13 +82,16 @@ void inline writeProfiles(std::string dirEntry, gameProfile& currentProfile) {
 		RGB Lightbar{};
 
 		while (writeStrings.good()) {
+			std::getline(writeStrings, profileName,'\n');
+			memcpy(&currentProfile.profileName[0], &profileName[0], profileName.length());
 
-			writeStrings >> profileName;
-			writeStrings.get();
-			currentProfile.profileName = profileName;
+			//It just works if I add this idk
 
-			writeStrings >> appName;
-			writeStrings.get();
+			writeStrings.ignore();
+			writeStrings.unget();
+			//
+			std::getline(writeStrings, appName,'\n');
+
 			currentProfile.appName = std::wstring(&appName[0], &appName[appName.length()]);
 			currentProfile.appNameLiteral = appName;
 
@@ -171,14 +175,12 @@ void inline checkMacro(Macros& macro, const controller& x360Controller) {
 void asyncGameProfile(std::vector<gameProfile>& gameProfiles,controller& x360Controller){
 
 	while (true) {
-		while (profileEdit) Sleep(1000);
+		while (profileEdit) Sleep(500);
 		Sleep(500);
 
 		for (int i = 0; i < gameProfiles.size();i++) {
 			while (gameProfiles[i].isOpen()) {
-
 				//Set profile
-
 				memcpy(&ptrCurrentTriggerProfile, &gameProfiles[i].gameTriggerProfile, 8);
 				gameProfileSet = true;
 				x360Controller.RGB[0].Index = 0;

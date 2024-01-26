@@ -3,7 +3,12 @@
 #include <tchar.h>
 #include "User Settings/Adaptive Triggers/Adaptive Triggers.h"
 #include "User Settings/Game Profiles/gameProfile.h"
+#ifdef _DEBUG
 #include <iostream>
+#define DEBUG(x) do { std::cout << x << '\n'; } while (0)
+#else
+#define DEBUG(x) do ; while(0)
+#endif // _DEBUG
 
 
 unsigned char outputHID[547]{};
@@ -15,7 +20,7 @@ int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PV
 
 	if (client == nullptr)
 	{
-		std::cerr << "Uh, not enough memory to do that?!" << std::endl;
+		DEBUG("Uh, not enough memory to do that?!");
 		return -1;
 	}
 
@@ -23,7 +28,7 @@ int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PV
 
 	if (!VIGEM_SUCCESS(retval))
 	{
-		std::cerr << "ViGEm Bus connection failed with error code: 0x" << std::hex << retval << std::endl;
+		DEBUG("ViGEm Bus connection failed with error code: 0x" << std::hex << retval);
 		return -1;
 	}
 
@@ -119,7 +124,7 @@ void extern inline sendOutputReport(controller& x360Controller) {
 		switch (x360Controller.batteryLevel) { //Chooses Lightbar Profile
 		case 0: x360Controller.RGB[0].Index = 1; break;
 		case 12: x360Controller.RGB[0].Index = 2; break;
-		case 27: x360Controller.RGB[0].Index = 3; break;
+		case 25: x360Controller.RGB[0].Index = 3; break;
 		case 37: x360Controller.RGB[0].Index = 4; break;
 		case 50: x360Controller.RGB[0].Index = 5; break;
 		case 62: x360Controller.RGB[0].Index = 6; break;
