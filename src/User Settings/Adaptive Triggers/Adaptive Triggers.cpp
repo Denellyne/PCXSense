@@ -6,6 +6,9 @@ extern bool gameProfileSet;
 
 void triggerEditor(bool& makerOpen, unsigned char* trigger,bool& rumbleTriggers) {
 
+	rumble[0] = 0;
+	rumble[1] = 0;
+
 	static const short int triggerModes[9] = { 0x0, //Off
 												0x1, //Rigid
 												0x2, //Pulse
@@ -17,8 +20,11 @@ void triggerEditor(bool& makerOpen, unsigned char* trigger,bool& rumbleTriggers)
 												0x2 | 0x20 | 0x04 }; //Pulse AB
 
 	if (ImGui::Begin("Adaptive Trigger Maker", &makerOpen)) {
+		static int motor1{}, motor2{};
+
 		gameProfileSet = true;
 		memcpy(&ptrCurrentTriggerProfile, &*trigger, 8);
+		
 
 		if (ImGui::BeginCombo("Trigger Mode", std::format("{}", (int)trigger[0]).c_str())) {
 			for (short int i = 0; i < IM_ARRAYSIZE(triggerModes); i++) if (ImGui::Selectable(std::format("{}", triggerModes[i]).c_str())) trigger[0] = triggerModes[i];
@@ -37,6 +43,18 @@ void triggerEditor(bool& makerOpen, unsigned char* trigger,bool& rumbleTriggers)
 
 				ImGui::SliderInt("##2", (int*)&trigger[1], 0, 15);
 				ImGui::SliderInt("##3", (int*)&trigger[2], 0, 200);
+
+				ImGui::Text("Rumble Edit");
+				ImGui::SliderInt("##4", &motor1, 0, 255);
+				ImGui::SliderInt("##5", &motor2, 0, 255);
+
+				rumble[0] = motor1;
+				rumble[1] = motor2;
+
+				ptrCurrentTriggerProfile[1] += (int)rumble[0] >> 4;
+				ptrCurrentTriggerProfile[2] += (int)rumble[1] >> 4;
+				if ((int)rumble[0] >= 252) ptrCurrentTriggerProfile[3] = 220;
+
 
 				ImGui::End();
 				return;
