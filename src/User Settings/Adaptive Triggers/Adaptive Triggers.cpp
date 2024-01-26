@@ -1,8 +1,42 @@
 #include "Adaptive Triggers.h"
 #include "GUI\Functions\Misc\functionality.h"
+#include <fstream>
+
 
 extern unsigned char ptrCurrentTriggerProfile[8]{};
 extern bool gameProfileSet;
+
+void triggerToProfile(std::vector<gameProfile>& gameProfiles) {
+
+	std::ifstream restoreProfile("triggers.txt");
+
+	if (restoreProfile.is_open()) {
+		char triggerName[128]{};
+		int trigger[8]{};
+		while (restoreProfile.good()) {
+			gameProfile currentProfile{};
+			ZeroMemory(triggerName, 0);
+
+
+			restoreProfile.getline(triggerName, 128);
+			for (short int i = 0; i < 8; i++) restoreProfile >> trigger[i];
+			restoreProfile.get();
+
+			currentProfile.profileName = triggerName;
+			for (short int i = 0; i < 8; i++) currentProfile.gameTriggerProfile[i] = trigger[i];
+
+			if (strcmp(triggerName,"No Profile") == 0) continue;
+
+			gameProfiles.push_back(currentProfile);
+
+		}
+		restoreProfile.close();
+		DeleteFile(L"triggers.txt");
+		gameProfiles.pop_back();
+		saveProfiles(gameProfiles);
+	}
+
+}
 
 void triggerEditor(bool& makerOpen, unsigned char* trigger,bool& rumbleTriggers) {
 

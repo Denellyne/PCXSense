@@ -18,6 +18,7 @@ int main() {
 
 	loadMacros(Macro);
 	loadProfiles(gameProfiles);
+	triggerToProfile(gameProfiles);
 	loadLightSettings(x360Controller);
 	
 	x360Controller.client = vigem_alloc();
