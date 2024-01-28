@@ -6,6 +6,31 @@
 #ifdef _DEBUG
 #include <iostream>
 #define DEBUG(x) do { std::cout << x << '\n'; } while (0)
+#include <chrono>
+class Timer {
+public:
+	Timer() {
+		m_StartTimepoint = std::chrono::high_resolution_clock::now();
+	}
+	~Timer() {
+		Stop();
+	}
+	void Stop() {
+		auto endTimePoint = std::chrono::high_resolution_clock::now();
+
+		auto start = std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch().count();
+		auto end = std::chrono::time_point_cast<std::chrono::microseconds>(endTimePoint).time_since_epoch().count();
+
+		short int duration = end - start;
+
+		std::cout << duration << "us\n";
+		Sleep(1);
+		system("cls");
+	}
+
+private:
+	std::chrono::time_point< std::chrono::high_resolution_clock> m_StartTimepoint;
+};
 #else
 #define DEBUG(x) do ; while(0)
 #endif // _DEBUG
@@ -191,59 +216,33 @@ LightEditorOpened:
 
 }
 
-void inline getInputReport(controller& x360Controller) {
+void inline static setButtons(controller& x360Controller){
 
-	//static uint8_t isCharging = (x360Controller.inputBuffer[53 + x360Controller.bluetooth] & 0xf0) >> 0x4;
-
-	bool readSuccess = ReadFile(x360Controller.deviceHandle, x360Controller.inputBuffer, x360Controller.bufferSize, NULL, NULL);
-
-	if (!readSuccess) {
-		CloseHandle(x360Controller.deviceHandle);
-		while (!isControllerConnected(x360Controller)) {}
+	if (x360Controller.shortTriggers) {
+		x360Controller.ControllerState.Gamepad.bLeftTrigger = ((x360Controller.inputBuffer[5 + x360Controller.bluetooth]) >> 2) + 190;
+		x360Controller.ControllerState.Gamepad.bRightTrigger = ((x360Controller.inputBuffer[6 + x360Controller.bluetooth]) >> 2) + 190;
 	}
+	// Normal Order
+	x360Controller.ControllerState.Gamepad.wButtons = (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 4)) ? XINPUT_GAMEPAD_X : 0; //Square
 
-	x360Controller.batteryLevel = (x360Controller.inputBuffer[53 + x360Controller.bluetooth] & 15) * 12.5; /* Hex 0x35 (USB) to get Battery / Hex 0x36 (Bluetooth) to get Battery
-																									 because if bluetooth == true then bluetooth == 1 so we can just add bluetooth
-																									 to the hex value of USB to get the battery reading
-																									 */
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 5)) ? XINPUT_GAMEPAD_A : 0; //Cross
 
-	x360Controller.batteryLevel = x360Controller.batteryLevel > 100 ? 100 : x360Controller.batteryLevel; //Because of a bug on the HID this needs to be implemented or else battery might display higher than 100%
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 6)) ? XINPUT_GAMEPAD_B : 0; //Circle
 
-	if (bool(x360Controller.shortTriggers)) {
-		x360Controller.ControllerState.Gamepad.bLeftTrigger = (x360Controller.inputBuffer[5 + x360Controller.bluetooth]) * 0.25 + 190;
-		x360Controller.ControllerState.Gamepad.bRightTrigger = (x360Controller.inputBuffer[6 + x360Controller.bluetooth]) * 0.25 + 190;
-	}
-	else {
-		x360Controller.ControllerState.Gamepad.bLeftTrigger = x360Controller.inputBuffer[5 + x360Controller.bluetooth];
-		x360Controller.ControllerState.Gamepad.bRightTrigger = x360Controller.inputBuffer[6 + x360Controller.bluetooth];
-	}
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 7)) ? XINPUT_GAMEPAD_Y : 0; //Triangle
 
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 0)) ? XINPUT_GAMEPAD_LEFT_SHOULDER : 0; //Left Shoulder
 
-	x360Controller.ControllerState.Gamepad.sThumbLX = ((x360Controller.inputBuffer[1 + x360Controller.bluetooth] * 257) - 32768);
-	x360Controller.ControllerState.Gamepad.sThumbLY = (32767 - (x360Controller.inputBuffer[2 + x360Controller.bluetooth] * 257));
-	x360Controller.ControllerState.Gamepad.sThumbRX = ((x360Controller.inputBuffer[3 + x360Controller.bluetooth] * 257) - 32768);
-	x360Controller.ControllerState.Gamepad.sThumbRY = (32767 - (x360Controller.inputBuffer[4 + x360Controller.bluetooth] * 257));
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 1)) ? XINPUT_GAMEPAD_RIGHT_SHOULDER : 0; //Right Shoulder
 
-	x360Controller.ControllerState.Gamepad.wButtons = (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 4)) ? XINPUT_GAMEPAD_X : 0;
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 4)) ? XINPUT_GAMEPAD_BACK : 0; //Select
 
-	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 5)) ? XINPUT_GAMEPAD_A : 0;
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 5)) ? XINPUT_GAMEPAD_START : 0; //Start
 
-	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 6)) ? XINPUT_GAMEPAD_B : 0;
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 6)) ? XINPUT_GAMEPAD_LEFT_THUMB : 0; //Left Thumb
 
-	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 7)) ? XINPUT_GAMEPAD_Y : 0;
-
-	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 0)) ? XINPUT_GAMEPAD_LEFT_SHOULDER : 0;
-
-	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 1)) ? XINPUT_GAMEPAD_RIGHT_SHOULDER : 0;
-
-	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 4)) ? XINPUT_GAMEPAD_BACK : 0;
-
-	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 5)) ? XINPUT_GAMEPAD_START : 0;
-
-	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 6)) ? XINPUT_GAMEPAD_LEFT_THUMB : 0;
-
-	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 7)) ? XINPUT_GAMEPAD_RIGHT_THUMB : 0;
-	//ControllerState.Gamepad.wButtons += joystick.rgbButtons[12] ? 0x0400 : 0;
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 7)) ? XINPUT_GAMEPAD_RIGHT_THUMB : 0; //Right thumb
+	//ControllerState.Gamepad.wButtons += joystick.rgbButtons[12] ? 0x0400 : 0; //Sony Button
 
 	switch ((int)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & 0x0f)) {
 	case 0: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_UP; break;
@@ -262,6 +261,116 @@ void inline getInputReport(controller& x360Controller) {
 
 	case 7: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_UP + XINPUT_GAMEPAD_DPAD_LEFT; break;
 	}
+}
+
+void inline static setButtonsGameProfile(controller& x360Controller) {
+
+	extern int buttonMapping[11];
+
+	// Normal Order
+	x360Controller.ControllerState.Gamepad.wButtons = (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 4))  ? buttonMapping[0] : 0; //Square
+
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 5)) ? buttonMapping[1] : 0; //Cross
+
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 6)) ? buttonMapping[2] : 0; //Circle
+
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 7)) ? buttonMapping[3] : 0; //Triangle
+
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 0)) ? buttonMapping[4] : 0; //Left Shoulder
+
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 1)) ? buttonMapping[5] : 0; //Right Shoulder
+
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 4)) ? buttonMapping[6] : 0; //Select
+
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 5)) ? buttonMapping[7] : 0; //Start
+
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 6)) ? buttonMapping[8] : 0; //Left Thumb
+
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 7)) ? buttonMapping[9] : 0; //Right thumb
+	//ControllerState.Gamepad.wButtons += joystick.rgbButtons[12] ? 0x0400 : 0; //Sony Button
+
+	if (buttonMapping[10] == 1) {
+
+		switch ((int)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & 0x0f)) {
+
+		case 0: x360Controller.ControllerState.Gamepad.sThumbLY = 32767; break; //Up
+
+		case 1: x360Controller.ControllerState.Gamepad.sThumbLY = (29727); x360Controller.ControllerState.Gamepad.sThumbLX = (19403); break; //Up Right
+
+		case 2: x360Controller.ControllerState.Gamepad.sThumbLX = 32767; break; //Right
+
+		case 3: x360Controller.ControllerState.Gamepad.sThumbLY = (-29727); x360Controller.ControllerState.Gamepad.sThumbLX = (19403); break; //Down Right
+
+		case 4: x360Controller.ControllerState.Gamepad.sThumbLY = -32768; break; //Down
+
+		case 5: x360Controller.ControllerState.Gamepad.sThumbLY = (-29727); x360Controller.ControllerState.Gamepad.sThumbLX = (-22223); break; //Down Left
+
+		case 6: x360Controller.ControllerState.Gamepad.sThumbLX = -32768; break; //Left
+
+		case 7: x360Controller.ControllerState.Gamepad.sThumbLY = (29727); x360Controller.ControllerState.Gamepad.sThumbLX = (-22223); break; //Up Left
+		}
+
+		return;
+
+	}
+
+	switch ((int)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & 0x0f)) {
+	case 0: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_UP; break;
+
+	case 1: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_UP + XINPUT_GAMEPAD_DPAD_RIGHT; break;
+
+	case 2: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_RIGHT; break;
+
+	case 3: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_DOWN + XINPUT_GAMEPAD_DPAD_RIGHT; break;
+
+	case 4: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_DOWN; break;
+
+	case 5: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_DOWN + XINPUT_GAMEPAD_DPAD_LEFT; break;
+
+	case 6: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_LEFT; break;
+
+	case 7: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_UP + XINPUT_GAMEPAD_DPAD_LEFT; break;
+	}
+	
+}
+
+void inline getInputReport(controller& x360Controller) {
+
+	//static uint8_t isCharging = (x360Controller.inputBuffer[53 + x360Controller.bluetooth] & 0xf0) >> 0x4;
+
+#ifdef _DEBUG
+	Timer inputLagInMicroSeconds;
+#endif
+
+	bool readSuccess = ReadFile(x360Controller.deviceHandle, x360Controller.inputBuffer, x360Controller.bufferSize, NULL, NULL);
+
+	if (!readSuccess) {
+		CloseHandle(x360Controller.deviceHandle);
+		while (!isControllerConnected(x360Controller)) {}
+	}
+
+	x360Controller.batteryLevel = (x360Controller.inputBuffer[53 + x360Controller.bluetooth] & 15) * 12.5; /* Hex 0x35 (USB) to get Battery / Hex 0x36 (Bluetooth) to get Battery
+																											  because if bluetooth == true then bluetooth == 1 so we can just add bluetooth
+																										  	  to the hex value of USB to get the battery reading
+																										   */
+
+	x360Controller.batteryLevel = x360Controller.batteryLevel > 100 ? 100 : x360Controller.batteryLevel; //Because of a bug on the Dualsense HID this needs to be implemented or else battery might display higher than 100%
+
+	x360Controller.ControllerState.Gamepad.sThumbLX = ((x360Controller.inputBuffer[1 + x360Controller.bluetooth] * 257) - 32768);
+	x360Controller.ControllerState.Gamepad.sThumbLY = (32767 - (x360Controller.inputBuffer[2 + x360Controller.bluetooth] * 257));
+	x360Controller.ControllerState.Gamepad.sThumbRX = ((x360Controller.inputBuffer[3 + x360Controller.bluetooth] * 257) - 32768);
+	x360Controller.ControllerState.Gamepad.sThumbRY = (32767 - (x360Controller.inputBuffer[4 + x360Controller.bluetooth] * 257));
+
+	x360Controller.ControllerState.Gamepad.bLeftTrigger = x360Controller.inputBuffer[5 + x360Controller.bluetooth];
+	x360Controller.ControllerState.Gamepad.bRightTrigger = x360Controller.inputBuffer[6 + x360Controller.bluetooth];
+
+	if (gameProfileSet) {
+		setButtonsGameProfile(x360Controller);
+		return;
+	}
+
+	setButtons(x360Controller);
+	
 }
 
 void inline adaptiveTriggersProfile(bool& bluetooth, int& shortTriggers) {

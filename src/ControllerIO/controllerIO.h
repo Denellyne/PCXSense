@@ -35,7 +35,6 @@ struct controller {
 	XINPUT_STATE ControllerState;
 	short int batteryLevel;
 
-
 	int bufferSize;
 	bool bluetooth;
 	int shortTriggers{};

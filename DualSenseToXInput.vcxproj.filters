@@ -209,4 +209,9 @@
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="CPP.HINT">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

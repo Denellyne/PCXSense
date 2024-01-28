@@ -9,7 +9,7 @@
 extern bool gameProfileSet = false;
 extern bool profileEdit = false;
 extern UCHAR rumble[2];
-
+extern int buttonMapping[11]{};
 
 BOOL inline CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring){
 	const DWORD TITLE_SIZE = 1024;
@@ -179,17 +179,20 @@ void inline checkMacro(Macros& macro, const controller& x360Controller) {
 	}
 }
 
-void asyncGameProfile(std::vector<gameProfile>& gameProfiles,controller& x360Controller){
+void asyncGameProfile(std::vector<gameProfile>& gameProfiles, controller& x360Controller) {
 
 	while (true) {
 		while (profileEdit) Sleep(500);
+
 		Sleep(500);
 
 		for (int i = 0; i < gameProfiles.size();i++) {
 			while (gameProfiles[i].isOpen()) {
 				//Set profile
 				memcpy(&ptrCurrentTriggerProfile, &gameProfiles[i].gameTriggerProfile, 8);
+				for (int j = 0; j < 11; j++) buttonMapping[j] = gameProfiles[i].buttonMapping[j];
 				gameProfileSet = true;
+
 				x360Controller.RGB[0].Index = 0;
 				x360Controller.RGB[0].colors[0] = gameProfiles[i].Lightbar.colors[0];
 				x360Controller.RGB[0].colors[1] = gameProfiles[i].Lightbar.colors[1];
@@ -198,7 +201,7 @@ void asyncGameProfile(std::vector<gameProfile>& gameProfiles,controller& x360Con
 				if (gameProfiles[i].rumbleTriggers) {
 					ptrCurrentTriggerProfile[1] += (int)rumble[0] >> 4;
 					ptrCurrentTriggerProfile[2] += (int)rumble[1] >> 4;
-					if ((int)rumble[0] >= 230) ptrCurrentTriggerProfile[3] = 220;
+					if ((int)rumble[0] >= 230) ptrCurrentTriggerProfile[3] = 220; //Safeguard so triggers don't rattle to much damaging them
 				}
 				
 				Sleep(20);
