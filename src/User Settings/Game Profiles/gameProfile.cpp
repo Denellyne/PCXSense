@@ -11,20 +11,21 @@ extern bool profileEdit = false;
 extern UCHAR rumble[2];
 extern int buttonMapping[11]{};
 
-BOOL inline CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring){
+BOOL inline static CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring){
 	const DWORD TITLE_SIZE = 1024;
 	TCHAR windowTitle[TITLE_SIZE];
 
 	if (GetWindowText(hwnd, windowTitle, TITLE_SIZE))
 		if (_tcsstr(windowTitle, LPCTSTR(substring)) != NULL)
-			return false;
+			return true;
 
-	return true;
+	return false;
 }
 bool inline gameProfile::isOpen() {
 	if (appName.length() == 0) return false;
-	if (EnumWindows(FindWindowBySubstr, (LPARAM)appName.c_str()) == false) return true;
-	return false;
+	HWND foregroundWindow = GetForegroundWindow();
+	
+	return FindWindowBySubstr(foregroundWindow, (LPARAM)appName.c_str());
 }
 
 void inline checkMacro(Macros& macro, const controller& x360Controller) {

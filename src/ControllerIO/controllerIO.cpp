@@ -14,6 +14,9 @@ constexpr DWORD TITLE_SIZE = 1024;
 int emulator{};
 extern bool gameProfileSet;
 
+#define boolSetter(x,y,operatorA,operatorB) x * (x operatorA y) + y * (y operatorB x);
+
+
 int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PVIGEM_CLIENT& client) {
 
 	if (client == nullptr)
@@ -71,25 +74,11 @@ BOOL inline static CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring){
 	TCHAR windowTitle[TITLE_SIZE];
 
 	if (GetWindowText(hwnd, windowTitle, TITLE_SIZE)) {
-		if (_tcsstr(windowTitle, L"yuzu") != NULL) {
-			
-			emulator = 1;
-			return false;
-		}
-			
-		if (_tcsstr(windowTitle, L"Cemu") != NULL) {
-			emulator = 2;
-			return false;
-		}
-
-		if (_tcsstr(windowTitle, L"Dolphin") != NULL) {
-			emulator = 3;
-			return false;
-		}
+		if (_tcsstr(windowTitle, LPCTSTR(substring)) != NULL)
+			return true;
 	}
 
-	emulator = 0;
-	return true;
+	return false;
 }
 
 void inline adaptiveTriggersProfile(bool& bluetooth, int& shortTriggers);
@@ -101,6 +90,8 @@ void extern inline sendOutputReport(controller& x360Controller) {
 
 	while (true) {
 		Sleep(4);
+
+
 		ZeroMemory(outputHID, 547);
 
 		//USB Report ID or BT additional Flag
@@ -115,11 +106,7 @@ void extern inline sendOutputReport(controller& x360Controller) {
 
 		adaptiveTriggersProfile(x360Controller.bluetooth, x360Controller.shortTriggers);
 
-		//LED Controls
-		if (lightbarOpen || gameProfileSet || profileEdit) goto LightEditorOpened; //Go-tos are bad ,
-																			      //a better solution is needed 
-
-		switch (x360Controller.batteryLevel) { //Chooses Lightbar Profile
+		switch (x360Controller.batteryLevel + lightbarOpen + gameProfileSet + profileEdit) { //Chooses Lightbar Profile, if any of those editors are open then it breaks and sets itself to the currently being edited profile
 		case 0: x360Controller.RGB[0].Index = 1; break;
 		case 12: x360Controller.RGB[0].Index = 2; break;
 		case 25: x360Controller.RGB[0].Index = 3; break;
@@ -129,7 +116,7 @@ void extern inline sendOutputReport(controller& x360Controller) {
 		case 75: x360Controller.RGB[0].Index = 7; break;
 		case 87: x360Controller.RGB[0].Index = 8; break;
 		case 100: x360Controller.RGB[0].Index = 9; break;
-		default: x360Controller.RGB[0].Index = 0; break;
+		default: break;
 		}
 
 LightEditorOpened:
@@ -158,7 +145,7 @@ LightEditorOpened:
 			outputHID[77] = ((crc & 0xFF000000) >> 24UL);
 
 			WriteFile(x360Controller.deviceHandle, outputHID, 547, NULL, NULL);
-			return;
+			continue;
 		}
 		//USB
 		WriteFile(x360Controller.deviceHandle, outputHID, 64, NULL, NULL);
@@ -169,10 +156,6 @@ LightEditorOpened:
 
 void inline static setButtons(controller& x360Controller){
 
-	if (x360Controller.shortTriggers) {
-		x360Controller.ControllerState.Gamepad.bLeftTrigger = ((x360Controller.inputBuffer[5 + x360Controller.bluetooth]) >> 2) + 190;
-		x360Controller.ControllerState.Gamepad.bRightTrigger = ((x360Controller.inputBuffer[6 + x360Controller.bluetooth]) >> 2) + 190;
-	}
 	// Normal Order
 	x360Controller.ControllerState.Gamepad.wButtons = (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 4)) ? XINPUT_GAMEPAD_X : 0; //Square
 
@@ -285,12 +268,6 @@ void inline static setButtonsGameProfile(controller& x360Controller) {
 
 void inline getInputReport(controller& x360Controller) {
 
-	//static uint8_t isCharging = (x360Controller.inputBuffer[53 + x360Controller.bluetooth] & 0xf0) >> 0x4;
-
-#if (defined _DEBUG || defined _PROFILE)
-	Timer inputLagInMicroSeconds(4);
-#endif
-
 	bool readSuccess = ReadFile(x360Controller.deviceHandle, x360Controller.inputBuffer, x360Controller.bufferSize, NULL, NULL);
 
 	if (!readSuccess) {
@@ -303,15 +280,18 @@ void inline getInputReport(controller& x360Controller) {
 																										  	  to the hex value of USB to get the battery reading
 																										   */
 
-	x360Controller.batteryLevel = x360Controller.batteryLevel > 100 ? 100 : x360Controller.batteryLevel; //Because of a bug on the Dualsense HID this needs to be implemented or else battery might display higher than 100%
+
+	//Because of a bug on the Dualsense HID this needs to be implemented or else battery might display higher than 100 %
+	x360Controller.batteryLevel = boolSetter(x360Controller.batteryLevel, 100, < , <= );
 
 	x360Controller.ControllerState.Gamepad.sThumbLX = ((x360Controller.inputBuffer[1 + x360Controller.bluetooth] * 257) - 32768);
 	x360Controller.ControllerState.Gamepad.sThumbLY = (32767 - (x360Controller.inputBuffer[2 + x360Controller.bluetooth] * 257));
 	x360Controller.ControllerState.Gamepad.sThumbRX = ((x360Controller.inputBuffer[3 + x360Controller.bluetooth] * 257) - 32768);
 	x360Controller.ControllerState.Gamepad.sThumbRY = (32767 - (x360Controller.inputBuffer[4 + x360Controller.bluetooth] * 257));
 
-	x360Controller.ControllerState.Gamepad.bLeftTrigger = x360Controller.inputBuffer[5 + x360Controller.bluetooth];
-	x360Controller.ControllerState.Gamepad.bRightTrigger = x360Controller.inputBuffer[6 + x360Controller.bluetooth];
+	//Same idea as boolSetter
+	x360Controller.ControllerState.Gamepad.bLeftTrigger = x360Controller.inputBuffer[5 + x360Controller.bluetooth] * (x360Controller.shortTriggers == 0) + (((x360Controller.inputBuffer[5 + x360Controller.bluetooth]) >> 2) + 190) * (x360Controller.shortTriggers != 0);
+	x360Controller.ControllerState.Gamepad.bRightTrigger = x360Controller.inputBuffer[6 + x360Controller.bluetooth] * (x360Controller.shortTriggers == 0) + (((x360Controller.inputBuffer[6 + x360Controller.bluetooth]) >> 2) + 190) * (x360Controller.shortTriggers != 0);
 
 	if (gameProfileSet) {
 		setButtonsGameProfile(x360Controller);
@@ -319,63 +299,66 @@ void inline getInputReport(controller& x360Controller) {
 	}
 
 	setButtons(x360Controller);
+
 } 
 
 void inline adaptiveTriggersProfile(bool& bluetooth, int& shortTriggers) {
-		EnumWindows(FindWindowBySubstr, NULL);
+	HWND foregroundWindow = GetForegroundWindow();
 
-		switch (emulator) {
-		case 1: //Yuzu
-			shortTriggers = 190;
-			outputHID[11 + bluetooth] = 0x2;
-			outputHID[12 + bluetooth] = 30;
-			outputHID[13 + bluetooth] = 180;
-			outputHID[14 + bluetooth] = 50;
+	emulator = 1 * (FindWindowBySubstr(foregroundWindow, (LPARAM)L"yuzu")) + 2 * (FindWindowBySubstr(foregroundWindow, (LPARAM)L"Cemu")) + 3 * (FindWindowBySubstr(foregroundWindow, (LPARAM)L"Dolphin"));
 
-			outputHID[22 + bluetooth] = 0x2;
-			outputHID[23 + bluetooth] = 23;
-			outputHID[24 + bluetooth] = 180;
-			outputHID[25 + bluetooth] = 50;
+	switch (emulator) {
+	case 1: //Yuzu
+		shortTriggers = 190;
+		outputHID[11 + bluetooth] = 0x2;
+		outputHID[12 + bluetooth] = 30;
+		outputHID[13 + bluetooth] = 180;
+		outputHID[14 + bluetooth] = 50;
 
-			break;
-		case 2: // Cemu
-			shortTriggers = 0;
-			outputHID[11 + bluetooth] = 0x2;
-			outputHID[12 + bluetooth] = 30;
-			outputHID[13 + bluetooth] = 180;
-			outputHID[14 + bluetooth] = 50;
+		outputHID[22 + bluetooth] = 0x2;
+		outputHID[23 + bluetooth] = 23;
+		outputHID[24 + bluetooth] = 180;
+		outputHID[25 + bluetooth] = 50;
 
-			outputHID[22 + bluetooth] = 0x2;
-			outputHID[23 + bluetooth] = 23;
-			outputHID[24 + bluetooth] = 180;
-			outputHID[25 + bluetooth] = 50;
+		break;
+	case 2: // Cemu
+		shortTriggers = 0;
+		outputHID[11 + bluetooth] = 0x2;
+		outputHID[12 + bluetooth] = 30;
+		outputHID[13 + bluetooth] = 180;
+		outputHID[14 + bluetooth] = 50;
 
-			break;
-		case 3: //Dolphin
+		outputHID[22 + bluetooth] = 0x2;
+		outputHID[23 + bluetooth] = 23;
+		outputHID[24 + bluetooth] = 180;
+		outputHID[25 + bluetooth] = 50;
 
-			shortTriggers = 0;
-			outputHID[11 + bluetooth] = 0x2;
-			outputHID[12 + bluetooth] = 0x90;
-			outputHID[13 + bluetooth] = 0xA0;
-			outputHID[14 + bluetooth] = 0xFF;
+		break;
+	case 3: //Dolphin
 
-			outputHID[22 + bluetooth] = 0x2;
-			outputHID[23 + bluetooth] = 0x90;
-			outputHID[24 + bluetooth] = 0xA0;
-			outputHID[25 + bluetooth] = 0xFF;
+		shortTriggers = 0;
+		outputHID[11 + bluetooth] = 0x2;
+		outputHID[12 + bluetooth] = 0x90;
+		outputHID[13 + bluetooth] = 0xA0;
+		outputHID[14 + bluetooth] = 0xFF;
 
-			break;
-		default:
-			//Else set Current Trigger Profile
-			shortTriggers = 0;
-			if (!gameProfileSet) break;
+		outputHID[22 + bluetooth] = 0x2;
+		outputHID[23 + bluetooth] = 0x90;
+		outputHID[24 + bluetooth] = 0xA0;
+		outputHID[25 + bluetooth] = 0xFF;
 
-			memcpy(&outputHID[11 + bluetooth], &ptrCurrentTriggerProfile, 7);
-			memcpy(&outputHID[22 + bluetooth], &ptrCurrentTriggerProfile, 7);
-			outputHID[20 + bluetooth] = ptrCurrentTriggerProfile[7];
-			outputHID[31 + bluetooth] = ptrCurrentTriggerProfile[7];
-			break;
-		}
+		break;
+	default:
+		//Else set Current Trigger Profile
+		shortTriggers = 0;
+		if (!gameProfileSet) break;
+
+		memcpy(&outputHID[11 + bluetooth], &ptrCurrentTriggerProfile, 7);
+		memcpy(&outputHID[22 + bluetooth], &ptrCurrentTriggerProfile, 7);
+		outputHID[20 + bluetooth] = ptrCurrentTriggerProfile[7];
+		outputHID[31 + bluetooth] = ptrCurrentTriggerProfile[7];
+		break;
+	}
 
 }
 
@@ -389,6 +372,17 @@ uint32_t inline computeCRC32(unsigned char* buffer, const size_t& len)
 	return result;
 }
 
+
+//Useful data for later
+
+/*
+* Benchmark template
+#if (defined _DEBUG || defined _PROFILE)
+	Timer inputLagInMicroSeconds(4);
+#endif
+*/
+
+//static uint8_t isCharging = (x360Controller.inputBuffer[53 + x360Controller.bluetooth] & 0xf0) >> 0x4;
 
 /*if (x360Controller.rainbow) {
 *
