@@ -3,38 +3,11 @@
 #include <tchar.h>
 #include "User Settings/Adaptive Triggers/Adaptive Triggers.h"
 #include "User Settings/Game Profiles/gameProfile.h"
-#ifdef _DEBUG
-#include <iostream>
-#define DEBUG(x) do { std::cout << x << '\n'; } while (0)
-#include <chrono>
-class Timer {
-public:
-	Timer() {
-		m_StartTimepoint = std::chrono::high_resolution_clock::now();
-	}
-	~Timer() {
-		Stop();
-	}
-	void Stop() {
-		auto endTimePoint = std::chrono::high_resolution_clock::now();
-
-		auto start = std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch().count();
-		auto end = std::chrono::time_point_cast<std::chrono::microseconds>(endTimePoint).time_since_epoch().count();
-
-		short int duration = end - start;
-
-		std::cout << duration << "us\n";
-		Sleep(1);
-		system("cls");
-	}
-
-private:
-	std::chrono::time_point< std::chrono::high_resolution_clock> m_StartTimepoint;
-};
+#if (defined _DEBUG || defined _PROFILE)
+#include "Misc/benchmark.h"
 #else
 #define DEBUG(x) do ; while(0)
 #endif // _DEBUG
-
 
 unsigned char outputHID[547]{};
 constexpr DWORD TITLE_SIZE = 1024;
@@ -185,34 +158,12 @@ LightEditorOpened:
 			outputHID[77] = ((crc & 0xFF000000) >> 24UL);
 
 			WriteFile(x360Controller.deviceHandle, outputHID, 547, NULL, NULL);
-
+			return;
 		}
-		else 
 		//USB
-			WriteFile(x360Controller.deviceHandle, outputHID, 64, NULL, NULL);
+		WriteFile(x360Controller.deviceHandle, outputHID, 64, NULL, NULL);
 			
 	}
-
-	/*if (x360Controller.rainbow) {
-	* 
-	* //static float Red{ 210 }, Green{}, Blue{ 90 };
-	  //static int AddRed{ 1 }, AddGreen{ 1 }, AddBlue{ 1 };
-	* 
-				if (Red == 255) AddRed = -1;
-				if (Red == 0) AddRed = 1;
-				if (Green == 255) AddGreen = -1;
-				if (Green == 0) AddGreen = 1;
-				if (Blue == 255) AddBlue = -1;
-				if (Blue == 0) AddBlue = 1;
-
-				Red += 2.5f * AddRed;
-				Green += 2.5f * AddGreen;
-				Blue += 2.5f * AddBlue;
-
-				outputHID[45] = Red; //Red
-				outputHID[46] = Green; //Green
-				outputHID[47] = Blue; //Blue
-			}*/
 
 }
 
@@ -295,23 +246,21 @@ void inline static setButtonsGameProfile(controller& x360Controller) {
 
 		case 0: x360Controller.ControllerState.Gamepad.sThumbLY = 32767; break; //Up
 
-		case 1: x360Controller.ControllerState.Gamepad.sThumbLY = (29727); x360Controller.ControllerState.Gamepad.sThumbLX = (19403); break; //Up Right
+		case 1: x360Controller.ControllerState.Gamepad.sThumbLY = 29727; x360Controller.ControllerState.Gamepad.sThumbLX = 19403; break; //Up Right
 
 		case 2: x360Controller.ControllerState.Gamepad.sThumbLX = 32767; break; //Right
 
-		case 3: x360Controller.ControllerState.Gamepad.sThumbLY = (-29727); x360Controller.ControllerState.Gamepad.sThumbLX = (19403); break; //Down Right
+		case 3: x360Controller.ControllerState.Gamepad.sThumbLY = -29727; x360Controller.ControllerState.Gamepad.sThumbLX = 19403; break; //Down Right
 
 		case 4: x360Controller.ControllerState.Gamepad.sThumbLY = -32768; break; //Down
 
-		case 5: x360Controller.ControllerState.Gamepad.sThumbLY = (-29727); x360Controller.ControllerState.Gamepad.sThumbLX = (-22223); break; //Down Left
+		case 5: x360Controller.ControllerState.Gamepad.sThumbLY = -29727; x360Controller.ControllerState.Gamepad.sThumbLX = -22223; break; //Down Left
 
 		case 6: x360Controller.ControllerState.Gamepad.sThumbLX = -32768; break; //Left
 
-		case 7: x360Controller.ControllerState.Gamepad.sThumbLY = (29727); x360Controller.ControllerState.Gamepad.sThumbLX = (-22223); break; //Up Left
+		case 7: x360Controller.ControllerState.Gamepad.sThumbLY = 29727; x360Controller.ControllerState.Gamepad.sThumbLX = -22223; break; //Up Left
 		}
-
 		return;
-
 	}
 
 	switch ((int)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & 0x0f)) {
@@ -338,8 +287,8 @@ void inline getInputReport(controller& x360Controller) {
 
 	//static uint8_t isCharging = (x360Controller.inputBuffer[53 + x360Controller.bluetooth] & 0xf0) >> 0x4;
 
-#ifdef _DEBUG
-	Timer inputLagInMicroSeconds;
+#if (defined _DEBUG || defined _PROFILE)
+	Timer inputLagInMicroSeconds(4);
 #endif
 
 	bool readSuccess = ReadFile(x360Controller.deviceHandle, x360Controller.inputBuffer, x360Controller.bufferSize, NULL, NULL);
@@ -370,8 +319,7 @@ void inline getInputReport(controller& x360Controller) {
 	}
 
 	setButtons(x360Controller);
-	
-}
+} 
 
 void inline adaptiveTriggersProfile(bool& bluetooth, int& shortTriggers) {
 		EnumWindows(FindWindowBySubstr, NULL);
@@ -440,3 +388,25 @@ uint32_t inline computeCRC32(unsigned char* buffer, const size_t& len)
 	// Return result
 	return result;
 }
+
+
+/*if (x360Controller.rainbow) {
+*
+* //static float Red{ 210 }, Green{}, Blue{ 90 };
+  //static int AddRed{ 1 }, AddGreen{ 1 }, AddBlue{ 1 };
+*
+			if (Red == 255) AddRed = -1;
+			if (Red == 0) AddRed = 1;
+			if (Green == 255) AddGreen = -1;
+			if (Green == 0) AddGreen = 1;
+			if (Blue == 255) AddBlue = -1;
+			if (Blue == 0) AddBlue = 1;
+
+			Red += 2.5f * AddRed;
+			Green += 2.5f * AddGreen;
+			Blue += 2.5f * AddBlue;
+
+			outputHID[45] = Red; //Red
+			outputHID[46] = Green; //Green
+			outputHID[47] = Blue; //Blue
+		}*/

@@ -1,5 +1,5 @@
 #pragma once
-#ifndef _DEBUG
+#ifdef NDEBUG
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #else
 #include "misc\util.h"
@@ -10,6 +10,7 @@
 #include "User Settings/Macros/macro.h"
 #include "User Settings/Adaptive Triggers/Adaptive Triggers.h"
 #include "User Settings/Game Profiles/gameProfile.h"
+#include "User Settings/Game Profiles/saveLoad.h"
 #include "User Settings/Lightbar/Lightbar.h"
 #include <thread>
 #include <format>
@@ -59,6 +60,11 @@ void zeroOutputReport() {
 }
 
 extern BOOL WINAPI exitFunction(_In_ DWORD dwCtrlType) {
+#ifndef NDEBUG
+	extern void saveOnExit();
+	saveOnExit();
+#endif // !NDEBUG
+
 	reinterpret_cast<std::thread*>(asyncThreadPointer)->~thread();
 	zeroOutputReport();
 	saveMacros(*reinterpret_cast<std::vector<Macros>*>(ptrMacros));

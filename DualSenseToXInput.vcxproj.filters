@@ -123,6 +123,12 @@
     <ClCompile Include="src\GUI\Sub Menus\subMenus.cpp">
       <Filter>Source Files\FrontEnd\GUI\Functionality\Sub Menus</Filter>
     </ClCompile>
+    <ClCompile Include="src\User Settings\Game Profiles\saveLoad.cpp">
+      <Filter>Source Files\Backend\User Settings\Game Profile</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Misc\benchmark.cpp">
+      <Filter>Source Files\Backend\Controller\Misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource1.h">
@@ -202,6 +208,12 @@
     </ClInclude>
     <ClInclude Include="src\GUI\Sub Menus\subMenus.h">
       <Filter>Source Files\FrontEnd\GUI\Functionality\Sub Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="src\User Settings\Game Profiles\saveLoad.h">
+      <Filter>Source Files\Backend\User Settings\Game Profile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Misc\benchmark.h">
+      <Filter>Source Files\Backend\Controller\Misc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

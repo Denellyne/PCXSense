@@ -3,7 +3,7 @@
 #include <fstream>
 #include <Windows.h>
 
-#ifdef _DEBUG
+#if (defined _DEBUG || defined _PROFILE)
 void autoUpdater() {
     Sleep(3);
 }

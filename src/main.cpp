@@ -2,11 +2,9 @@
 extern std::string Version = "PCXSenseBeta0.6";
 
 int main() {
-#ifndef _DEBUG
+#ifdef NDEBUG
 	autoUpdater();
 #endif
-
-
 	SetProcessShutdownParameters(2, 0);
 	SetConsoleCtrlHandler(exitFunction, TRUE);
 	
@@ -38,7 +36,7 @@ int main() {
 	//Start async threads
 	std::thread asyncOutputReport(sendOutputReport, std::ref(x360Controller));
 	asyncOutputReport.detach();
-	std::thread(GUI, std::ref(x360Controller),std::ref(Macro),std::ref(gameProfiles)).detach();
+//	std::thread(GUI, std::ref(x360Controller),std::ref(Macro),std::ref(gameProfiles)).detach();
 	std::thread(asyncMacro, std::ref(x360Controller),std::ref(Macro)).detach();
 	std::thread(asyncGameProfile,std::ref(gameProfiles),std::ref(x360Controller)).detach();
 

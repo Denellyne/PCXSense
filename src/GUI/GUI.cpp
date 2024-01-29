@@ -57,7 +57,6 @@ int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameP
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(window);   
     }
-
    
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
