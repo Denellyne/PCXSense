@@ -36,7 +36,7 @@ int main() {
 	//Start async threads
 	std::thread asyncOutputReport(sendOutputReport, std::ref(x360Controller));
 	asyncOutputReport.detach();
-//	std::thread(GUI, std::ref(x360Controller),std::ref(Macro),std::ref(gameProfiles)).detach();
+	std::thread(GUI, std::ref(x360Controller),std::ref(Macro),std::ref(gameProfiles)).detach();
 	std::thread(asyncMacro, std::ref(x360Controller),std::ref(Macro)).detach();
 	std::thread(asyncGameProfile,std::ref(gameProfiles),std::ref(x360Controller)).detach();
 
