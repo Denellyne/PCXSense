@@ -31,8 +31,8 @@ void setupBenchmark();
     Time unit:
     1 - Seconds
     2 - Milliseconds
-    3 - Nanoseconds
-    4 - Microseconds
+    3 - Microseconds
+    4 - Nanoseconds
     */
 class Timer {
 public:

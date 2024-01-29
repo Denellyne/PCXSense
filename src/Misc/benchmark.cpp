@@ -47,12 +47,12 @@ Timer::Timer(int ratio){
     switch (ratio) {
     case 1: units = " s"; break;
     case 2: units = " ms"; break;
-    case 3: units = " ns"; break;
-    case 4: units = " us"; break;
+    case 3: units = " us"; break;
+    case 4: units = " ns"; break;
 
     default:
         timeMeasure = 4;
-        units = " us";
+        units = " ns";
         break;
     }
 
@@ -62,20 +62,20 @@ Timer::Timer(int ratio){
 void Timer::Stop() {
     auto endTimePoint = std::chrono::high_resolution_clock::now();
 
-    auto start = std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch().count();
-    auto end = std::chrono::time_point_cast<std::chrono::microseconds>(endTimePoint).time_since_epoch().count();
+    auto start = std::chrono::time_point_cast<std::chrono::nanoseconds>(m_StartTimepoint).time_since_epoch().count();
+    auto end = std::chrono::time_point_cast<std::chrono::nanoseconds>(endTimePoint).time_since_epoch().count();
 
     int duration = end - start;
 
     switch (timeMeasure) {
     case 1:
-        duration *= 0.000001;
+        duration *= 0.000000001;
         break;
     case 2:
-        duration *= 0.001;
+        duration *= 0.000001;
         break;
     case 3:
-        duration *= 1000;
+        duration *= 0.001;
         break;
     }
 
