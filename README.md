@@ -50,7 +50,7 @@ Adaptive Trigger Custom Profiles,
 ![AT](https://github.com/Denellyne/PCXSense/assets/56112881/97234900-d4d2-415d-8aa9-da85d5ce040a)
 
 
-Lightbar control(*To be fully implemented*),
+Lightbar control
 
 ## Goals
 
