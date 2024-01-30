@@ -394,7 +394,6 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
   </ItemGroup>
   <ItemGroup>
     <None Include="CPP.HINT" />
-    <None Include="src\Inline Assembly\assemblyFunctions.s" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -28,9 +28,6 @@
     <Filter Include="Source Files\Backend\Controller">
       <UniqueIdentifier>{d6d6a11b-03cd-474b-acd7-8d79b746af06}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Backend\Controller\Misc">
-      <UniqueIdentifier>{ea1ba039-592b-47ec-934f-e7f6e2324a80}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Backend\Controller\Controller IO">
       <UniqueIdentifier>{09f5b18a-fdb5-4467-8694-194b6ef46eb1}</UniqueIdentifier>
     </Filter>
@@ -67,6 +64,9 @@
     <Filter Include="Source Files\FrontEnd\GUI\Functionality\Sub Menus">
       <UniqueIdentifier>{5875696c-e945-4e34-842b-b8730ff7f510}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Backend\Misc">
+      <UniqueIdentifier>{ea1ba039-592b-47ec-934f-e7f6e2324a80}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -82,7 +82,7 @@
       <Filter>Source Files\Backend\Controller\Controller IO</Filter>
     </ClCompile>
     <ClCompile Include="src\Misc\util.cpp">
-      <Filter>Source Files\Backend\Controller\Misc</Filter>
+      <Filter>Source Files\Backend\Misc</Filter>
     </ClCompile>
     <ClCompile Include="src\Updater\update.cpp">
       <Filter>Source Files\Backend\Updater</Filter>
@@ -127,7 +127,7 @@
       <Filter>Source Files\Backend\User Settings\Game Profile</Filter>
     </ClCompile>
     <ClCompile Include="src\Misc\benchmark.cpp">
-      <Filter>Source Files\Backend\Controller\Misc</Filter>
+      <Filter>Source Files\Backend\Misc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -150,7 +150,7 @@
       <Filter>Source Files\Backend\Controller\Controller IO</Filter>
     </ClInclude>
     <ClInclude Include="src\Misc\util.h">
-      <Filter>Source Files\Backend\Controller\Misc</Filter>
+      <Filter>Source Files\Backend\Misc</Filter>
     </ClInclude>
     <ClInclude Include="src\Updater\update.h">
       <Filter>Source Files\Backend\Updater</Filter>
@@ -213,7 +213,7 @@
       <Filter>Source Files\Backend\User Settings\Game Profile</Filter>
     </ClInclude>
     <ClInclude Include="src\Misc\benchmark.h">
-      <Filter>Source Files\Backend\Controller\Misc</Filter>
+      <Filter>Source Files\Backend\Misc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -223,9 +223,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CPP.HINT">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="src\Inline Assembly\assemblyFunctions.s">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
