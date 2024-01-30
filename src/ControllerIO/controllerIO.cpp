@@ -3,6 +3,7 @@
 #include <tchar.h>
 #include "User Settings/Adaptive Triggers/Adaptive Triggers.h"
 #include "User Settings/Game Profiles/gameProfile.h"
+//#include "Inline Assembly/assemblyFunctions.s"
 #if (defined _DEBUG || defined _PROFILE)
 #include "Misc/benchmark.h"
 #else
@@ -14,7 +15,10 @@ constexpr DWORD TITLE_SIZE = 1024;
 int emulator{};
 extern bool gameProfileSet;
 
-#define boolSetter(x,y,operatorA,operatorB) x * (x operatorA y) + y * (y operatorB x);
+//#define boolSetter(x,y,operatorA,operatorB) x * (x operatorA y) + y * (y operatorB x);
+
+extern "C" int returnSmaller(int x, int y);
+
 
 
 int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PVIGEM_CLIENT& client) {
@@ -274,15 +278,14 @@ void inline getInputReport(controller& x360Controller) {
 		CloseHandle(x360Controller.deviceHandle);
 		while (!isControllerConnected(x360Controller)) {}
 	}
-
 	x360Controller.batteryLevel = (x360Controller.inputBuffer[53 + x360Controller.bluetooth] & 15) * 12.5; /* Hex 0x35 (USB) to get Battery / Hex 0x36 (Bluetooth) to get Battery
 																											  because if bluetooth == true then bluetooth == 1 so we can just add bluetooth
 																										  	  to the hex value of USB to get the battery reading
-																										   */
+															 											   */
 
 
 	//Because of a bug on the Dualsense HID this needs to be implemented or else battery might display higher than 100 %
-	x360Controller.batteryLevel = boolSetter(x360Controller.batteryLevel, 100, < , <= );
+	x360Controller.batteryLevel = returnSmaller(x360Controller.batteryLevel, 100);
 
 	x360Controller.ControllerState.Gamepad.sThumbLX = ((x360Controller.inputBuffer[1 + x360Controller.bluetooth] * 257) - 32768);
 	x360Controller.ControllerState.Gamepad.sThumbLY = (32767 - (x360Controller.inputBuffer[2 + x360Controller.bluetooth] * 257));

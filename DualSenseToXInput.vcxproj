@@ -209,7 +209,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\Include\;.\Include\imgui\cpp;.\Include\imgui\header;.\Include\imgui\header\GLFW;.\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Include\;.\src\Inline Assembly\;.\Include\imgui\cpp;.\Include\imgui\header;.\Include\imgui\header\GLFW;.\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/sdl /w34996 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
       <TreatWarningAsError>false</TreatWarningAsError>
@@ -222,7 +222,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\Include\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;Urlmon.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\Include\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;Urlmon.lib;.\src\Inline Assembly\assemblyFunctions.o;%(AdditionalDependencies)</AdditionalDependencies>
       <Driver>NotSet</Driver>
       <AllowIsolation>false</AllowIsolation>
       <Profile>true</Profile>
@@ -230,6 +230,7 @@
       </DelayLoadDLLs>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
+      <ForceSymbolReferences>%(ForceSymbolReferences)</ForceSymbolReferences>
     </Link>
     <CustomBuildStep>
       <Inputs>%(Inputs)</Inputs>
@@ -250,7 +251,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\Include\;.\Include\imgui\cpp;.\Include\imgui\header;.\Include\imgui\header\GLFW;.\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Include\;.\src\Inline Assembly\;.\Include\imgui\cpp;.\Include\imgui\header;.\Include\imgui\header\GLFW;.\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <DebugInformationFormat>None</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -271,11 +272,12 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\Include\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;Urlmon.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\Include\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;Urlmon.lib;.\src\Inline Assembly\assemblyFunctions.o;%(AdditionalDependencies)</AdditionalDependencies>
       <Driver>NotSet</Driver>
       <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
+      <ForceSymbolReferences>%(ForceSymbolReferences)</ForceSymbolReferences>
     </Link>
     <CustomBuildStep>
       <Inputs>%(Inputs)</Inputs>
@@ -296,7 +298,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_PROFILE;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\Include\;.\Include\imgui\cpp;.\Include\imgui\header;.\Include\imgui\header\GLFW;.\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Include\;.\src\Inline Assembly\;.\Include\imgui\cpp;.\Include\imgui\header;.\Include\imgui\header\GLFW;.\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -317,11 +319,12 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\Include\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;Urlmon.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\Include\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;Urlmon.lib;.\src\Inline Assembly\assemblyFunctions.o;%(AdditionalDependencies)</AdditionalDependencies>
       <Driver>NotSet</Driver>
       <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
+      <ForceSymbolReferences>%(ForceSymbolReferences)</ForceSymbolReferences>
     </Link>
     <CustomBuildStep>
       <Inputs>%(Inputs)</Inputs>
@@ -391,6 +394,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
   </ItemGroup>
   <ItemGroup>
     <None Include="CPP.HINT" />
+    <None Include="src\Inline Assembly\assemblyFunctions.s" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

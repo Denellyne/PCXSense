@@ -225,5 +225,8 @@
     <None Include="CPP.HINT">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="src\Inline Assembly\assemblyFunctions.s">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
