@@ -19,8 +19,6 @@ extern bool gameProfileSet;
 
 extern "C" int returnSmaller(int x, int y);
 
-
-
 int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PVIGEM_CLIENT& client) {
 
 	if (client == nullptr)

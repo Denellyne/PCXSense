@@ -1,15 +1,19 @@
 #include "gameProfile.h"
 #include <format>
 #include <string>
+#include <iostream>
 #include "GUI\Functions\Misc\functionality.h"
 #include "User Settings/Macros/macro.h"
 #include "User Settings/Adaptive Triggers/Adaptive Triggers.h"
-#include <iostream>
+#include "User Settings/Button Mappings/button Mappings.h"
+#include "User Settings/Button Mappings/button Mappings.h"
 
 extern bool gameProfileSet = false;
 extern bool profileEdit = false;
 extern UCHAR rumble[2];
 extern int buttonMapping[11]{};
+extern bool triggerMaker{ false }, profileMacroOpen{ false }, lightEditor{ false }, buttonRemapper{ false };
+
 
 BOOL inline static CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring){
 	const DWORD TITLE_SIZE = 1024;
@@ -21,6 +25,7 @@ BOOL inline static CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring){
 
 	return false;
 }
+
 bool inline gameProfile::isOpen() {
 	if (appName.length() == 0) return false;
 	HWND foregroundWindow = GetForegroundWindow();
@@ -82,9 +87,9 @@ void profileEditor(bool& profileEdit,gameProfile& currentProfile, controller& x3
 	ImGui::SetCursorScreenPos(ImVec2(combo_pos.x + style.FramePadding.x, combo_pos.y));
 	float iconSize = ImGui::GetTextLineHeightWithSpacing() - style.FramePadding.y;
 
-	static bool triggerMaker{ false }, profileMacroOpen{ false }, lightEditor{false};
 	if (triggerMaker) (triggerEditor(triggerMaker, currentProfile.gameTriggerProfile,currentProfile.rumbleTriggers));
 	if (profileMacroOpen) (macroMenu(profileMacroOpen,currentProfile.gameMacros, x360Controller));
+	if (buttonRemapper) (buttonMappingEditor(buttonRemapper,currentProfile.buttonMapping));
 
 
 	if(ImGui::Begin("Profile Editor",&profileEdit)) {
@@ -102,6 +107,7 @@ void profileEditor(bool& profileEdit,gameProfile& currentProfile, controller& x3
 
 		if (ImGui::Button("Edit Trigger Profile")) triggerMaker = true;
 		if (ImGui::Button("Edit Macro Profile")) profileMacroOpen = true;
+		if (ImGui::Button("Edit Button Mapping")) buttonRemapper = true;
 		if (ImGui::ColorButton("Lightbar", { (float)(currentProfile.Lightbar.colors[0]),(float)(currentProfile.Lightbar.colors[1]),(float)(currentProfile.Lightbar.colors[2]),1 }, 0, { iconSize,iconSize }))
 			lightEditor = !lightEditor;
 

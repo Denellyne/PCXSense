@@ -67,6 +67,9 @@
     <Filter Include="Source Files\Backend\Misc">
       <UniqueIdentifier>{ea1ba039-592b-47ec-934f-e7f6e2324a80}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Backend\User Settings\Button Mapping">
+      <UniqueIdentifier>{6246d86b-115f-4ded-adae-e047bc0398b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -128,6 +131,9 @@
     </ClCompile>
     <ClCompile Include="src\Misc\benchmark.cpp">
       <Filter>Source Files\Backend\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\User Settings\Button Mappings\button Mappings.cpp">
+      <Filter>Source Files\Backend\User Settings\Button Mapping</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -214,6 +220,9 @@
     </ClInclude>
     <ClInclude Include="src\Misc\benchmark.h">
       <Filter>Source Files\Backend\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\User Settings\Button Mappings\button Mappings.h">
+      <Filter>Source Files\Backend\User Settings\Button Mapping</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

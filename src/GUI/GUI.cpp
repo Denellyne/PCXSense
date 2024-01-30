@@ -67,6 +67,8 @@ int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameP
 }
 
 void inline app(controller& x360Controller,const GLuint* Images, std::vector<Macros>& Macro, std::vector<gameProfile>& gameProfiles) {
+    extern bool triggerMaker, profileMacroOpen, lightEditor, buttonRemapper , profileEdit;
+
     //Boilerplate Window Code
     static ImGuiIO& io = ImGui::GetIO();
     if (lightbar >= 1) lightbar = 1;
@@ -91,6 +93,15 @@ void inline app(controller& x360Controller,const GLuint* Images, std::vector<Mac
     if (debugOpen) debugMenu(x360Controller);
     if (macroOpen) macroMenu(Macro,x360Controller);
     if (profileOpen) profileMenu(profileOpen, gameProfiles, x360Controller);
+
+    //Prevents the app from stalling the profile changer
+    profileEdit = (profileOpen == 1) * profileEdit;
+    triggerMaker = (profileOpen == 1) * triggerMaker;
+    profileMacroOpen = (profileOpen == 1) * profileMacroOpen;
+    buttonRemapper = (profileOpen == 1) * buttonRemapper;
+
+
+
     if (lightbarOpen) lightbarEditor(lightbarOpen, x360Controller.RGB);
 
     ImGui::PopStyleColor(3);
