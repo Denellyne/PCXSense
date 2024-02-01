@@ -13,8 +13,13 @@
 #endif
 
 
-#define DS_PRODUCT_ID 0x0ce6
-#define DS_VENDOR_ID 0x054c
+#define SONY_VENDOR_ID 0x054c
+
+#define DUALSENSE_PRODUCT_ID 0x0ce6
+#define DUALSHOCK4_PRODUCT_ID1 0x05C4 
+#define DUALSHOCK4_PRODUCT_ID2 0x09CC 
+#define DUALSHOCK4_PRODUCT_ID3 0x0BA0 
+#define DUALSHOCK4_PRODUCT_ID4 0x0BA1
 
 
 extern UCHAR rumble[2];
@@ -87,8 +92,8 @@ const uint32_t hashTable[256] = {
 
 bool isControllerConnected(controller& inputReport);
 uint32_t computeCRC32(unsigned char* buffer, const size_t& len);
-void extern inline sendOutputReport(controller& x360Controller);
-void extern inline getInputReport(controller& inputReport);
+void extern inline sendDualsenseOutputReport(controller& x360Controller);
+void extern inline getDualsenseInput(controller& inputReport);
 int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PVIGEM_CLIENT& client);
 
 

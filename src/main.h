@@ -17,7 +17,7 @@
 
 
 LPVOID ptrController;
-LPVOID asyncThreadPointer;
+extern LPVOID asyncThreadPointer = nullptr;
 LPVOID ptrMacros;
 LPVOID ptrProfiles;
 extern UCHAR rumble[2]{};
@@ -65,7 +65,11 @@ extern BOOL WINAPI exitFunction(_In_ DWORD dwCtrlType) {
 	saveOnExit();
 #endif // !NDEBUG
 
-	reinterpret_cast<std::thread*>(asyncThreadPointer)->~thread();
+	if (reinterpret_cast<std::thread*>(asyncThreadPointer) != nullptr) {
+		reinterpret_cast<std::thread*>(asyncThreadPointer)->~thread();
+		delete asyncThreadPointer;
+		asyncThreadPointer = nullptr;
+	}
 	zeroOutputReport();
 	saveMacros(*reinterpret_cast<std::vector<Macros>*>(ptrMacros));
 	saveLightSettings(*reinterpret_cast<controller*>(ptrController));

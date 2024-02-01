@@ -3,7 +3,8 @@
 #include <tchar.h>
 #include "User Settings/Adaptive Triggers/Adaptive Triggers.h"
 #include "User Settings/Game Profiles/gameProfile.h"
-//#include "Inline Assembly/assemblyFunctions.s"
+#include "Controller Connections/controllerConnections.h"
+#include "thread"
 #if (defined _DEBUG || defined _PROFILE)
 #include "Misc/benchmark.h"
 #else
@@ -19,57 +20,29 @@ extern bool gameProfileSet;
 
 extern "C" int returnSmaller(int x, int y);
 
-int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PVIGEM_CLIENT& client) {
+bool inline isControllerConnected(controller& x360Controller) {
+	Sleep(50); //Sleeps for 50ms so it doesnt consume to much memory and CPU
 
-	if (client == nullptr)
-	{
-		DEBUG("Uh, not enough memory to do that?!");
-		return -1;
+	//Stop output thread
+	extern LPVOID asyncThreadPointer;
+	if (reinterpret_cast<std::thread*>(asyncThreadPointer) != nullptr) {
+		reinterpret_cast<std::thread*>(asyncThreadPointer)->~thread();
+		delete asyncThreadPointer;
+		asyncThreadPointer = nullptr;
 	}
+		
+	extern void (*getInputs)(controller& x360Controller);
 
-	const auto retval = vigem_connect(client);
-
-	if (!VIGEM_SUCCESS(retval))
-	{
-		DEBUG("ViGEm Bus connection failed with error code: 0x" << std::hex << retval);
-		return -1;
-	}
-
-	emulateX360 = vigem_target_x360_alloc();
-
-	target = vigem_target_add(client, emulateX360);
-
-	return 0;
-}
-
-
-bool inline isControllerConnected(controller& inputReport) {
-	Sleep(50);
-	hid_device_info* deviceInfo = hid_enumerate(DS_VENDOR_ID, DS_PRODUCT_ID);
-	if (deviceInfo == nullptr) {
-		inputReport.isConnected = false;
-		return false;
-	}
-	inputReport.deviceHandle = CreateFileA(deviceInfo->path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
-	inputReport.bluetooth = deviceInfo->interface_number == -1;
-
-	if (inputReport.bluetooth) { //Bluetooth
-		inputReport.bufferSize = 78;
-		inputReport.inputBuffer[0] = 0x31; //Data report code
-	}
-	else { //USB
-		inputReport.bufferSize = 64;
-		inputReport.inputBuffer[0] = 0x01; //Data report code
-	}
-	hid_free_enumeration(deviceInfo);
-
-	if ((bool)inputReport.deviceHandle) {
-		inputReport.isConnected = true;
+	if (isDualsenseConnected(x360Controller)) {
+		getInputs = &getDualsenseInput;
+		std::thread* asyncThreadPointer = new std::thread(sendDualsenseOutputReport, std::ref(x360Controller));
+		asyncThreadPointer->detach();
 		return true;
 	}
-	else inputReport.isConnected = false;
 
+	x360Controller.isConnected = false;
 	return false;
+
 }
 
 BOOL inline static CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring){
@@ -85,7 +58,7 @@ BOOL inline static CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring){
 
 void inline adaptiveTriggersProfile(bool& bluetooth, int& shortTriggers);
 
-void extern inline sendOutputReport(controller& x360Controller) {
+void extern inline sendDualsenseOutputReport(controller& x360Controller) {
 	extern bool profileOpen;
 	extern bool lightbarOpen;
 	extern bool profileEdit;
@@ -268,13 +241,14 @@ void inline static setButtonsGameProfile(controller& x360Controller) {
 	
 }
 
-void inline getInputReport(controller& x360Controller) {
+void inline getDualsenseInput(controller& x360Controller) {
 
 	bool readSuccess = ReadFile(x360Controller.deviceHandle, x360Controller.inputBuffer, x360Controller.bufferSize, NULL, NULL);
 
 	if (!readSuccess) {
 		CloseHandle(x360Controller.deviceHandle);
 		while (!isControllerConnected(x360Controller)) {}
+		return;
 	}
 	x360Controller.batteryLevel = (x360Controller.inputBuffer[53 + x360Controller.bluetooth] & 15) * 12.5; /* Hex 0x35 (USB) to get Battery / Hex 0x36 (Bluetooth) to get Battery
 																											  because if bluetooth == true then bluetooth == 1 so we can just add bluetooth

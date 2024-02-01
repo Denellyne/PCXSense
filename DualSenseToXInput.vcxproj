@@ -345,6 +345,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
     <ClCompile Include="Include\imgui\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="Include\imgui\cpp\imgui_tables.cpp" />
     <ClCompile Include="Include\imgui\cpp\imgui_widgets.cpp" />
+    <ClCompile Include="src\ControllerIO\Controller Connections\controllerConnections.cpp" />
     <ClCompile Include="src\ControllerIO\controllerIO.cpp" />
     <ClCompile Include="src\GUI\Functions\Misc\functionality.cpp" />
     <ClCompile Include="src\GUI\GUI.cpp" />
@@ -375,6 +376,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
     <ClInclude Include="Include\imgui\header\imstb_truetype.h" />
     <ClInclude Include="Include\imgui\header\stb_image.h" />
     <ClInclude Include="resource1.h" />
+    <ClInclude Include="src\ControllerIO\Controller Connections\controllerConnections.h" />
     <ClInclude Include="src\ControllerIO\controllerIO.h" />
     <ClInclude Include="src\GUI\Functions\Misc\functionality.h" />
     <ClInclude Include="src\GUI\GUI.h" />

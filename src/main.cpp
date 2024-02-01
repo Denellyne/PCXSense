@@ -1,6 +1,9 @@
 #include "main.h"
 extern std::string Version = "PCXSenseBeta0.6";
 
+extern void (*getInputs)(controller& x360Controller) = &getDualsenseInput;
+
+
 int main() {
 #ifdef NDEBUG
 	autoUpdater();
@@ -34,18 +37,16 @@ int main() {
 	}
 
 	//Start async threads
-	std::thread asyncOutputReport(sendOutputReport, std::ref(x360Controller));
-	asyncOutputReport.detach();
 	std::thread(GUI, std::ref(x360Controller),std::ref(Macro),std::ref(gameProfiles)).detach();
 	std::thread(asyncMacro, std::ref(x360Controller),std::ref(Macro)).detach();
 	std::thread(asyncGameProfile,std::ref(gameProfiles),std::ref(x360Controller)).detach();
+
 
 #if _DEBUG
 	//std::thread(debugData, std::ref(x360Controller)).detach(); // Displays controller info
 #endif
 
 	ptrController = &x360Controller;
-	asyncThreadPointer = &asyncOutputReport;
 	ptrMacros = &Macro;
 	ptrProfiles = &gameProfiles;
 
@@ -55,7 +56,7 @@ int main() {
 
 		XInputGetState(0, &x360Controller.ControllerState);
 
-		getInputReport(x360Controller);
+		getInputs(x360Controller);
 
 		vigem_target_x360_update(x360Controller.client, x360Controller.emulateX360, *reinterpret_cast<XUSB_REPORT*>(&x360Controller.ControllerState.Gamepad));
 

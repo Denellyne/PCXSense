@@ -70,6 +70,9 @@
     <Filter Include="Source Files\Backend\User Settings\Button Mapping">
       <UniqueIdentifier>{6246d86b-115f-4ded-adae-e047bc0398b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Backend\Controller\Controller IO\Controller Connect">
+      <UniqueIdentifier>{f9927506-72ff-4e6a-af6d-17b41064a8f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -134,6 +137,9 @@
     </ClCompile>
     <ClCompile Include="src\User Settings\Button Mappings\button Mappings.cpp">
       <Filter>Source Files\Backend\User Settings\Button Mapping</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ControllerIO\Controller Connections\controllerConnections.cpp">
+      <Filter>Source Files\Backend\Controller\Controller IO\Controller Connect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -223,6 +229,9 @@
     </ClInclude>
     <ClInclude Include="src\User Settings\Button Mappings\button Mappings.h">
       <Filter>Source Files\Backend\User Settings\Button Mapping</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ControllerIO\Controller Connections\controllerConnections.h">
+      <Filter>Source Files\Backend\Controller\Controller IO\Controller Connect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
