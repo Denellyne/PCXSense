@@ -46,6 +46,16 @@ void saveProfiles(const std::vector<gameProfile> gameProfiles) {
 			saveMacro.close();
 		}
 
+		//Write button mapping
+
+		std::ofstream saveButtonMapping(std::format("Game Profiles/{}/mapping.txt", profile.profileName.c_str()));
+		if (saveButtonMapping.is_open()) {
+			for (int i = 0; i < ARRAYSIZE(profile.buttonMapping); i++)
+				saveButtonMapping << profile.buttonMapping[i] << '\n';
+
+			saveButtonMapping.close();
+		}
+
 	}
 }
 
@@ -121,6 +131,17 @@ void inline writeProfiles(std::string dirEntry, gameProfile& currentProfile) {
 		}
 		if (currentProfile.gameMacros.size() <= 3) currentProfile.gameMacros.pop_back(); //Error correction
 		loadMacros.close();
+	}
+
+	std::ifstream loadButtonMapping(std::format("{}/mapping.txt", dirEntry));
+	if (loadButtonMapping.is_open()) {
+		int buttonMappingTemp[11]{};
+		for (int i = 0; i < ARRAYSIZE(currentProfile.buttonMapping); i++)
+			loadButtonMapping >> buttonMappingTemp[i];
+		for (int i = 0; i < ARRAYSIZE(currentProfile.buttonMapping); i++)
+			currentProfile.buttonMapping[i] = buttonMappingTemp[i];
+		
+		loadButtonMapping.close();
 	}
 
 }

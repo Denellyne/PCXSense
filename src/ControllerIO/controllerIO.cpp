@@ -18,7 +18,7 @@ extern bool gameProfileSet;
 
 //#define boolSetter(x,y,operatorA,operatorB) x * (x operatorA y) + y * (y operatorB x);
 
-extern "C" int returnSmaller(int x, int y);
+extern "C" int returnSmaller(int x, int y); //Assembly Function in src/Assembly Functions/assemblyFunctions.s
 
 bool inline isControllerConnected(controller& x360Controller) {
 	Sleep(50); //Sleeps for 50ms so it doesnt consume to much memory and CPU

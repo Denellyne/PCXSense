@@ -22,7 +22,8 @@ void setupBenchmark() {
 extern void saveOnExit() {
     //The reason we do it here instead of when we are pushing the data to the vector
     //is so we minimize the bloat inside our Timer Class
-    
+    if (timePerCall.size() == 0) return;
+
     unsigned long long int sumOfCallTimes = 0;
 
     for (int i = 1; i < timePerCall.size(); i++)
