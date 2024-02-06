@@ -18,7 +18,7 @@ extern bool gameProfileSet;
 
 //#define boolSetter(x,y,operatorA,operatorB) x * (x operatorA y) + y * (y operatorB x);
 
-extern "C" int returnSmaller(int x, int y); //Assembly Function in src/Assembly Functions/assemblyFunctions.s
+extern "C" int returnSmaller(int x); //Assembly Function in src/Assembly Functions/assemblyFunctions.s
 
 bool inline isControllerConnected(controller& x360Controller) {
 	Sleep(50); //Sleeps for 50ms so it doesnt consume to much memory and CPU
@@ -240,7 +240,6 @@ void inline static setButtonsGameProfile(controller& x360Controller) {
 	}
 	
 }
-
 void inline getDualsenseInput(controller& x360Controller) {
 
 	bool readSuccess = ReadFile(x360Controller.deviceHandle, x360Controller.inputBuffer, x360Controller.bufferSize, NULL, NULL);
@@ -255,9 +254,8 @@ void inline getDualsenseInput(controller& x360Controller) {
 																										  	  to the hex value of USB to get the battery reading
 															 											   */
 
-
 	//Because of a bug on the Dualsense HID this needs to be implemented or else battery might display higher than 100 %
-	x360Controller.batteryLevel = returnSmaller(x360Controller.batteryLevel, 100);
+	x360Controller.batteryLevel = returnSmaller(x360Controller.batteryLevel);
 
 	x360Controller.ControllerState.Gamepad.sThumbLX = ((x360Controller.inputBuffer[1 + x360Controller.bluetooth] * 257) - 32768);
 	x360Controller.ControllerState.Gamepad.sThumbLY = (32767 - (x360Controller.inputBuffer[2 + x360Controller.bluetooth] * 257));

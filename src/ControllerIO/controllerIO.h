@@ -38,7 +38,7 @@ struct controller {
 	PVIGEM_CLIENT client;
 	PVIGEM_TARGET emulateX360;
 	XINPUT_STATE ControllerState;
-	short int batteryLevel;
+	int batteryLevel;
 
 	int bufferSize;
 	bool bluetooth;

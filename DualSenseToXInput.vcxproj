@@ -222,7 +222,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\Include\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;Urlmon.lib;.\src\Inline Assembly\assemblyFunctions.o;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\Include\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;Urlmon.lib;.\src\Inline Assembly\assemblyFunctions.obj;%(AdditionalDependencies)</AdditionalDependencies>
       <Driver>NotSet</Driver>
       <AllowIsolation>false</AllowIsolation>
       <Profile>true</Profile>
@@ -272,7 +272,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\Include\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;Urlmon.lib;.\src\Inline Assembly\assemblyFunctions.o;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\Include\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;Urlmon.lib;.\src\Inline Assembly\assemblyFunctions.obj;%(AdditionalDependencies)</AdditionalDependencies>
       <Driver>NotSet</Driver>
       <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <DelayLoadDLLs>
@@ -319,7 +319,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\Include\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;Urlmon.lib;.\src\Inline Assembly\assemblyFunctions.o;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XInput.lib;dxguid.lib;setupapi.lib;.\Include\ViGEm\ViGEmClient.lib;.\Include\hidapi.lib;.\Include\imgui\header\GLFW\glfw3dll.lib;opengl32.lib;Urlmon.lib;.\src\Inline Assembly\assemblyFunctions.obj;%(AdditionalDependencies)</AdditionalDependencies>
       <Driver>NotSet</Driver>
       <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <DelayLoadDLLs>
