@@ -1,9 +1,9 @@
 Persona 3 Reload
-Persona 3 Reload
-6
-6
-199
-45
+P3R
+1
+50
+255
+0
 0
 0
 0

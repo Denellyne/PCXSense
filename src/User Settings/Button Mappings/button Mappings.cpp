@@ -17,10 +17,10 @@ static std::map<int, const char*> buttons = {
 static const int buttonsKeys[10]{ 0x4000,0x1000,0x2000,0x8000,0x0100,0x0200,0x0020,0x0010,0x0040,0x0080 };
 
 void buttonMappingEditor(bool& makerOpen, int* buttonProfile) {
-	extern int buttonMapping[11];
+	extern int buttonMapping[12];
 	extern bool gameProfileSet;
 
-	for (int i = 0; i < 11; i++) buttonMapping[i] = buttonProfile[i];
+	for (int i = 0; i < IM_ARRAYSIZE(buttonMapping); i++) buttonMapping[i] = buttonProfile[i];
 	gameProfileSet = true;
 
 	if (ImGui::Begin("Button Remapper", &makerOpen)) {
@@ -37,6 +37,8 @@ void buttonMappingEditor(bool& makerOpen, int* buttonProfile) {
 		}
 		if (ImGui::RadioButton("Map dpad to joysticks", buttonProfile[10]))
 			buttonProfile[10] = 1 * (buttonProfile[10] <= 0);
+		if (ImGui::RadioButton("Start/Select on Touchpad", buttonProfile[11]))
+			buttonProfile[11] = 1 * (buttonProfile[11] <= 0);
 	}
 	ImGui::End();
 }

@@ -39,6 +39,12 @@ bool inline isControllerConnected(controller& x360Controller) {
 		asyncThreadPointer->detach();
 		return true;
 	}
+	if (isDualShoch4Connected(x360Controller)) {
+		getInputs = &getDualsenseInput;
+		std::thread* asyncThreadPointer = new std::thread(sendDualsenseOutputReport, std::ref(x360Controller));
+		asyncThreadPointer->detach();
+		return true;
+	}
 
 	x360Controller.isConnected = false;
 	return false;
@@ -172,9 +178,13 @@ void inline static setButtons(controller& x360Controller){
 	}
 }
 
+#define isSelectPressed (buttonMapping[11])*(!(x360Controller.inputBuffer[33 + x360Controller.bluetooth] & (1 << 7)) & (((((x360Controller.inputBuffer[35 + x360Controller.bluetooth]) & 0x0F) << 8) | ((x360Controller.inputBuffer[34 + x360Controller.bluetooth]))) < 800)) ^ (x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 4))
+#define isStartPressed (buttonMapping[11])*(!(x360Controller.inputBuffer[33 + x360Controller.bluetooth] & (1 << 7)) & (((((x360Controller.inputBuffer[35 + x360Controller.bluetooth]) & 0x0F) << 8) | ((x360Controller.inputBuffer[34 + x360Controller.bluetooth]))) >= (800)) ^ (x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 5)))
+
+
 void inline static setButtonsGameProfile(controller& x360Controller) {
 
-	extern int buttonMapping[11];
+	extern int buttonMapping[12];
 
 	// Normal Order
 	x360Controller.ControllerState.Gamepad.wButtons = (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 4))  ? buttonMapping[0] : 0; //Square
@@ -189,9 +199,14 @@ void inline static setButtonsGameProfile(controller& x360Controller) {
 
 	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 1)) ? buttonMapping[5] : 0; //Right Shoulder
 
-	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 4)) ? buttonMapping[6] : 0; //Select
+	//x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 4)) ? buttonMapping[6] : 0; //Select
 
-	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 5)) ? buttonMapping[7] : 0; //Start
+	//x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 5)) ? buttonMapping[7] : 0; //Start
+
+	x360Controller.ControllerState.Gamepad.wButtons += isSelectPressed ? XINPUT_GAMEPAD_BACK : 0;
+
+	x360Controller.ControllerState.Gamepad.wButtons += isStartPressed ? XINPUT_GAMEPAD_START : 0;
+
 
 	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 6)) ? buttonMapping[8] : 0; //Left Thumb
 
@@ -262,7 +277,6 @@ void inline getDualsenseInput(controller& x360Controller) {
 	x360Controller.ControllerState.Gamepad.sThumbRX = ((x360Controller.inputBuffer[3 + x360Controller.bluetooth] * 257) - 32768);
 	x360Controller.ControllerState.Gamepad.sThumbRY = (32767 - (x360Controller.inputBuffer[4 + x360Controller.bluetooth] * 257));
 
-	//Same idea as boolSetter
 	x360Controller.ControllerState.Gamepad.bLeftTrigger = x360Controller.inputBuffer[5 + x360Controller.bluetooth] * (x360Controller.shortTriggers == 0) + (((x360Controller.inputBuffer[5 + x360Controller.bluetooth]) >> 2) + 190) * (x360Controller.shortTriggers != 0);
 	x360Controller.ControllerState.Gamepad.bRightTrigger = x360Controller.inputBuffer[6 + x360Controller.bluetooth] * (x360Controller.shortTriggers == 0) + (((x360Controller.inputBuffer[6 + x360Controller.bluetooth]) >> 2) + 190) * (x360Controller.shortTriggers != 0);
 

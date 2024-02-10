@@ -11,7 +11,7 @@
 extern bool gameProfileSet = false;
 extern bool profileEdit = false;
 extern UCHAR rumble[2];
-extern int buttonMapping[11]{};
+extern int buttonMapping[12]{};
 extern bool triggerMaker{ false }, profileMacroOpen{ false }, lightEditor{ false }, buttonRemapper{ false };
 
 
@@ -57,7 +57,7 @@ void asyncGameProfile(std::vector<gameProfile>& gameProfiles, controller& x360Co
 			while (gameProfiles[i].isOpen()) {
 				//Set profile
 				memcpy(&ptrCurrentTriggerProfile, &gameProfiles[i].gameTriggerProfile, 8);
-				for (int j = 0; j < 11; j++) buttonMapping[j] = gameProfiles[i].buttonMapping[j];
+				for (int j = 0; j < ARRAYSIZE(buttonMapping); j++) buttonMapping[j] = gameProfiles[i].buttonMapping[j];
 				gameProfileSet = true;
 
 				x360Controller.RGB[0].Index = 0;
