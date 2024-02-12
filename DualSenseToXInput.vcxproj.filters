@@ -73,6 +73,12 @@
     <Filter Include="Source Files\Backend\Controller\Controller IO\Controller Connect">
       <UniqueIdentifier>{f9927506-72ff-4e6a-af6d-17b41064a8f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Backend\Controller\Controller IO\Dualsense">
+      <UniqueIdentifier>{b5b6683c-687a-40ba-aad6-a32d6ddea664}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Backend\Controller\Controller IO\Dualshock4">
+      <UniqueIdentifier>{7a7b1cd1-4ea8-41b8-906c-61579602154e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -140,6 +146,12 @@
     </ClCompile>
     <ClCompile Include="src\ControllerIO\Controller Connections\controllerConnections.cpp">
       <Filter>Source Files\Backend\Controller\Controller IO\Controller Connect</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ControllerIO\Dualsense\dualsense.cpp">
+      <Filter>Source Files\Backend\Controller\Controller IO\Dualsense</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ControllerIO\Dualshock4\dualshock4.cpp">
+      <Filter>Source Files\Backend\Controller\Controller IO\Dualshock4</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -232,6 +244,12 @@
     </ClInclude>
     <ClInclude Include="src\ControllerIO\Controller Connections\controllerConnections.h">
       <Filter>Source Files\Backend\Controller\Controller IO\Controller Connect</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ControllerIO\Dualsense\dualsense.h">
+      <Filter>Source Files\Backend\Controller\Controller IO\Dualsense</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ControllerIO\Dualshock4\dualshock4.h">
+      <Filter>Source Files\Backend\Controller\Controller IO\Dualshock4</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

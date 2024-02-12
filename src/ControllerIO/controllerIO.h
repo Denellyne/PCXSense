@@ -16,7 +16,7 @@
 #define SONY_VENDOR_ID 0x054c
 
 #define DUALSENSE_PRODUCT_ID 0x0ce6
-#define DUALSHOCH_PRODUCT_ID 0x09CC 
+#define DUALSHOCK4_PRODUCT_ID 0x09CC 
 
 
 extern UCHAR rumble[2];
@@ -31,7 +31,7 @@ struct RGB {
 struct controller {
 	
 	//Data order per thread
-	unsigned char inputBuffer[78]{};
+	unsigned char inputBuffer[547]{};
 	PVIGEM_CLIENT client;
 	PVIGEM_TARGET emulateX360;
 	XINPUT_STATE ControllerState;
@@ -87,10 +87,11 @@ const uint32_t hashTable[256] = {
 };
 
 
-bool isControllerConnected(controller& inputReport);
+bool extern inline isControllerConnected(controller& inputReport);
 uint32_t computeCRC32(unsigned char* buffer, const size_t& len);
 void extern inline sendDualsenseOutputReport(controller& x360Controller);
 void extern inline getDualsenseInput(controller& inputReport);
+void extern inline getDualShock4Input(controller& x360Controller);
 int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PVIGEM_CLIENT& client);
 
 
