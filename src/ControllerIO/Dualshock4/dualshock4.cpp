@@ -7,9 +7,8 @@ extern bool gameProfileSet;
 
 extern "C" int returnSmaller(int x); //Assembly Function in src/Assembly Functions/assemblyFunctions.s
 constexpr DWORD TITLE_SIZE = 1024;
-#include <iostream>
+
 void inline static setButtons(controller& x360Controller) {
-	system("cls");
 	//std::cout << (short)(((x360Controller.inputBuffer[39] & 0x0f) << 8) | x360Controller.inputBuffer[38]) << '\n'; //X
 	//std::cout << x360Controller.inputBuffer[40] << '\n'; //Y
 
