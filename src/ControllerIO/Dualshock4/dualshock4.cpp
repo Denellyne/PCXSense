@@ -5,12 +5,12 @@
 
 extern bool gameProfileSet;
 
+#define isSelectPressed (buttonMapping[11])*(!(x360Controller.inputBuffer[37] & (1 << 7)) & (((((((x360Controller.inputBuffer[39] & 0x0f) << 8) | x360Controller.inputBuffer[38]))) < 800)) ^ (x360Controller.inputBuffer[8] & (1 << 4)))
+#define isStartPressed (buttonMapping[11])*(!(x360Controller.inputBuffer[37] & (1 << 7)) & (((((x360Controller.inputBuffer[39]) & 0x0F) << 8) | ((x360Controller.inputBuffer[38]))) >= (800)) ^ (x360Controller.inputBuffer[8] & (1 << 5)))
+
 extern "C" int returnSmaller(int x); //Assembly Function in src/Assembly Functions/assemblyFunctions.s
 constexpr DWORD TITLE_SIZE = 1024;
-
 void inline static setButtons(controller& x360Controller) {
-	//std::cout << (short)(((x360Controller.inputBuffer[39] & 0x0f) << 8) | x360Controller.inputBuffer[38]) << '\n'; //X
-	//std::cout << x360Controller.inputBuffer[40] << '\n'; //Y
 
 	// Normal Order
 	x360Controller.ControllerState.Gamepad.wButtons = (bool)(x360Controller.inputBuffer[7] & (1 << 4)) ? XINPUT_GAMEPAD_X : 0; //Square
@@ -55,7 +55,6 @@ void inline static setButtons(controller& x360Controller) {
 
 }
 
-
 void inline static setButtonsGameProfile(controller& x360Controller) {
 	extern int buttonMapping[12];
 
@@ -72,9 +71,9 @@ void inline static setButtonsGameProfile(controller& x360Controller) {
 
 	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[8] & (1 << 1)) ? buttonMapping[5] : 0; //Right Shoulder
 
-	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[8] & (1 << 4)) ? buttonMapping[6] : 0; //Select
+	x360Controller.ControllerState.Gamepad.wButtons += isSelectPressed ? buttonMapping[6] : 0;
 
-	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[8] & (1 << 5)) ? buttonMapping[7] : 0; //Start
+	x360Controller.ControllerState.Gamepad.wButtons += isStartPressed ? buttonMapping[7] : 0;
 
 	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[8] & (1 << 6)) ? buttonMapping[8] : 0; //Left Thumb
 
@@ -134,17 +133,8 @@ void inline getDualShock4Input(controller& x360Controller) {
 		return;
 	}
 
-	/*for (int i = 0; i < 78; i++)
-		std::cout << i << ": " << (uint32_t)x360Controller.inputBuffer[i] << '\n';
-	system("cls");
-	Sleep(5);*/
+	x360Controller.batteryLevel = (x360Controller.inputBuffer[32] & 15) * 12.5; 
 
-	x360Controller.batteryLevel = (x360Controller.inputBuffer[32] & 15) * 12.5; /* Hex 0x35 (USB) to get Battery / Hex 0x36 (Bluetooth) to get Battery
-																											  because if bluetooth == true then bluetooth == 1 so we can just add bluetooth
-																											  to the hex value of USB to get the battery reading
-																										   */
-
-																										   //Because of a bug on the Dualsense HID this needs to be implemented or else battery might display higher than 100 %
 	x360Controller.batteryLevel = returnSmaller(x360Controller.batteryLevel);
 
 	x360Controller.ControllerState.Gamepad.sThumbLX = ((x360Controller.inputBuffer[3] * 257) - 32768);
@@ -165,13 +155,13 @@ void inline getDualShock4Input(controller& x360Controller) {
 }
 void sendDualShock4OutputReport(controller& x360Controller) {
 
-	unsigned char outputHID[574]{};
+	unsigned char outputHID[334]{};
 	extern bool profileOpen;
 	extern bool lightbarOpen;
 	extern bool profileEdit;
 
 	while (true) {
-		Sleep(1);
+		Sleep(4);
 
 		ZeroMemory(outputHID, 0);
 
@@ -197,21 +187,12 @@ void sendDualShock4OutputReport(controller& x360Controller) {
 		default: break;
 		}
 
-		//LightEditorOpened:
-
-		//	outputHID[9 + x360Controller.bluetooth] = x360Controller.RGB[x360Controller.RGB[0].Index].microhponeLed;
-		//	outputHID[39 + x360Controller.bluetooth] = 0x02;
-		//	outputHID[42 + x360Controller.bluetooth] = 0x02;
-		//	outputHID[43 + x360Controller.bluetooth] = 0x02;
-
-
 		for (int i = 0; i < 3; i++) {
 			outputHID[8 + i] = x360Controller.RGB[x360Controller.RGB[0].Index].colors[i] * 255;
 			x360Controller.RGB[0].colors[i] = x360Controller.RGB[x360Controller.RGB[0].Index].colors[i];
 		}
 
 		//Send Output Report
-
 		const UINT32 crc = computeCRC32(outputHID, 74);
 
 		outputHID[74] = (crc & 0x000000FF);
@@ -221,6 +202,5 @@ void sendDualShock4OutputReport(controller& x360Controller) {
 
 		WriteFile(x360Controller.deviceHandle, outputHID, 334, NULL, NULL);
 			
-
 	}
 }

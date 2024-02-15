@@ -3,6 +3,37 @@ extern std::string Version = "PCXSenseBeta0.6";
 
 extern void (*getInputs)(controller& x360Controller) = &getDualsenseInput;
 
+//void inline secondcontroller(controller& secondcontroller) {
+//	secondcontroller.client = vigem_alloc();
+//	if (secondcontroller.client == null) {
+//		if (messagebox(null, l"the app couldn't start, please install vigembusdriver ,if this error persists please open an issue on github", l"vigem bus", mb_yesno | mb_taskmodal) == idno) return;
+//		shellexecute(0, 0, l"https://github.com/nefarius/vigembus/releases/tag/v1.22.0", 0, 0, sw_show);
+//		return;
+//	}
+//
+//	if (initializefakecontroller(secondcontroller.emulatex360, secondcontroller.target, secondcontroller.client) != 0) {
+//		if (messagebox(null, l"the app couldn't start, please install vigembusdriver ,if this error persists please open an issue on github", l"vigem bus", mb_yesno | mb_taskmodal) == idno) return;
+//		shellexecute(0, 0, l"https://github.com/nefarius/vigembus/releases/tag/v1.22.0", 0, 0, sw_show);
+//		return;
+//	}
+//
+//	if (!isdualshoch4connected(secondcontroller))
+//		return;
+//
+//	getinputs = &getdualshock4input;
+//	std::thread* asyncthreadpointer = new std::thread(senddualshock4outputreport, std::ref(secondcontroller));
+//	asyncthreadpointer->detach();
+//	
+//	while(true){
+//
+//		xinputgetstate(1, &secondcontroller.controllerstate);
+//
+//		getinputs(secondcontroller);
+//
+//		vigem_target_x360_update(secondcontroller.client, secondcontroller.emulatex360, *reinterpret_cast<xusb_report*>(&secondcontroller.controllerstate.gamepad));
+//	}
+//
+//}
 
 int main() {
 #ifdef NDEBUG
@@ -13,6 +44,7 @@ int main() {
 	
 	//Initialize Fake Controller
 	controller x360Controller{};
+	//controller x360Controller2{};
 
 	std::vector<Macros> Macro;
 	std::vector<gameProfile> gameProfiles;
@@ -35,25 +67,27 @@ int main() {
 		ShellExecute(0, 0, L"https://github.com/nefarius/ViGEmBus/releases/tag/v1.22.0", 0, 0, SW_SHOW);
 		return -1;
 	}
+	
 
 	//Start async threads
 	std::thread(GUI, std::ref(x360Controller),std::ref(Macro),std::ref(gameProfiles)).detach();
 	std::thread(asyncMacro, std::ref(x360Controller),std::ref(Macro)).detach();
 	std::thread(asyncGameProfile,std::ref(gameProfiles),std::ref(x360Controller)).detach();
-
+	//std::thread(secondController,std::ref(x360Controller2)).detach();
 
 #if _DEBUG
 	//std::thread(debugData, std::ref(x360Controller)).detach(); // Displays controller info
 #endif
 
 	ptrController = &x360Controller;
+//	ptrController2 = &x360Controller2;
 	ptrMacros = &Macro;
 	ptrProfiles = &gameProfiles;
 
 	vigem_target_x360_register_notification(x360Controller.client, x360Controller.emulateX360, &getRumble, ptrController);
+	//vigem_target_x360_register_notification(x360Controller2.client, x360Controller2.emulateX360, &getRumble, ptrController2);
 
 	while (true) {
-
 		XInputGetState(0, &x360Controller.ControllerState);
 
 		getInputs(x360Controller);

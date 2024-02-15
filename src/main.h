@@ -17,14 +17,14 @@
 
 
 LPVOID ptrController;
+LPVOID ptrController2;
 extern LPVOID asyncThreadPointer = nullptr;
 LPVOID ptrMacros;
 LPVOID ptrProfiles;
 extern UCHAR rumble[2]{};
 
 
-VOID CALLBACK getRumble(PVIGEM_CLIENT Client, PVIGEM_TARGET Target, UCHAR LargeMotor, UCHAR SmallMotor, UCHAR LedNumber, LPVOID UserData)
-{
+VOID CALLBACK getRumble(PVIGEM_CLIENT Client, PVIGEM_TARGET Target, UCHAR LargeMotor, UCHAR SmallMotor, UCHAR LedNumber, LPVOID UserData){
 	rumble[0] = SmallMotor;
 	rumble[1] = LargeMotor;
 }

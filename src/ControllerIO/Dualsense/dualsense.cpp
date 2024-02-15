@@ -161,9 +161,9 @@ void inline static setButtonsGameProfile(controller& x360Controller) {
 
 	//x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 5)) ? buttonMapping[7] : 0; //Start
 
-	x360Controller.ControllerState.Gamepad.wButtons += isSelectPressed ? XINPUT_GAMEPAD_BACK : 0;
+	x360Controller.ControllerState.Gamepad.wButtons += isSelectPressed ? buttonMapping[6] : 0;
 
-	x360Controller.ControllerState.Gamepad.wButtons += isStartPressed ? XINPUT_GAMEPAD_START : 0;
+	x360Controller.ControllerState.Gamepad.wButtons += isStartPressed ? buttonMapping[7] : 0;
 
 
 	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 6)) ? buttonMapping[8] : 0; //Left Thumb

@@ -13,10 +13,10 @@
 #endif
 
 
-#define SONY_VENDOR_ID 0x054c
+constexpr int SONY_VENDOR_ID = 0x054c;
 
-#define DUALSENSE_PRODUCT_ID 0x0ce6
-#define DUALSHOCK4_PRODUCT_ID 0x09CC 
+constexpr int DUALSENSE_PRODUCT_ID = 0x0ce6;
+constexpr int DUALSHOCK4_PRODUCT_ID = 0x09CC ;
 
 
 extern UCHAR rumble[2];
@@ -30,23 +30,23 @@ struct RGB {
 
 struct controller {
 	
-	//Data order per thread
-	unsigned char inputBuffer[547]{};
+	unsigned char inputBuffer[574]{};
+	bool bluetooth;
+	bool isConnected{false};
+
 	PVIGEM_CLIENT client;
 	PVIGEM_TARGET emulateX360;
 	XINPUT_STATE ControllerState;
 	int batteryLevel;
 
 	int bufferSize;
-	bool bluetooth;
 	int shortTriggers{};
 
 	RGB RGB[10]{};
-	bool isConnected;
 	//bool rainbow{};
-
-	HANDLE deviceHandle;
+	
 	VIGEM_ERROR target;
+	HANDLE deviceHandle;
 };
 
 const UINT32 crcSeed = 0xeada2d49;

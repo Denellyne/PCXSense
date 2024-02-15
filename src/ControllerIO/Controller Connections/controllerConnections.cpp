@@ -1,4 +1,5 @@
 #include "controllerConnections.h"
+#include <mutex>
 
 int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PVIGEM_CLIENT& client) {
 
@@ -18,7 +19,10 @@ int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PV
 bool isDualShoch4Connected(controller& x360Controller) {
 	hid_device_info* deviceInfo = hid_enumerate(SONY_VENDOR_ID, DUALSHOCK4_PRODUCT_ID);
 
-	if (deviceInfo == nullptr) return false;
+	if (deviceInfo == nullptr) {
+		hid_free_enumeration(deviceInfo);
+		return false;
+	}
 
 	//deviceInfo->path different from other controller
 
@@ -39,9 +43,14 @@ bool isDualShoch4Connected(controller& x360Controller) {
 
 }
 bool isDualsenseConnected(controller& x360Controller){
+
 	hid_device_info* deviceInfo = hid_enumerate(SONY_VENDOR_ID, DUALSENSE_PRODUCT_ID);
 
-	if (deviceInfo == nullptr) return false;
+	if (deviceInfo == nullptr) {
+		hid_free_enumeration(deviceInfo);
+		return false;
+	}
+
 	x360Controller.deviceHandle = CreateFileA(deviceInfo->path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
 	x360Controller.bluetooth = deviceInfo->interface_number == -1;
 	x360Controller.isConnected = true;

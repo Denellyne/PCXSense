@@ -2,8 +2,6 @@
 #include "GUI\Functions\Misc\functionality.h"
 #include <fstream>
 
-
-
 void saveMacros(const std::vector<Macros> Macro) {
 	std::ofstream writeMacros("macros.txt");
 	if(writeMacros.is_open()){

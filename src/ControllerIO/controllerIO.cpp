@@ -18,7 +18,7 @@
 extern "C" int returnSmaller(int x); //Assembly Function in src/Assembly Functions/assemblyFunctions.s
 
 bool inline isControllerConnected(controller& x360Controller) {
-	Sleep(50); //Sleeps for 50ms so it doesnt consume to much memory and CPU
+	Sleep(50); //Sleeps for 50ms so it doesnt spam the cpu
 
 	//Stop output thread
 	extern LPVOID asyncThreadPointer;
