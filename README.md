@@ -52,6 +52,11 @@ Adaptive Trigger Custom Profiles,
 
 Lightbar control
 
+## Supported Controllers
+
+    Dualsense
+    Dualshock 4
+
 ## Goals
 
 This project aims to make using your Dualsense as easy and hassle-free as possible with the ability to customize everything about your own experience.
@@ -64,7 +69,7 @@ Be a source to help another developers develop projects like this
 
 Joycons support (Merged),
 
-Touchpad support (*with Only Citra Mode Option*)
+Touchpad support (*with Only Citra Mode Option*) (Partially implemented)
 
 Gyro support
 
@@ -73,8 +78,6 @@ Device Hiding (*Blocks double inputs*)
 Multiple Controller Emulation
 
 ## Roadmap
-
-### Game Profiles - Lightbar - Rumble to AT - Button Remapping
 
 ### Launch at startup - Bluetooth disconnect - Device Hiding
 
@@ -93,6 +96,7 @@ Please open an [issue](https://github.com/Denellyne/PCXSense/issues) with as muc
 Also contributions are appreciated, if you want to contribute open a pull request  and I'll review it
 
 
+
 ## Regarding Virus Detections
 
 If your device detect this as a virus beware it's a false positive,things like these happen all the time.
@@ -100,8 +104,6 @@ If your device detect this as a virus beware it's a false positive,things like t
 I've sent a sample to review to Microsoft and Malwarebytes and both of them confirmed its a false positive on the autoupdater ,in case of any problem just allow the file on your computer
 
 [Malwarebytes Confirms its a false Positive](https://forums.malwarebytes.com/topic/307011-false-positive-on-my-autoupdater/)
-
-
 
 ## Support me
 
