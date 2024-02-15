@@ -32,11 +32,13 @@ bool isDualShoch4Connected(controller& x360Controller) {
 	hid_free_enumeration(deviceInfo);
 
 	if (x360Controller.bluetooth) { //Bluetooth
+		x360Controller.bluetooth = 0;
 		x360Controller.bufferSize = 547;
 		x360Controller.inputBuffer[0] = 0x11; //Data report code
 		return true;
 	}
 	//USB
+	x360Controller.bluetooth = 1; //Usb has a 2 offset from bluetooth
 	x360Controller.bufferSize = 64;
 	x360Controller.inputBuffer[0] = 0x01; //Data report code
 	return true;
