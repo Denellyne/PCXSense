@@ -18,33 +18,42 @@
 extern "C" int returnSmaller(int x); //Assembly Function in src/Assembly Functions/assemblyFunctions.s
 
 bool inline isControllerConnected(controller& x360Controller) {
-	Sleep(50); //Sleeps for 50ms so it doesnt spam the cpu
+	x360Controller.isConnected = false;
 
 	//Stop output thread
 	extern LPVOID asyncThreadPointer;
 	if (reinterpret_cast<std::thread*>(asyncThreadPointer) != nullptr) {
-		reinterpret_cast<std::thread*>(asyncThreadPointer)->~thread();
 		delete asyncThreadPointer;
 		asyncThreadPointer = nullptr;
 	}
-		
-	extern void (*getInputs)(controller& x360Controller);
 
-	if (isDualsenseConnected(x360Controller)) {
-		getInputs = &getDualsenseInput;
-		std::thread* asyncThreadPointer = new std::thread(sendDualsenseOutputReport, std::ref(x360Controller));
-		asyncThreadPointer->detach();
-		return true;
-	}
-	if (isDualShoch4Connected(x360Controller)) {
-		getInputs = &getDualShock4Input;
-		std::thread* asyncThreadPointer = new std::thread(sendDualShock4OutputReport, std::ref(x360Controller));
-		asyncThreadPointer->detach();
-		return true;
-	}
+	while (true) {
+		Sleep(50); //Sleeps for 50ms so it doesnt spam the cpu
 
-	x360Controller.isConnected = false;
-	return false;
+		extern void (*getInputs)(controller & x360Controller);
+
+		if (isDualsenseConnected(x360Controller)) {
+			x360Controller.threadStop = false;
+			getInputs = &getDualsenseInput;
+			asyncThreadPointer = new std::thread(sendDualsenseOutputReport, std::ref(x360Controller));
+			reinterpret_cast<std::thread*>(asyncThreadPointer)->detach();
+			return true;
+		}
+		if (isDualsenseEdgeConnected(x360Controller)) {
+			x360Controller.threadStop = false;
+			getInputs = &getDualsenseInput;
+			asyncThreadPointer = new std::thread(sendDualsenseOutputReport, std::ref(x360Controller));
+			reinterpret_cast<std::thread*>(asyncThreadPointer)->detach();
+			return true;
+		}
+		if (isDualShock4Connected(x360Controller)) {
+			x360Controller.threadStop = false;
+			getInputs = &getDualShock4Input;
+			asyncThreadPointer = new std::thread(sendDualShock4OutputReport, std::ref(x360Controller));
+			reinterpret_cast<std::thread*>(asyncThreadPointer)->detach();
+			return true;
+		}
+	}
 
 }
 

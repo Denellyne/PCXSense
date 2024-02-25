@@ -16,6 +16,7 @@
 constexpr int SONY_VENDOR_ID = 0x054c;
 
 constexpr int DUALSENSE_PRODUCT_ID = 0x0ce6;
+constexpr int DUALSENSEEDGE_PRODUCT_ID = 0x0df2;
 constexpr int DUALSHOCK4_PRODUCT_ID = 0x09CC ;
 
 
@@ -33,6 +34,7 @@ struct controller {
 	unsigned char inputBuffer[574]{};
 	bool bluetooth;
 	bool isConnected{false};
+	bool threadStop{ false };
 
 	PVIGEM_CLIENT client;
 	PVIGEM_TARGET emulateX360;
@@ -46,7 +48,7 @@ struct controller {
 	//bool rainbow{};
 	
 	VIGEM_ERROR target;
-	HANDLE deviceHandle;
+	hid_device* deviceHandle{nullptr};
 };
 
 const UINT32 crcSeed = 0xeada2d49;

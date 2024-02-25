@@ -11,7 +11,7 @@
 extern bool gameProfileSet = false;
 extern bool profileEdit = false;
 extern UCHAR rumble[2];
-extern int buttonMapping[12]{};
+extern int buttonMapping[15]{};
 extern bool triggerMaker{ false }, profileMacroOpen{ false }, lightEditor{ false }, buttonRemapper{ false };
 
 
@@ -145,7 +145,7 @@ void profileMenu(bool& profileOpen, std::vector<gameProfile>& gameProfiles, cont
 			}
 			ImGui::PopID();
 		}
-		if (ImGui::Button("Create new trigger Profile")) {
+		if (ImGui::Button("Create new Game Profile")) {
 			profileEdit = true;
 			gameProfile newProfile{};
 			gameProfiles.push_back(newProfile);

@@ -56,7 +56,7 @@ void inline static setButtons(controller& x360Controller) {
 }
 
 void inline static setButtonsGameProfile(controller& x360Controller) {
-	extern int buttonMapping[12];
+	extern int buttonMapping[15];
 
 	// Normal Order
 	x360Controller.ControllerState.Gamepad.wButtons = (bool)(x360Controller.inputBuffer[7 - x360Controller.bluetooth * 2] & (1 << 4)) ? buttonMapping[0] : 0; //Square
@@ -125,11 +125,11 @@ void inline static setButtonsGameProfile(controller& x360Controller) {
 
 void inline getDualShock4Input(controller& x360Controller) {
 
-	bool readSuccess = ReadFile(x360Controller.deviceHandle, x360Controller.inputBuffer, x360Controller.bufferSize, NULL, NULL);
-
-	if (!readSuccess) {
-		CloseHandle(x360Controller.deviceHandle);
-		while (!isControllerConnected(x360Controller)) {}
+	if (hid_read(x360Controller.deviceHandle, x360Controller.inputBuffer, x360Controller.bufferSize) == -1) {
+		x360Controller.threadStop = true;
+		printf("%ls\n", hid_error(x360Controller.deviceHandle));
+		hid_close(x360Controller.deviceHandle);
+		isControllerConnected(x360Controller);
 		return;
 	}
 
@@ -153,7 +153,6 @@ void inline getDualShock4Input(controller& x360Controller) {
 	setButtons(x360Controller);
 
 }
-#include <iostream>
 void sendDualShock4OutputReport(controller& x360Controller) {
 
 	unsigned char outputHID[334]{};
@@ -164,7 +163,7 @@ void sendDualShock4OutputReport(controller& x360Controller) {
 	while (true) {
 		Sleep(4);
 
-		ZeroMemory(outputHID, 0);
+		ZeroMemory(outputHID, 334);
 
 		outputHID[1] = (byte)(0xC0);
 		
@@ -193,6 +192,7 @@ void sendDualShock4OutputReport(controller& x360Controller) {
 		}
 
 		//Send Output Report
+		if (x360Controller.threadStop) return;
 		if (!x360Controller.bluetooth) {
 			outputHID[0] = 0x11;
 			const UINT32 crc = computeCRC32(outputHID, 74);
@@ -202,13 +202,13 @@ void sendDualShock4OutputReport(controller& x360Controller) {
 			outputHID[76] = ((crc & 0x00FF0000) >> 16UL);
 			outputHID[77] = ((crc & 0xFF000000) >> 24UL);
 
-			WriteFile(x360Controller.deviceHandle, outputHID, 334, NULL, NULL);
+			hid_write(x360Controller.deviceHandle, outputHID, 334);
+
 			continue;
 		}
 		outputHID[0] = 0x05;
-		WriteFile(x360Controller.deviceHandle, outputHID, 68, NULL, NULL);
+		hid_write(x360Controller.deviceHandle, outputHID, 68);
 
 
-			
 	}
 }

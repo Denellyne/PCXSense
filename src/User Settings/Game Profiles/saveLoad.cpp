@@ -135,7 +135,7 @@ void inline writeProfiles(std::string dirEntry, gameProfile& currentProfile) {
 
 	std::ifstream loadButtonMapping(std::format("{}/mapping.txt", dirEntry));
 	if (loadButtonMapping.is_open()) {
-		int buttonMappingTemp[12]{};
+		int buttonMappingTemp[15]{};
 		for (int i = 0; i < ARRAYSIZE(currentProfile.buttonMapping); i++)
 			loadButtonMapping >> buttonMappingTemp[i];
 		for (int i = 0; i < ARRAYSIZE(currentProfile.buttonMapping); i++)

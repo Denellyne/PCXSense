@@ -34,7 +34,6 @@ void extern inline sendDualsenseOutputReport(controller& x360Controller) {
 	while (true) {
 		Sleep(4);
 
-
 		ZeroMemory(outputHID, 547);
 
 		//USB Report ID or BT additional Flag
@@ -76,7 +75,7 @@ void extern inline sendDualsenseOutputReport(controller& x360Controller) {
 		}
 
 		//Send Output Report
-
+		if (x360Controller.threadStop) return;
 		if (x360Controller.bluetooth) {
 			outputHID[0] = 0x31; // BT Report ID
 
@@ -87,11 +86,11 @@ void extern inline sendDualsenseOutputReport(controller& x360Controller) {
 			outputHID[76] = ((crc & 0x00FF0000) >> 16UL);
 			outputHID[77] = ((crc & 0xFF000000) >> 24UL);
 
-			WriteFile(x360Controller.deviceHandle, outputHID, 547, NULL, NULL);
+			hid_write(x360Controller.deviceHandle, outputHID, 547);
 			continue;
 		}
 		//USB
-		WriteFile(x360Controller.deviceHandle, outputHID, 64, NULL, NULL);
+		hid_write(x360Controller.deviceHandle, outputHID, 64);
 
 	}
 
@@ -119,7 +118,8 @@ void inline static setButtons(controller& x360Controller) {
 	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 6)) ? XINPUT_GAMEPAD_LEFT_THUMB : 0; //Left Thumb
 
 	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 7)) ? XINPUT_GAMEPAD_RIGHT_THUMB : 0; //Right thumb
-	//ControllerState.Gamepad.wButtons += joystick.rgbButtons[12] ? 0x0400 : 0; //Sony Button
+	
+//ControllerState.Gamepad.wButtons += joystick.rgbButtons[12] ? 0x0400 : 0; //Sony Button
 
 	switch ((int)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & 0x0f)) {
 	case 0: x360Controller.ControllerState.Gamepad.wButtons += XINPUT_GAMEPAD_DPAD_UP; break;
@@ -142,7 +142,7 @@ void inline static setButtons(controller& x360Controller) {
 
 void inline static setButtonsGameProfile(controller& x360Controller) {
 
-	extern int buttonMapping[12];
+	extern int buttonMapping[15];
 
 	// Normal Order
 	x360Controller.ControllerState.Gamepad.wButtons = (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 4)) ? buttonMapping[0] : 0; //Square
@@ -169,6 +169,14 @@ void inline static setButtonsGameProfile(controller& x360Controller) {
 	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 6)) ? buttonMapping[8] : 0; //Left Thumb
 
 	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 7)) ? buttonMapping[9] : 0; //Right thumb
+
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 4)) ? buttonMapping[11] : 0; //Left Function
+
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 5)) ? buttonMapping[12] : 0; //Right Function
+
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 6)) ? buttonMapping[13] : 0; //Left Paddle
+
+	x360Controller.ControllerState.Gamepad.wButtons += (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 7)) ? buttonMapping[14] : 0; //Right Paddle
 	//ControllerState.Gamepad.wButtons += joystick.rgbButtons[12] ? 0x0400 : 0; //Sony Button
 
 	if (buttonMapping[10] == 1) {
@@ -216,11 +224,13 @@ void inline static setButtonsGameProfile(controller& x360Controller) {
 
 void inline getDualsenseInput(controller& x360Controller) {
 
-	bool readSuccess = ReadFile(x360Controller.deviceHandle, x360Controller.inputBuffer, x360Controller.bufferSize, NULL, NULL);
-
-	if (!readSuccess) {
-		CloseHandle(x360Controller.deviceHandle);
-		while (!isControllerConnected(x360Controller)) {}
+	//bool readSuccess = ReadFile(x360Controller.deviceHandle, x360Controller.inputBuffer, x360Controller.bufferSize, NULL, NULL);
+	
+	if (hid_read(x360Controller.deviceHandle, x360Controller.inputBuffer, x360Controller.bufferSize) == -1) {
+		x360Controller.threadStop = true;
+		printf("%ls\n", hid_error(x360Controller.deviceHandle));
+		hid_close(x360Controller.deviceHandle);
+		isControllerConnected(x360Controller);
 		return;
 	}
 	x360Controller.batteryLevel = (x360Controller.inputBuffer[53 + x360Controller.bluetooth] & 15) * 12.5; /* Hex 0x35 (USB) to get Battery / Hex 0x36 (Bluetooth) to get Battery

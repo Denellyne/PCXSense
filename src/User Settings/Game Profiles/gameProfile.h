@@ -16,10 +16,11 @@ public:
 	std::wstring appName{};
 	std::vector<Macros> gameMacros{};
 
-	int buttonMapping[12]{ XINPUT_GAMEPAD_X ,XINPUT_GAMEPAD_A,XINPUT_GAMEPAD_B,XINPUT_GAMEPAD_Y,
+	int buttonMapping[15]{ XINPUT_GAMEPAD_X ,XINPUT_GAMEPAD_A,XINPUT_GAMEPAD_B,XINPUT_GAMEPAD_Y,
 						   XINPUT_GAMEPAD_LEFT_SHOULDER,XINPUT_GAMEPAD_RIGHT_SHOULDER,
 						   XINPUT_GAMEPAD_BACK,XINPUT_GAMEPAD_START,
-						   XINPUT_GAMEPAD_LEFT_THUMB,XINPUT_GAMEPAD_RIGHT_THUMB, 0,0 }; // Last element is treated as a boolean for DpadToJoystick
+						   XINPUT_GAMEPAD_LEFT_THUMB,XINPUT_GAMEPAD_RIGHT_THUMB,
+						   0,0,0,0,0 }; //First element of this line is treated as a boolean for DpadToJoystick and the other are Dualsense Edge Extras
 
 	unsigned char gameTriggerProfile[8]{};
 	bool rumbleTriggers = 0;
