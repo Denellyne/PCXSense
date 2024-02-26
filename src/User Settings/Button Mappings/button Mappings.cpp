@@ -1,41 +1,43 @@
 #include "button Mappings.h"
 #include <map>
 
+
 static std::map<int, const char*> xboxButtons = {
 	{0x0000,"None"},
 	{0x4000,"X"},
 	{0x1000,"A"},
 	{0x2000,"B"},
 	{0x8000,"Y"},
-	{0x0100,"LB"},
-	{0x0200,"RB"},
+	{0x0100,"Left Shoulder"},
+	{0x0200,"Right Shoulder"},
 	{0x0020,"Back"},
 	{0x0010,"Start"},
-	{0x0040,"LSB"},
-	{0x0080,"RSB"},
+	{0x0040,"Left Thumb"},
+	{0x0080,"Right Thumb"},
 };
 
-static const char* dualsenseEdgeExtras[4]{
-	"L Fn    ",
-	"R Fn    ",
-	"L Back  ",
-	"R Back  ",
+static const char* extraButtons[7]{
+	"Touchpad      ",
+	"Home          ",
+	"Mic           ",
+	"Left Function ",
+	"Right Function",
+	"Left Paddle   ",
+	"Right Paddle  ",
 };
 
-static const char* psButtons[13]{
-	"Square  ",
-	"Cross   ",
-	"Circle  ",
-	"Triangle",
-	"L1      ",
-	"R1      ",
-	"Share   ",
-	"Options ",
-	"L3      ",
-	"R3      ",
-	"PS      ",
-	"Touchpad",
-	"Mic     ",
+static const char* psButtons[10]{
+	"Square        ",
+	"Cross         ",
+	"Circle        ",
+	"Triangle      ",
+	"L1            ",
+	"R1            ",
+	"Share         ",
+	"Options       ",
+	"L3            ",
+	"R3            ",
+
 };
 
 static const int xboxButtonsKeys[11]{ 0x0000,0x4000,0x1000,0x2000,0x8000,0x0100,0x0200,0x0020,0x0010,0x0040,0x0080 };
@@ -60,22 +62,23 @@ void buttonMappingEditor(bool& makerOpen, int* buttonProfile) {
 			ImGui::PopID();
 		}
 
-		for (short int i = 0; i < IM_ARRAYSIZE(dualsenseEdgeExtras); i++) {
+		for (short int i = (bool)buttonProfile[11]; i < IM_ARRAYSIZE(extraButtons); i++) {
 			ImGui::PushID(&buttonProfile[i + 15]);
-			ImGui::Text(dualsenseEdgeExtras[i]);
+			ImGui::Text(extraButtons[i]);
 			ImGui::SameLine();
-			if (ImGui::BeginCombo("##Change Dualsense Extras", xboxButtons[buttonProfile[i + 15]])) {
-				for (short int j = 0; j < IM_ARRAYSIZE(xboxButtonsKeys); j++) if (ImGui::Selectable(xboxButtons[xboxButtonsKeys[j]])) buttonProfile[i + 15] = xboxButtonsKeys[j];
+			if (ImGui::BeginCombo("##Change Dualsense Extras", xboxButtons[buttonProfile[i + 12]])) {
+				for (short int j = 0; j < IM_ARRAYSIZE(xboxButtonsKeys); j++) if (ImGui::Selectable(xboxButtons[xboxButtonsKeys[j]])) buttonProfile[i + 12] = xboxButtonsKeys[j];
 				ImGui::EndCombo();
 			}
 			ImGui::PopID();
 		}
 
-		if (ImGui::RadioButton("Map D-Pad to joysticks", buttonProfile[13]))
-			buttonProfile[13] = 1 * (buttonProfile[13] <= 0);
+		if (ImGui::RadioButton("Map D-Pad to joysticks", buttonProfile[10]))
+			buttonProfile[10] = 1 * (buttonProfile[10] <= 0);
 
-		if (ImGui::RadioButton("Start/Select on Touchpad", buttonProfile[14]))
-			buttonProfile[14] = 1 * (buttonProfile[14] <= 0);
+		if (ImGui::RadioButton("Start/Select on Touchpad", buttonProfile[11]))
+			buttonProfile[11] = 1 * (buttonProfile[11] <= 0);
+		buttonProfile[12] = buttonProfile[12] * (buttonProfile[11] <= 0); //If Start/Select on touch is activated then the binding on the touchbutton is resetted
 	}
 	ImGui::End();
 }

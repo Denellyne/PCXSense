@@ -8,8 +8,8 @@ constexpr DWORD TITLE_SIZE = 1024;
 int emulator{};
 extern bool gameProfileSet;
 
-#define isSelectPressed (buttonMapping[14])*(!(x360Controller.inputBuffer[33 + x360Controller.bluetooth] & (1 << 7)) & ((((x360Controller.inputBuffer[35 + x360Controller.bluetooth] & 0x0F) << 8) | (x360Controller.inputBuffer[34 + x360Controller.bluetooth])) <  800)) ^ (x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 4))
-#define isStartPressed  (buttonMapping[14])*(!(x360Controller.inputBuffer[33 + x360Controller.bluetooth] & (1 << 7)) & ((((x360Controller.inputBuffer[35 + x360Controller.bluetooth] & 0x0F) << 8) | (x360Controller.inputBuffer[34 + x360Controller.bluetooth])) >= 800)) ^ (x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 5))
+#define isSelectPressed (buttonMapping[11])*(!(x360Controller.inputBuffer[33 + x360Controller.bluetooth] & (1 << 7)) & ((((x360Controller.inputBuffer[35 + x360Controller.bluetooth] & 0x0F) << 8) | (x360Controller.inputBuffer[34 + x360Controller.bluetooth])) <  800)) ^ (x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 4))
+#define isStartPressed  (buttonMapping[11])*(!(x360Controller.inputBuffer[33 + x360Controller.bluetooth] & (1 << 7)) & ((((x360Controller.inputBuffer[35 + x360Controller.bluetooth] & 0x0F) << 8) | (x360Controller.inputBuffer[34 + x360Controller.bluetooth])) >= 800)) ^ (x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 5))
 
 extern "C" int returnSmaller(int x); //Assembly Function in src/Assembly Functions/assemblyFunctions.s
 
@@ -163,11 +163,11 @@ void inline static setButtonsGameProfile(controller& x360Controller) {
 
 	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 7)) ? buttonMapping[9] : 0; //Right thumb
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 0)) ? buttonMapping[10] : 0; //PS Button
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 1)) ? buttonMapping[12] : 0; //Touchpad Button
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 1)) ? buttonMapping[11] : 0; //Touchpad Button
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 0)) ? buttonMapping[13] : 0; //PS Button
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 2)) ? buttonMapping[12] : 0; //Mic Button
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 2)) ? buttonMapping[14] : 0; //Mic Button
 
 	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 4)) ? buttonMapping[15] : 0; //Left Function
 
@@ -177,7 +177,7 @@ void inline static setButtonsGameProfile(controller& x360Controller) {
 
 	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 7)) ? buttonMapping[18] : 0; //Right Paddle
 
-	if (buttonMapping[13] == 1) {
+	if (buttonMapping[10] == 1) {
 
 		switch ((int)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & 0x0f)) {
 

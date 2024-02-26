@@ -26,11 +26,11 @@ public:
 	                       XINPUT_GAMEPAD_START, // Options
 	                       XINPUT_GAMEPAD_LEFT_THUMB, // L3
 	                       XINPUT_GAMEPAD_RIGHT_THUMB, // R3
-	                       0, // PS Button
-	                       0, // Touchpad Button
-	                       0, // Mic Button
 	                       0, // DpadToJoystick (Bool)
 	                       0, // Start/Select on Touchpad (Bool)
+						   0, // Touchpad Button
+						   0, // Home/Sony Button
+						   0, // Mic Button
 						   0, // Edge Only : Left Function
 						   0, // Edge Only : Right Function
 						   0, // Edge Only : Left Paddle
