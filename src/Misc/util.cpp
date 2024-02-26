@@ -37,34 +37,38 @@ void debugData(controller &x360Controller) {
 		case 7: DEBUG("Dpad Up and Dpad Left"); break;
 		}
 
-		if ((bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 4))) DEBUG("Square Button");
+		if ((bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 4))) DEBUG("Square Button\n");
 
-		if ((bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 5))) DEBUG("Cross Button");
+		if ((bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 5))) DEBUG("Cross Button\n");
 
-		if ((bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 6))) DEBUG("Circle Button");
+		if ((bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 6))) DEBUG("Circle Button\n");
 
-		if ((bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 7))) DEBUG("Triangle Button");
+		if ((bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 7))) DEBUG("Triangle Button\n");
 
-		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 0))) DEBUG("L1 Button");
+		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 0))) DEBUG("L1 Button\n");
 
-		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 1))) DEBUG("R1 Button");
+		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 1))) DEBUG("R1 Button\n");
 
-		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 4))) DEBUG("Select Button");
+		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 4))) DEBUG("Select Button\n");
 
-		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 5))) DEBUG("Start Button");
+		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 5))) DEBUG("Start Button\n");
 
-		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 6))) DEBUG("L3 Button");
+		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 6))) DEBUG("L3 Button\n");
 
-		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 7))) DEBUG("R3 Button");
+		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 7))) DEBUG("R3 Button\n");
 
-		if ((bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 0))) DEBUG("Sony/Home Button");
+		if ((bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 0))) DEBUG("Sony/Home Button\n");
 
-		if ((bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 1))) DEBUG("Touchpad Button");
-
-		if ((bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 2))) DEBUG("Mic Button");
+		if ((bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & 0x02)) DEBUG("Toutchpad Click\n");
 
 		if (!x360Controller.isConnected)
 			DEBUG("Failed to get device state");
+			
+		
 	}
 }
 #endif
+
+
+
+
