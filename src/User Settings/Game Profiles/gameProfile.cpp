@@ -11,7 +11,7 @@
 extern bool gameProfileSet = false;
 extern bool profileEdit = false;
 extern UCHAR rumble[2];
-extern int buttonMapping[15]{};
+extern int buttonMapping[19]{};
 extern bool triggerMaker{ false }, profileMacroOpen{ false }, lightEditor{ false }, buttonRemapper{ false };
 
 

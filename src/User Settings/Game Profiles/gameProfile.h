@@ -15,12 +15,27 @@ public:
 	std::string appNameLiteral{};
 	std::wstring appName{};
 	std::vector<Macros> gameMacros{};
-
-	int buttonMapping[15]{ XINPUT_GAMEPAD_X ,XINPUT_GAMEPAD_A,XINPUT_GAMEPAD_B,XINPUT_GAMEPAD_Y,
-						   XINPUT_GAMEPAD_LEFT_SHOULDER,XINPUT_GAMEPAD_RIGHT_SHOULDER,
-						   XINPUT_GAMEPAD_BACK,XINPUT_GAMEPAD_START,
-						   XINPUT_GAMEPAD_LEFT_THUMB,XINPUT_GAMEPAD_RIGHT_THUMB,
-						   0,0,0,0,0 }; //First element of this line is treated as a boolean for DpadToJoystick and the other are Dualsense Edge Extras
+	                       // Default Values
+	int buttonMapping[19]{ XINPUT_GAMEPAD_X, // Square
+	                       XINPUT_GAMEPAD_A, // Cross
+	                       XINPUT_GAMEPAD_B, // Circle
+	                       XINPUT_GAMEPAD_Y, // Triangle
+	                       XINPUT_GAMEPAD_LEFT_SHOULDER, // L1
+	                       XINPUT_GAMEPAD_RIGHT_SHOULDER, // R1
+	                       XINPUT_GAMEPAD_BACK, // Share
+	                       XINPUT_GAMEPAD_START, // Options
+	                       XINPUT_GAMEPAD_LEFT_THUMB, // L3
+	                       XINPUT_GAMEPAD_RIGHT_THUMB, // R3
+	                       0, // DpadToJoystick (Bool)
+	                       0, // Start/Select on Touchpad (Bool)
+						   0, // Touchpad Button
+						   0, // Home/Sony Button
+						   0, // Mic Button
+						   0, // Edge Only : Left Function
+						   0, // Edge Only : Right Function
+						   0, // Edge Only : Left Paddle
+						   0, // Edge Only : Right Paddle
+	}; 
 
 	unsigned char gameTriggerProfile[8]{};
 	bool rumbleTriggers = 0;
