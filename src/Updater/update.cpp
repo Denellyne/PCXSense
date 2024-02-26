@@ -22,7 +22,7 @@ void autoUpdater() {
 
     if (MessageBox(NULL, L"A new update was found do you wish to update?", L"New Update", MB_YESNO | MB_TASKMODAL) == IDNO) return;
 
-    ShellExecute(0, 0, L"https://github.com/Denellyne/PCXSense/releases/tag/Latest", 0, 0, SW_SHOW);
+    ShellExecute(0, 0, L"https://github.com/Denellyne/PCXSense/releases/Latest", 0, 0, SW_SHOW);
     _exit(NULL);
 }
 #endif // _DEBUG
