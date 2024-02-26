@@ -57,7 +57,7 @@ void debugData(controller &x360Controller) {
 
 		if ((bool)(x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 7))) DEBUG("R3 Button");
 
-		if ((bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 0))) DEBUG("PS Button");
+		if ((bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 0))) DEBUG("Sony/Home Button");
 
 		if ((bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 1))) DEBUG("Touchpad Button");
 
