@@ -16,7 +16,7 @@ public:
 	std::wstring appName{};
 	std::vector<Macros> gameMacros{};
 	                       // Default Values
-	int buttonMapping[19]{ XINPUT_GAMEPAD_X, // Square
+	int buttonMapping[18]{ XINPUT_GAMEPAD_X, // Square
 	                       XINPUT_GAMEPAD_A, // Cross
 	                       XINPUT_GAMEPAD_B, // Circle
 	                       XINPUT_GAMEPAD_Y, // Triangle
@@ -27,7 +27,6 @@ public:
 	                       XINPUT_GAMEPAD_LEFT_THUMB, // L3
 	                       XINPUT_GAMEPAD_RIGHT_THUMB, // R3
 	                       0, // PS Button
-	                       0, // Touchpad Button
 	                       0, // Mic Button
 	                       0, // DpadToJoystick (Bool)
 	                       0, // Start/Select on Touchpad (Bool)

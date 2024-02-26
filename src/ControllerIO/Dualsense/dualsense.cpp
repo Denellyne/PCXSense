@@ -8,8 +8,8 @@ constexpr DWORD TITLE_SIZE = 1024;
 int emulator{};
 extern bool gameProfileSet;
 
-#define isSelectPressed (buttonMapping[14])*(!(x360Controller.inputBuffer[33 + x360Controller.bluetooth] & (1 << 7)) & ((((x360Controller.inputBuffer[35 + x360Controller.bluetooth] & 0x0F) << 8) | (x360Controller.inputBuffer[34 + x360Controller.bluetooth])) <  800)) ^ (x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 4))
-#define isStartPressed  (buttonMapping[14])*(!(x360Controller.inputBuffer[33 + x360Controller.bluetooth] & (1 << 7)) & ((((x360Controller.inputBuffer[35 + x360Controller.bluetooth] & 0x0F) << 8) | (x360Controller.inputBuffer[34 + x360Controller.bluetooth])) >= 800)) ^ (x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 5))
+#define isSelectPressed (buttonMapping[13])*(!(x360Controller.inputBuffer[33 + x360Controller.bluetooth] & (1 << 7)) & ((((x360Controller.inputBuffer[35 + x360Controller.bluetooth] & 0x0F) << 8) | (x360Controller.inputBuffer[34 + x360Controller.bluetooth])) <  800)) ^ (x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 4))
+#define isStartPressed  (buttonMapping[13])*(!(x360Controller.inputBuffer[33 + x360Controller.bluetooth] & (1 << 7)) & ((((x360Controller.inputBuffer[35 + x360Controller.bluetooth] & 0x0F) << 8) | (x360Controller.inputBuffer[34 + x360Controller.bluetooth])) >= 800)) ^ (x360Controller.inputBuffer[9 + x360Controller.bluetooth] & (1 << 5))
 
 extern "C" int returnSmaller(int x); //Assembly Function in src/Assembly Functions/assemblyFunctions.s
 
@@ -140,7 +140,7 @@ void inline static setButtons(controller& x360Controller) {
 
 void inline static setButtonsGameProfile(controller& x360Controller) {
 
-	extern int buttonMapping[19];
+	extern int buttonMapping[18];
 
 	// Normal Order
 	x360Controller.ControllerState.Gamepad.wButtons = (bool)(x360Controller.inputBuffer[8 + x360Controller.bluetooth] & (1 << 4)) ? buttonMapping[0] : 0; //Square
@@ -165,17 +165,15 @@ void inline static setButtonsGameProfile(controller& x360Controller) {
 
 	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 0)) ? buttonMapping[10] : 0; //PS Button
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 1)) ? buttonMapping[11] : 0; //Touchpad Button
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 2)) ? buttonMapping[11] : 0; //Mic Button
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 2)) ? buttonMapping[12] : 0; //Mic Button
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 4)) ? buttonMapping[14] : 0; //Left Function
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 4)) ? buttonMapping[15] : 0; //Left Function
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 5)) ? buttonMapping[15] : 0; //Right Function
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 5)) ? buttonMapping[16] : 0; //Right Function
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 6)) ? buttonMapping[16] : 0; //Left Paddle
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 6)) ? buttonMapping[17] : 0; //Left Paddle
-
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 7)) ? buttonMapping[18] : 0; //Right Paddle
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[10 + x360Controller.bluetooth] & (1 << 7)) ? buttonMapping[17] : 0; //Right Paddle
 
 	if (buttonMapping[13] == 1) {
 
