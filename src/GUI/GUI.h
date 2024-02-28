@@ -9,5 +9,5 @@
 
 extern BOOL WINAPI exitFunction(_In_ DWORD dwCtrlType);
 
-int GUI(controller& x360Controller, std::vector<Macros>& Macro, std::vector<gameProfile>& gameProfiles);
+int GUI(controller& x360Controller, std::vector<Macros>& Macro, std::vector<gameProfile>& gameProfiles, bool minimized);
 

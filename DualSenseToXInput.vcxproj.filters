@@ -79,6 +79,9 @@
     <Filter Include="Source Files\Backend\Controller\Controller IO\Dualshock4">
       <UniqueIdentifier>{7a7b1cd1-4ea8-41b8-906c-61579602154e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Backend\Startup">
+      <UniqueIdentifier>{bfda5203-4f58-4af8-abdf-e31e9a6b54b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -152,6 +155,9 @@
     </ClCompile>
     <ClCompile Include="src\ControllerIO\Dualshock4\dualshock4.cpp">
       <Filter>Source Files\Backend\Controller\Controller IO\Dualshock4</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Startup\startup.cpp">
+      <Filter>Source Files\Backend\Startup</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -250,6 +256,9 @@
     </ClInclude>
     <ClInclude Include="src\ControllerIO\Dualshock4\dualshock4.h">
       <Filter>Source Files\Backend\Controller\Controller IO\Dualshock4</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Startup\startup.h">
+      <Filter>Source Files\Backend\Startup</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

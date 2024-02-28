@@ -32,7 +32,7 @@ struct RGB {
 struct controller {
 	
 	unsigned char inputBuffer[574]{};
-	bool bluetooth;
+	bool hidOffset;
 	bool isConnected{false};
 	bool threadStop{ false };
 

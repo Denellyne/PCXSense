@@ -1,5 +1,4 @@
 #include "controllerConnections.h"
-#include <mutex>
 
 int initializeFakeController(PVIGEM_TARGET& emulateX360, VIGEM_ERROR& target, PVIGEM_CLIENT& client) {
 
@@ -23,18 +22,19 @@ bool isDualShock4Connected(controller& x360Controller) {
 		return false;
 	}
 
-
-	x360Controller.bluetooth = hid_get_device_info(x360Controller.deviceHandle)->interface_number == -1;
+	x360Controller.hidOffset = hid_get_device_info(x360Controller.deviceHandle)->interface_number == -1;
 	x360Controller.isConnected = true;
 
-	if (x360Controller.bluetooth) { //Bluetooth
-		x360Controller.bluetooth = 0;
+	if (x360Controller.hidOffset) { //Bluetooth
+		x360Controller.hidOffset = 0;
 		x360Controller.bufferSize = 547;
 		x360Controller.inputBuffer[0] = 0x11; //Data report code
 		return true;
 	}
 	//USB
-	x360Controller.bluetooth = 1; //Usb has a 2 offset from bluetooth
+	
+
+	x360Controller.hidOffset = 1; //Usb has a 2 offset from bluetooth
 	x360Controller.bufferSize = 64;
 	x360Controller.inputBuffer[0] = 0x01; //Data report code
 	return true;
@@ -49,15 +49,18 @@ bool isDualsenseConnected(controller& x360Controller){
 		return false;
 	}
 
-	x360Controller.bluetooth = hid_get_device_info(x360Controller.deviceHandle)->interface_number == -1;
+	x360Controller.hidOffset = hid_get_device_info(x360Controller.deviceHandle)->interface_number == -1;
 	x360Controller.isConnected = true;
 
-	if (x360Controller.bluetooth) { //Bluetooth
+	if (x360Controller.hidOffset) { //Bluetooth
 		x360Controller.bufferSize = 78;
 		x360Controller.inputBuffer[0] = 0x31; //Data report code
 		return true;
 	}
 	//USB
+	
+	//disconnectBluetooth(x360Controller.deviceHandle, serialAddress);
+
 	x360Controller.bufferSize = 64;
 	x360Controller.inputBuffer[0] = 0x01; //Data report code
 	return true;
@@ -73,11 +76,11 @@ bool isDualsenseEdgeConnected(controller& x360Controller) {
 		return false;
 	}
 
-	x360Controller.bluetooth = hid_get_device_info(x360Controller.deviceHandle)->interface_number == -1;
+	x360Controller.hidOffset = hid_get_device_info(x360Controller.deviceHandle)->interface_number == -1;
 
 	x360Controller.isConnected = true;
 
-	if (x360Controller.bluetooth) { //Bluetooth
+	if (x360Controller.hidOffset) { //Bluetooth
 		x360Controller.bufferSize = 78;
 		x360Controller.inputBuffer[0] = 0x31; //Data report code
 		return true;

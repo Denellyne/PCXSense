@@ -5,35 +5,35 @@
 
 extern bool gameProfileSet;
 
-#define isSelectPressed (buttonMapping[11])*(!(x360Controller.inputBuffer[37- x360Controller.bluetooth * 2] & (1 << 7)) & ((((x360Controller.inputBuffer[39- x360Controller.bluetooth * 2] & 0x0f) << 8) | (x360Controller.inputBuffer[38- x360Controller.bluetooth * 2])) <  800)) ^ (x360Controller.inputBuffer[8- x360Controller.bluetooth * 2] & (1 << 4))
-#define isStartPressed  (buttonMapping[11])*(!(x360Controller.inputBuffer[37- x360Controller.bluetooth * 2] & (1 << 7)) & ((((x360Controller.inputBuffer[39- x360Controller.bluetooth * 2] & 0x0F) << 8) | (x360Controller.inputBuffer[38- x360Controller.bluetooth * 2])) >= 800)) ^ (x360Controller.inputBuffer[8- x360Controller.bluetooth * 2] & (1 << 5))
+#define isSelectPressed (buttonMapping[11])*(!(x360Controller.inputBuffer[37- x360Controller.hidOffset * 2] & (1 << 7)) & ((((x360Controller.inputBuffer[39- x360Controller.hidOffset * 2] & 0x0f) << 8) | (x360Controller.inputBuffer[38- x360Controller.hidOffset * 2])) <  800)) ^ (x360Controller.inputBuffer[8- x360Controller.hidOffset * 2] & (1 << 4))
+#define isStartPressed  (buttonMapping[11])*(!(x360Controller.inputBuffer[37- x360Controller.hidOffset * 2] & (1 << 7)) & ((((x360Controller.inputBuffer[39- x360Controller.hidOffset * 2] & 0x0F) << 8) | (x360Controller.inputBuffer[38- x360Controller.hidOffset * 2])) >= 800)) ^ (x360Controller.inputBuffer[8- x360Controller.hidOffset * 2] & (1 << 5))
 
 extern "C" int returnSmaller(int x); //Assembly Function in src/Assembly Functions/assemblyFunctions.s
 constexpr DWORD TITLE_SIZE = 1024;
 void inline static setButtons(controller& x360Controller) {
 
 	// Normal Order
-	x360Controller.ControllerState.Gamepad.wButtons = (bool)(x360Controller.inputBuffer[7 - x360Controller.bluetooth * 2] & (1 << 4)) ? XINPUT_GAMEPAD_X : 0; //Square
+	x360Controller.ControllerState.Gamepad.wButtons = (bool)(x360Controller.inputBuffer[7 - x360Controller.hidOffset * 2] & (1 << 4)) ? XINPUT_GAMEPAD_X : 0; //Square
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[7 - x360Controller.bluetooth * 2] & (1 << 5)) ? XINPUT_GAMEPAD_A : 0; //Cross
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[7 - x360Controller.hidOffset * 2] & (1 << 5)) ? XINPUT_GAMEPAD_A : 0; //Cross
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[7 - x360Controller.bluetooth * 2] & (1 << 6)) ? XINPUT_GAMEPAD_B : 0; //Circle
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[7 - x360Controller.hidOffset * 2] & (1 << 6)) ? XINPUT_GAMEPAD_B : 0; //Circle
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[7 - x360Controller.bluetooth * 2] & (1 << 7)) ? XINPUT_GAMEPAD_Y : 0; //Triangle
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[7 - x360Controller.hidOffset * 2] & (1 << 7)) ? XINPUT_GAMEPAD_Y : 0; //Triangle
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.bluetooth * 2] & (1 << 0)) ? XINPUT_GAMEPAD_LEFT_SHOULDER : 0; //Left Shoulder
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.hidOffset * 2] & (1 << 0)) ? XINPUT_GAMEPAD_LEFT_SHOULDER : 0; //Left Shoulder
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.bluetooth * 2] & (1 << 1)) ? XINPUT_GAMEPAD_RIGHT_SHOULDER : 0; //Right Shoulder
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.hidOffset * 2] & (1 << 1)) ? XINPUT_GAMEPAD_RIGHT_SHOULDER : 0; //Right Shoulder
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.bluetooth * 2] & (1 << 4)) ? XINPUT_GAMEPAD_BACK : 0; //Select
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.hidOffset * 2] & (1 << 4)) ? XINPUT_GAMEPAD_BACK : 0; //Select
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.bluetooth * 2] & (1 << 5)) ? XINPUT_GAMEPAD_START : 0; //Start
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.hidOffset * 2] & (1 << 5)) ? XINPUT_GAMEPAD_START : 0; //Start
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.bluetooth * 2] & (1 << 6)) ? XINPUT_GAMEPAD_LEFT_THUMB : 0; //Left Thumb
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.hidOffset * 2] & (1 << 6)) ? XINPUT_GAMEPAD_LEFT_THUMB : 0; //Left Thumb
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.bluetooth * 2] & (1 << 7)) ? XINPUT_GAMEPAD_RIGHT_THUMB : 0; //Right thumb
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.hidOffset * 2] & (1 << 7)) ? XINPUT_GAMEPAD_RIGHT_THUMB : 0; //Right thumb
 
-	switch ((int)(x360Controller.inputBuffer[7 - x360Controller.bluetooth * 2] & 0x0F)) {
+	switch ((int)(x360Controller.inputBuffer[7 - x360Controller.hidOffset * 2] & 0x0F)) {
 	case 0: x360Controller.ControllerState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_UP; break;
 
 	case 1: x360Controller.ControllerState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_UP + XINPUT_GAMEPAD_DPAD_RIGHT; break;
@@ -58,33 +58,33 @@ void inline static setButtonsGameProfile(controller& x360Controller) {
 	extern int buttonMapping[19];
 
 	// Normal Order
-	x360Controller.ControllerState.Gamepad.wButtons = (bool)(x360Controller.inputBuffer[7 - x360Controller.bluetooth * 2] & (1 << 4)) ? buttonMapping[0] : 0; //Square
+	x360Controller.ControllerState.Gamepad.wButtons = (bool)(x360Controller.inputBuffer[7 - x360Controller.hidOffset * 2] & (1 << 4)) ? buttonMapping[0] : 0; //Square
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[7 - x360Controller.bluetooth * 2] & (1 << 5)) ? buttonMapping[1] : 0; //Cross
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[7 - x360Controller.hidOffset * 2] & (1 << 5)) ? buttonMapping[1] : 0; //Cross
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[7 - x360Controller.bluetooth * 2] & (1 << 6)) ? buttonMapping[2] : 0; //Circle
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[7 - x360Controller.hidOffset * 2] & (1 << 6)) ? buttonMapping[2] : 0; //Circle
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[7 - x360Controller.bluetooth * 2] & (1 << 7)) ? buttonMapping[3] : 0; //Triangle
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[7 - x360Controller.hidOffset * 2] & (1 << 7)) ? buttonMapping[3] : 0; //Triangle
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.bluetooth * 2] & (1 << 0)) ? buttonMapping[4] : 0; //Left Shoulder
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.hidOffset * 2] & (1 << 0)) ? buttonMapping[4] : 0; //Left Shoulder
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.bluetooth * 2] & (1 << 1)) ? buttonMapping[5] : 0; //Right Shoulder
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.hidOffset * 2] & (1 << 1)) ? buttonMapping[5] : 0; //Right Shoulder
 
 	x360Controller.ControllerState.Gamepad.wButtons |= isSelectPressed ? buttonMapping[6] : 0;
 
 	x360Controller.ControllerState.Gamepad.wButtons |= isStartPressed ? buttonMapping[7] : 0;
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.bluetooth * 2] & (1 << 6)) ? buttonMapping[8] : 0; //Left Thumb
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.hidOffset * 2] & (1 << 6)) ? buttonMapping[8] : 0; //Left Thumb
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.bluetooth * 2] & (1 << 7)) ? buttonMapping[9] : 0; //Right thumb
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[8 - x360Controller.hidOffset * 2] & (1 << 7)) ? buttonMapping[9] : 0; //Right thumb
 	
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[9 - x360Controller.bluetooth * 2] & (1 << 1)) ? buttonMapping[12] : 0; //Touchpad Button
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[9 - x360Controller.hidOffset * 2] & (1 << 1)) ? buttonMapping[12] : 0; //Touchpad Button
 
-	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[9 - x360Controller.bluetooth * 2] & (1 << 0)) ? buttonMapping[13] : 0; //PS Button
+	x360Controller.ControllerState.Gamepad.wButtons |= (bool)(x360Controller.inputBuffer[9 - x360Controller.hidOffset * 2] & (1 << 0)) ? buttonMapping[13] : 0; //PS Button
 
 	if (buttonMapping[10] == 1) {
 
-		switch ((int)(x360Controller.inputBuffer[7 - x360Controller.bluetooth * 2] & 0x0f)) {
+		switch ((int)(x360Controller.inputBuffer[7 - x360Controller.hidOffset * 2] & 0x0f)) {
 
 		case 0: x360Controller.ControllerState.Gamepad.sThumbLY = 32767; break; //Up
 
@@ -105,7 +105,7 @@ void inline static setButtonsGameProfile(controller& x360Controller) {
 		return;
 	}
 
-	switch ((int)(x360Controller.inputBuffer[7 - x360Controller.bluetooth * 2] & 0x0F)) {
+	switch ((int)(x360Controller.inputBuffer[7 - x360Controller.hidOffset * 2] & 0x0F)) {
 	case 0: x360Controller.ControllerState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_UP; break;
 
 	case 1: x360Controller.ControllerState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_UP + XINPUT_GAMEPAD_DPAD_RIGHT; break;
@@ -135,17 +135,17 @@ void inline getDualShock4Input(controller& x360Controller) {
 		return;
 	}
 
-	x360Controller.batteryLevel = (x360Controller.inputBuffer[32 - x360Controller.bluetooth * 2] & 15) * 12.5;
+	x360Controller.batteryLevel = (x360Controller.inputBuffer[32 - x360Controller.hidOffset * 2] & 15) * 12.5;
 
 	x360Controller.batteryLevel = returnSmaller(x360Controller.batteryLevel);
 
-	x360Controller.ControllerState.Gamepad.sThumbLX = ((x360Controller.inputBuffer[3 - x360Controller.bluetooth * 2] * 257) - 32768);
-	x360Controller.ControllerState.Gamepad.sThumbLY = (32767 - (x360Controller.inputBuffer[4 - x360Controller.bluetooth * 2] * 257));
-	x360Controller.ControllerState.Gamepad.sThumbRX = ((x360Controller.inputBuffer[5 - x360Controller.bluetooth * 2] * 257) - 32768);
-	x360Controller.ControllerState.Gamepad.sThumbRY = (32767 - (x360Controller.inputBuffer[6 - x360Controller.bluetooth * 2] * 257));
+	x360Controller.ControllerState.Gamepad.sThumbLX = ((x360Controller.inputBuffer[3 - x360Controller.hidOffset * 2] * 257) - 32768);
+	x360Controller.ControllerState.Gamepad.sThumbLY = (32767 - (x360Controller.inputBuffer[4 - x360Controller.hidOffset * 2] * 257));
+	x360Controller.ControllerState.Gamepad.sThumbRX = ((x360Controller.inputBuffer[5 - x360Controller.hidOffset * 2] * 257) - 32768);
+	x360Controller.ControllerState.Gamepad.sThumbRY = (32767 - (x360Controller.inputBuffer[6 - x360Controller.hidOffset * 2] * 257));
 
-	x360Controller.ControllerState.Gamepad.bLeftTrigger = x360Controller.inputBuffer[10 - x360Controller.bluetooth * 2];
-	x360Controller.ControllerState.Gamepad.bRightTrigger = x360Controller.inputBuffer[11 - x360Controller.bluetooth * 2];
+	x360Controller.ControllerState.Gamepad.bLeftTrigger = x360Controller.inputBuffer[10 - x360Controller.hidOffset * 2];
+	x360Controller.ControllerState.Gamepad.bRightTrigger = x360Controller.inputBuffer[11 - x360Controller.hidOffset * 2];
 
 	if (gameProfileSet) {
 		setButtonsGameProfile(x360Controller);
@@ -161,6 +161,7 @@ void sendDualShock4OutputReport(controller& x360Controller) {
 	extern bool profileOpen;
 	extern bool lightbarOpen;
 	extern bool profileEdit;
+	extern bool rumbleEnabled;
 
 	while (true) {
 		Sleep(4);
@@ -169,11 +170,11 @@ void sendDualShock4OutputReport(controller& x360Controller) {
 
 		outputHID[1] = (byte)(0xC0);
 		
-		outputHID[3 - x360Controller.bluetooth * 2] = 0x07;
-		outputHID[4 - x360Controller.bluetooth * 2] = 0x04;
+		outputHID[3 - x360Controller.hidOffset * 2] = 0x07;
+		outputHID[4 - x360Controller.hidOffset * 2] = 0x04;
 
-		outputHID[6 - x360Controller.bluetooth * 2] = rumble[0]; //Low Rumble
-		outputHID[7 - x360Controller.bluetooth * 2] = rumble[1]; //High Rumble
+		outputHID[6 - x360Controller.hidOffset * 2] = rumble[0] * rumbleEnabled; //Low Rumble
+		outputHID[7 - x360Controller.hidOffset * 2] = rumble[1] * rumbleEnabled; //High Rumble
 
 		switch (x360Controller.batteryLevel + lightbarOpen + gameProfileSet + profileEdit) { //Chooses Lightbar Profile, if any of those editors are open then it breaks and sets itself to the currently being edited profile
 		case 0: x360Controller.RGB[0].Index = 1; break;
@@ -189,13 +190,13 @@ void sendDualShock4OutputReport(controller& x360Controller) {
 		}
 
 		for (int i = 0; i < 3; i++) {
-			outputHID[8 + i - x360Controller.bluetooth * 2] = x360Controller.RGB[x360Controller.RGB[0].Index].colors[i] * 255;
+			outputHID[8 + i - x360Controller.hidOffset * 2] = x360Controller.RGB[x360Controller.RGB[0].Index].colors[i] * 255;
 			x360Controller.RGB[0].colors[i] = x360Controller.RGB[x360Controller.RGB[0].Index].colors[i];
 		}
 
 		//Send Output Report
 		if (x360Controller.threadStop) return;
-		if (!x360Controller.bluetooth) {
+		if (!x360Controller.hidOffset) {
 			outputHID[0] = 0x11;
 			const UINT32 crc = computeCRC32(outputHID, 74);
 

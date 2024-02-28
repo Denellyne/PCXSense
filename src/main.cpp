@@ -2,6 +2,7 @@
 extern std::string Version = "PCXSenseBeta0.8";
 
 extern void (*getInputs)(controller& x360Controller) = &getDualsenseInput;
+extern std::string currentDirectory{};
 
 //void inline secondcontroller(controller& secondcontroller) {
 //	secondcontroller.client = vigem_alloc();
@@ -35,7 +36,8 @@ extern void (*getInputs)(controller& x360Controller) = &getDualsenseInput;
 //
 //}
 
-int main() {
+int main(int argc,char* argv[]) {
+	currentDirectory = std::filesystem::path(argv[0]).parent_path().string();
 #ifdef NDEBUG
 	autoUpdater();
 #endif
@@ -67,10 +69,8 @@ int main() {
 		ShellExecute(0, 0, L"https://github.com/nefarius/ViGEmBus/releases/tag/v1.22.0", 0, 0, SW_SHOW);
 		return -1;
 	}
-	
-
 	//Start async threads
-	std::thread(GUI, std::ref(x360Controller),std::ref(Macro),std::ref(gameProfiles)).detach();
+	std::thread(GUI, std::ref(x360Controller),std::ref(Macro),std::ref(gameProfiles), startMinimized(argv[1])).detach();
 	std::thread(asyncMacro, std::ref(x360Controller),std::ref(Macro)).detach();
 	std::thread(asyncGameProfile,std::ref(gameProfiles),std::ref(x360Controller)).detach();
 	//std::thread(secondController,std::ref(x360Controller2)).detach();

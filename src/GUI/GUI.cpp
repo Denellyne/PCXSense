@@ -2,6 +2,7 @@
 #include "Functions\Misc\functionality.h"
 #include "Sub Menus\subMenus.h"
 #include "User Settings/Lightbar/Lightbar.h"
+#include "Startup/startup.h"
 #include <conio.h>
 
 bool rumbleWindow = false;
@@ -9,6 +10,7 @@ extern bool debugOpen = false;
 extern bool macroOpen = false;
 extern bool profileOpen = false;
 extern bool lightbarOpen = false;
+bool minimized = false;
 float lightbar = 0.0f;
 
 void inline app(controller& x360Controller,const GLuint* Images, std::vector<Macros>& Macro, std::vector<gameProfile>& gameProfiles);
@@ -19,7 +21,7 @@ void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected,const 
 
 void inline topBar(const GLuint* Images, const float& displaySizeX, const float* RGB);
 
-int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameProfile>& gameProfiles){
+int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameProfile>& gameProfiles,bool minimized){
     GLuint Images[21];
 
     glfwInit();
@@ -31,6 +33,7 @@ int GUI(controller& x360Controller,std::vector<Macros>& Macro, std::vector<gameP
     glfwSwapInterval(1);
 
     loadTexture(Images,window);
+    if (minimized) glfwIconifyWindow(window);
     // GUI BoilerPlate
 
     IMGUI_CHECKVERSION();
@@ -81,7 +84,7 @@ void inline app(controller& x360Controller,const GLuint* Images, std::vector<Mac
     ImGui::SetNextWindowPos(ImVec2(0, 0));
 
     ImGui::Begin("PCXSense", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus);
-
+    if (ImGui::Button("a")) isControllerConnected(x360Controller);
     //Setting colors for child window
     setColors();
     topBar(Images,io.DisplaySize.x,x360Controller.RGB[0].colors);
@@ -160,9 +163,23 @@ void inline topBar(const GLuint* Images, const float& displaySizeX,const float* 
         ImGui::SameLine();
         ImGui::Text("PCXSense");
 
-        if (ImGui::Selectable("##Debug Menu")) debugOpen = true;;
+        if (ImGui::Selectable("##Debug Menu")) debugOpen = true;
         ImGui::SameLine(30);
         ImGui::Text("Debug Menu");
+
+
+        if (ImGui::RadioButton("##Minimized", minimized))
+            minimized = !minimized;
+        ImGui::SameLine();
+        if (ImGui::Selectable("##Startup")) setStartup(minimized);
+        ImGui::SameLine(30);
+        if (ImGui::BeginItemTooltip()) {
+            ImGui::Text("Toggle if you want to start minimized");
+            ImGui::EndTooltip();
+        }
+        ImGui::Text("Open at Startup");
+       
+        
 
         if (ImGui::Selectable("##Update")) autoUpdater();
         ImGui::SameLine(30);
@@ -177,7 +194,7 @@ void inline topBar(const GLuint* Images, const float& displaySizeX,const float* 
     if (ImGui::BeginCombo("##Controller Settings", "Controller Settings", ImGuiComboFlags_WidthFitPreview | ImGuiComboFlags_PopupAlignLeft)) {
         if (ImGui::Selectable("##Rumble Test")) rumbleWindow = true;
         ImGui::SameLine(30);
-        ImGui::Text("Rumble Test");
+        ImGui::Text("Rumble Settings");
 
         if (ImGui::Selectable("##Lightbar Settings")) lightbarOpen = true; //Ligthbar Menu
         ImGui::SameLine(7);

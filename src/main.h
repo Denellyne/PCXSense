@@ -7,6 +7,7 @@
 
 #include "GUI\GUI.h"
 #include "Updater\update.h"
+#include "Startup/startup.h"
 #include "User Settings/Macros/macro.h"
 #include "User Settings/Adaptive Triggers/Adaptive Triggers.h"
 #include "User Settings/Game Profiles/gameProfile.h"
@@ -31,7 +32,7 @@ VOID CALLBACK getRumble(PVIGEM_CLIENT Client, PVIGEM_TARGET Target, UCHAR LargeM
 
 void zeroOutputReport() {
 	unsigned char outputHID[547]{};
-	if (reinterpret_cast<controller*>(ptrController)->bluetooth) {
+	if (reinterpret_cast<controller*>(ptrController)->hidOffset) {
 		ZeroMemory(outputHID, 547);
 
 		outputHID[0] = 0x31;
