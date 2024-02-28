@@ -17,14 +17,12 @@ void saveLightSettings(const controller& controller){
 
 		writeLight.close();
 	}
-
 }
 
 void loadLightSettings(controller& controller) {
 
 	std::ifstream loadLight("light.txt");
 	if (loadLight.is_open()) {
-
 		for (int i = 1; i < 10; i++) {
 			loadLight >> controller.RGB[i].colors[0];
 			loadLight >> controller.RGB[i].colors[1];
@@ -33,10 +31,7 @@ void loadLightSettings(controller& controller) {
 		}
 
 		loadLight.close();
-
 	}
-
-
 }
 
 void lightbarEditor(bool& lightbarOpen,RGB* RGB) {
@@ -47,12 +42,12 @@ void lightbarEditor(bool& lightbarOpen,RGB* RGB) {
 
 	std::string modifier;
 
-	const static std::string batteryLevel[] = {"0%:","12%:","27%:","37%:","50%:",
-											   "62%:","75%:","87%:","100%:" };
+	const static std::string batteryLevel[] = {"0%%:  ","12%%: ","27%%: ","37%%: ","50%%: ",
+											   "62%%: ","75%%: ","87%%: ","100%%:" };
 
 	static bool isOpen[9]{};
 	
-	if (ImGui::Begin("RBG Editor", &lightbarOpen)) {
+	if (ImGui::Begin("RGB Editor", &lightbarOpen)) {
 		
 		for (int i = 1; i < 10; i++) {
 			ImGui::PushID(&RGB[i]);
@@ -81,7 +76,6 @@ void lightbarEditor(bool& lightbarOpen,RGB* RGB) {
 				ImGui::EndCombo();
 			}
 
-
 			if (isOpen[i - 1]) {
 				ImGui::PushItemWidth(250);
 				ImGui::ColorPicker3(std::format("##RGB Picker{}", i).c_str(), &RGB[i].colors[0], ImGuiColorEditFlags_Float | ImGuiColorEditFlags_NoSmallPreview | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoAlpha);
@@ -90,7 +84,6 @@ void lightbarEditor(bool& lightbarOpen,RGB* RGB) {
 
 			ImGui::PopID();
 		}
-
 	}
 	ImGui::End();
 

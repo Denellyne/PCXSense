@@ -4,7 +4,6 @@
 #else
 #include "misc\util.h"
 #endif
-
 #include "GUI\GUI.h"
 #include "Updater\update.h"
 #include "Startup/startup.h"
@@ -16,14 +15,12 @@
 #include <thread>
 #include <format>
 
-
 LPVOID ptrController;
 LPVOID ptrController2;
 extern LPVOID asyncThreadPointer = nullptr;
 LPVOID ptrMacros;
 LPVOID ptrProfiles;
 extern UCHAR rumble[2]{};
-
 
 VOID CALLBACK getRumble(PVIGEM_CLIENT Client, PVIGEM_TARGET Target, UCHAR LargeMotor, UCHAR SmallMotor, UCHAR LedNumber, LPVOID UserData){
 	rumble[0] = SmallMotor;
@@ -36,7 +33,7 @@ void zeroOutputReport() {
 		ZeroMemory(outputHID, 547);
 
 		outputHID[0] = 0x31;
-		outputHID[1] = 0x02;
+		outputHID[1] = 0x02; 
 		outputHID[2] = 0x03 | 0x04 | 0x08;
 		outputHID[3] = 0x55;
 
@@ -67,7 +64,7 @@ extern BOOL WINAPI exitFunction(_In_ DWORD dwCtrlType) {
 #endif // !NDEBUG
 
 	if (reinterpret_cast<std::thread*>(asyncThreadPointer) != nullptr) {
-		reinterpret_cast<std::thread*>(asyncThreadPointer)->~thread();
+		reinterpret_cast<controller*>(ptrController)->threadStop = true;
 		delete asyncThreadPointer;
 		asyncThreadPointer = nullptr;
 	}

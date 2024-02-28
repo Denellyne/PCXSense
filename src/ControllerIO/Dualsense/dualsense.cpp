@@ -76,7 +76,7 @@ void extern inline sendDualsenseOutputReport(controller& x360Controller) {
 		}
 
 		//Send Output Report
-		if (x360Controller.threadStop) return;
+		
 		if (x360Controller.hidOffset) {
 			outputHID[0] = 0x31; // BT Report ID
 
@@ -257,7 +257,7 @@ void inline getDualsenseInput(controller& x360Controller) {
 
 }
 
-void inline adaptiveTriggersProfile(bool& bluetooth, int& shortTriggers) {
+void inline adaptiveTriggersProfile(bool& hidOffset, int& shortTriggers) {
 	HWND foregroundWindow = GetForegroundWindow();
 
 	emulator = 1 * (FindWindowBySubstr(foregroundWindow, (LPARAM)L"yuzu")) + 2 * (FindWindowBySubstr(foregroundWindow, (LPARAM)L"Cemu")) + 3 * (FindWindowBySubstr(foregroundWindow, (LPARAM)L"Dolphin"));
@@ -265,42 +265,42 @@ void inline adaptiveTriggersProfile(bool& bluetooth, int& shortTriggers) {
 	switch (emulator) {
 	case 1: //Yuzu
 		shortTriggers = 190;
-		outputHID[11 + bluetooth] = 0x2;
-		outputHID[12 + bluetooth] = 30;
-		outputHID[13 + bluetooth] = 180;
-		outputHID[14 + bluetooth] = 50;
+		outputHID[11 + hidOffset] = 0x2;
+		outputHID[12 + hidOffset] = 30;
+		outputHID[13 + hidOffset] = 180;
+		outputHID[14 + hidOffset] = 50;
 
-		outputHID[22 + bluetooth] = 0x2;
-		outputHID[23 + bluetooth] = 23;
-		outputHID[24 + bluetooth] = 180;
-		outputHID[25 + bluetooth] = 50;
+		outputHID[22 + hidOffset] = 0x2;
+		outputHID[23 + hidOffset] = 23;
+		outputHID[24 + hidOffset] = 180;
+		outputHID[25 + hidOffset] = 50;
 
 		break;
 	case 2: // Cemu
 		shortTriggers = 0;
-		outputHID[11 + bluetooth] = 0x2;
-		outputHID[12 + bluetooth] = 30;
-		outputHID[13 + bluetooth] = 180;
-		outputHID[14 + bluetooth] = 50;
+		outputHID[11 + hidOffset] = 0x2;
+		outputHID[12 + hidOffset] = 30;
+		outputHID[13 + hidOffset] = 180;
+		outputHID[14 + hidOffset] = 50;
 
-		outputHID[22 + bluetooth] = 0x2;
-		outputHID[23 + bluetooth] = 23;
-		outputHID[24 + bluetooth] = 180;
-		outputHID[25 + bluetooth] = 50;
+		outputHID[22 + hidOffset] = 0x2;
+		outputHID[23 + hidOffset] = 23;
+		outputHID[24 + hidOffset] = 180;
+		outputHID[25 + hidOffset] = 50;
 
 		break;
 	case 3: //Dolphin
 
 		shortTriggers = 0;
-		outputHID[11 + bluetooth] = 0x2;
-		outputHID[12 + bluetooth] = 0x90;
-		outputHID[13 + bluetooth] = 0xA0;
-		outputHID[14 + bluetooth] = 0xFF;
+		outputHID[11 + hidOffset] = 0x2;
+		outputHID[12 + hidOffset] = 0x90;
+		outputHID[13 + hidOffset] = 0xA0;
+		outputHID[14 + hidOffset] = 0xFF;
 
-		outputHID[22 + bluetooth] = 0x2;
-		outputHID[23 + bluetooth] = 0x90;
-		outputHID[24 + bluetooth] = 0xA0;
-		outputHID[25 + bluetooth] = 0xFF;
+		outputHID[22 + hidOffset] = 0x2;
+		outputHID[23 + hidOffset] = 0x90;
+		outputHID[24 + hidOffset] = 0xA0;
+		outputHID[25 + hidOffset] = 0xFF;
 
 		break;
 	default:
@@ -308,10 +308,10 @@ void inline adaptiveTriggersProfile(bool& bluetooth, int& shortTriggers) {
 		shortTriggers = 0;
 		if (!gameProfileSet) break;
 
-		memcpy(&outputHID[11 + bluetooth], &ptrCurrentTriggerProfile, 7);
-		memcpy(&outputHID[22 + bluetooth], &ptrCurrentTriggerProfile, 7);
-		outputHID[20 + bluetooth] = ptrCurrentTriggerProfile[7];
-		outputHID[31 + bluetooth] = ptrCurrentTriggerProfile[7];
+		memcpy(&outputHID[11 + hidOffset], &ptrCurrentTriggerProfile, 7);
+		memcpy(&outputHID[22 + hidOffset], &ptrCurrentTriggerProfile, 7);
+		outputHID[20 + hidOffset] = ptrCurrentTriggerProfile[7];
+		outputHID[31 + hidOffset] = ptrCurrentTriggerProfile[7];
 		break;
 	}
 

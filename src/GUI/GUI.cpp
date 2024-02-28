@@ -84,7 +84,6 @@ void inline app(controller& x360Controller,const GLuint* Images, std::vector<Mac
     ImGui::SetNextWindowPos(ImVec2(0, 0));
 
     ImGui::Begin("PCXSense", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus);
-    if (ImGui::Button("a")) isControllerConnected(x360Controller);
     //Setting colors for child window
     setColors();
     topBar(Images,io.DisplaySize.x,x360Controller.RGB[0].colors);
@@ -102,8 +101,6 @@ void inline app(controller& x360Controller,const GLuint* Images, std::vector<Mac
     triggerMaker = (profileOpen == 1) * triggerMaker;
     profileMacroOpen = (profileOpen == 1) * profileMacroOpen;
     buttonRemapper = (profileOpen == 1) * buttonRemapper;
-
-
 
     if (lightbarOpen) lightbarEditor(lightbarOpen, x360Controller.RGB);
 
@@ -259,7 +256,6 @@ void inline drawController(const float& displaySizeX, const float& displaySizeY,
     else ImGui::Image((void*)Images[2], { (226 / 3) * displaySizeX / 1280,(226 / 2.7f) * displaySizeY / 720 }, {}, { 1,1 }, { 1,1,1, (float)x360Controller.isConnected });
 
     if (x360Controller.isConnected) {
-        
         for (int i = 0; i < 12; i++) {
             if (buttonPressed[i]) {
                 ImGui::SetCursorPos(controllerPosition);
