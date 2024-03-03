@@ -18,7 +18,7 @@ void autoUpdater() {
     checkVersion.close();
     DeleteFile(L"Version.txt");
 
-    if (!strcmp(gitVersion, Version.c_str())) return;
+    if (!strcmp(gitVersion, Version.c_str()) || gitVersion[0] == '\0') return;
 
     if (MessageBox(NULL, L"A new update was found do you wish to update?", L"New Update", MB_YESNO | MB_TASKMODAL) == IDNO) return;
 
