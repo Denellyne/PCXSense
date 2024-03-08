@@ -55,6 +55,7 @@ Lightbar control
 ## Supported Controllers
 
     Dualsense
+    Dualsense Edge
     Dualshock 4
 
 ## Goals
