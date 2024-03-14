@@ -141,7 +141,7 @@ void inline static setButtons(controller& x360Controller) {
 
 void inline static setButtonsGameProfile(controller& x360Controller) {
 
-	extern int buttonMapping[19];
+	extern int buttonMapping[20];
 
 	// Normal Order
 	x360Controller.ControllerState.Gamepad.wButtons = (bool)(x360Controller.inputBuffer[8 + x360Controller.hidOffset] & (1 << 4)) ? buttonMapping[0] : 0; //Square

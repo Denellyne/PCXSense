@@ -1,7 +1,6 @@
 #include "button Mappings.h"
 #include <map>
 
-
 static std::map<int, const char*> xboxButtons = {
 	{0x0000,"None"},
 	{0x4000,"X"},
@@ -43,7 +42,8 @@ static const char* psButtons[10]{
 static const int xboxButtonsKeys[11]{ 0x0000,0x4000,0x1000,0x2000,0x8000,0x0100,0x0200,0x0020,0x0010,0x0040,0x0080 };
 
 void buttonMappingEditor(bool& makerOpen, int* buttonProfile) {
-	extern int buttonMapping[19];
+	extern int buttonMapping[20];
+
 	extern bool gameProfileSet;
 
 	for (int i = 0; i < IM_ARRAYSIZE(buttonMapping); i++) buttonMapping[i] = buttonProfile[i];
@@ -78,6 +78,10 @@ void buttonMappingEditor(bool& makerOpen, int* buttonProfile) {
 
 		if (ImGui::RadioButton("Start/Select on Touchpad", buttonProfile[11]))
 			buttonProfile[11] = 1 * (buttonProfile[11] <= 0);
+
+		//if (ImGui::RadioButton("Button Sensitive Rumble", buttonProfile[19]))
+			//buttonProfile[19] = 1 * (buttonProfile[19] <= 0);
+
 		buttonProfile[12] = buttonProfile[12] * (buttonProfile[11] <= 0); //If Start/Select on touch is activated then the binding on the touchbutton is resetted
 	}
 	ImGui::End();

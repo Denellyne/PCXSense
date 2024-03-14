@@ -16,7 +16,7 @@ public:
 	std::wstring appName{};
 	std::vector<Macros> gameMacros{};
 	                       // Default Values
-	int buttonMapping[19]{ XINPUT_GAMEPAD_X, // Square
+	int buttonMapping[20]{ XINPUT_GAMEPAD_X, // Square
 	                       XINPUT_GAMEPAD_A, // Cross
 	                       XINPUT_GAMEPAD_B, // Circle
 	                       XINPUT_GAMEPAD_Y, // Triangle
@@ -35,7 +35,10 @@ public:
 						   0, // Edge Only : Right Function
 						   0, // Edge Only : Left Paddle
 						   0, // Edge Only : Right Paddle
+						   0, // Button Sensitive Rumble
 	}; 
+
+	short int rumbleButton[10]{ 0 };
 
 	unsigned char gameTriggerProfile[8]{};
 	bool rumbleTriggers = 0;
