@@ -2,6 +2,7 @@
 #include "Functions\Misc\functionality.h"
 #include "Sub Menus\subMenus.h"
 #include "User Settings/Lightbar/Lightbar.h"
+#include "ControllerIO/Device Hiding/deviceHiding.h"
 #include "Startup/startup.h"
 #include <conio.h>
 
@@ -135,7 +136,6 @@ void inline notificationBar(ImVec2 cursorPosition,const bool& isConnected,const 
    // ImGui::SetCursorPos({500, 5});
    // ImGui::ColorButton("Connected", { 0,255,0,1 },ImGuiColorEditFlags_NoTooltip,{20,20});
 
-
     ImGui::EndChild();
 }
 
@@ -176,8 +176,6 @@ void inline topBar(const GLuint* Images, const float& displaySizeX,const float* 
         }
         ImGui::Text("Open at Startup");
        
-        
-
         if (ImGui::Selectable("##Update")) autoUpdater();
         ImGui::SameLine(30);
         ImGui::Text("Update");
@@ -203,9 +201,9 @@ void inline topBar(const GLuint* Images, const float& displaySizeX,const float* 
         ImGui::SameLine(30);
         ImGui::Text("Game Profiles");
 
-     //   if (ImGui::Selectable("##Device Hiding"));
-     //   ImGui::SameLine(30);
-      //  ImGui::Text("Device Hiding");
+        if (ImGui::Selectable("##Device Hiding")) hideDevice();
+        ImGui::SameLine(30);
+        ImGui::Text("Hide current device");
 
         if (ImGui::Selectable("##Macros"))  macroOpen = true; //Macro Editor
         ImGui::SameLine(30);
