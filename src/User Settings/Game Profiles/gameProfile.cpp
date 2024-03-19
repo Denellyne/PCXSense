@@ -1,6 +1,7 @@
 #include "gameProfile.h"
 #include <format>
 #include <string>
+#include <thread>
 #include <iostream>
 #include "GUI\Functions\Misc\functionality.h"
 #include "User Settings/Macros/macro.h"
@@ -11,10 +12,13 @@
 extern bool gameProfileSet = false;
 extern bool profileEdit = false;
 extern UCHAR rumble[2];
+extern UCHAR profileRumble{};
 extern int buttonMapping[20]{};
-extern short int buttonRumble[10]{};
+extern int buttonRumble[10]{};
 extern bool triggerMaker{ false }, profileMacroOpen{ false }, lightEditor{ false }, buttonRemapper{ false };
+extern bool tempRumbleEnabled{ false };
 
+#define sumProfileRumble gameProfiles[i].rumbleButton[0] + gameProfiles[i].rumbleButton[1] + gameProfiles[i].rumbleButton[2] + gameProfiles[i].rumbleButton[3] + gameProfiles[i].rumbleButton[4] + gameProfiles[i].rumbleButton[5] + gameProfiles[i].rumbleButton[6] + gameProfiles[i].rumbleButton[7] + gameProfiles[i].rumbleButton[8] + gameProfiles[i].rumbleButton[9]
 
 BOOL inline static CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring){
 	const DWORD TITLE_SIZE = 1024;
@@ -34,48 +38,93 @@ bool inline gameProfile::isOpen() {
 	return FindWindowBySubstr(foregroundWindow, (LPARAM)appName.c_str());
 }
 
-void inline checkMacro(Macros& macro, const controller& x360Controller) {
+void inline static getRumble(const controller& x360Controller,const int* rumbleButtons) {
 
-	if (macro.buttonCombination == x360Controller.ControllerState.Gamepad.wButtons) {
-		SendInput(ARRAYSIZE(macro.input), macro.input, sizeof(INPUT));
-		macro.input[0].ki.dwFlags = KEYEVENTF_KEYUP;
-		macro.input[1].ki.dwFlags = KEYEVENTF_KEYUP;
-		SendInput(ARRAYSIZE(macro.input), macro.input, sizeof(INPUT));
-		macro.input[0].ki.dwFlags = 0;
-		macro.input[1].ki.dwFlags = 0;
-		Sleep(1000);
+	profileRumble = (bool)(x360Controller.inputBuffer[8 + x360Controller.hidOffset] & (1 << 4)) ? rumbleButtons[0] : 0; //Square
+
+	profileRumble += (bool)(x360Controller.inputBuffer[8 + x360Controller.hidOffset] & (1 << 5)) ? rumbleButtons[1] : 0; //Cross
+
+	profileRumble += (bool)(x360Controller.inputBuffer[8 + x360Controller.hidOffset] & (1 << 6)) ? rumbleButtons[2] : 0; //Circle
+
+	profileRumble += (bool)(x360Controller.inputBuffer[8 + x360Controller.hidOffset] & (1 << 7)) ? rumbleButtons[3] : 0; //Triangle
+
+	profileRumble += (bool)(x360Controller.inputBuffer[9 + x360Controller.hidOffset] & (1 << 0)) ? rumbleButtons[4] : 0; //Left Shoulder
+
+	profileRumble += (bool)(x360Controller.inputBuffer[9 + x360Controller.hidOffset] & (1 << 1)) ? rumbleButtons[5] : 0; //Right Shoulder
+
+	profileRumble += (bool)(x360Controller.inputBuffer[9 + x360Controller.hidOffset] & (1 << 4)) ? rumbleButtons[6] : 0; //Select
+
+	profileRumble += (bool)(x360Controller.inputBuffer[9 + x360Controller.hidOffset] & (1 << 5)) ? rumbleButtons[7] : 0; //Start
+
+	profileRumble += (bool)(x360Controller.inputBuffer[9 + x360Controller.hidOffset] & (1 << 6)) ? rumbleButtons[8] : 0; //Left Thumb
+
+	profileRumble += (bool)(x360Controller.inputBuffer[9 + x360Controller.hidOffset] & (1 << 7)) ? rumbleButtons[9] : 0; //Right thumb
+	
+}
+
+void inline static asyncCheckMacro(const std::vector<Macros>& gameMacros, const controller& x360Controller) {
+
+	while (gameProfileSet) {
+		Sleep(20);
+		for (Macros macro : gameMacros)
+			if (macro.buttonCombination == x360Controller.ControllerState.Gamepad.wButtons) {
+				SendInput(ARRAYSIZE(macro.input), macro.input, sizeof(INPUT));
+				macro.input[0].ki.dwFlags = KEYEVENTF_KEYUP;
+				macro.input[1].ki.dwFlags = KEYEVENTF_KEYUP;
+				SendInput(ARRAYSIZE(macro.input), macro.input, sizeof(INPUT));
+				macro.input[0].ki.dwFlags = 0;
+				macro.input[1].ki.dwFlags = 0;
+				Sleep(1000);
+			}
 	}
+	
+}
+
+void inline static setProfile(controller& x360Controller,const gameProfile& gameProfile) {
+	extern bool rumbleEnabled;
+
+	if (gameProfile.buttonMapping[19]) {
+		std::thread(asyncCheckMacro, std::ref(gameProfile.gameMacros), std::ref(x360Controller)).detach();
+		rumbleEnabled = false;
+	}
+	gameProfileSet = true;
+
+	//Set profile
+	memcpy(&ptrCurrentTriggerProfile, &gameProfile.gameTriggerProfile, 8);
+	for (int j = 0; j < ARRAYSIZE(buttonMapping); j++) buttonMapping[j] = gameProfile.buttonMapping[j];
+
+	x360Controller.RGB[0].Index = 0;
+	x360Controller.RGB[0].colors[0] = gameProfile.Lightbar.colors[0];
+	x360Controller.RGB[0].colors[1] = gameProfile.Lightbar.colors[1];
+	x360Controller.RGB[0].colors[2] = gameProfile.Lightbar.colors[2];
 }
 
 void asyncGameProfile(std::vector<gameProfile>& gameProfiles, controller& x360Controller) {
+	extern bool rumbleEnabled;
 
 	while (true) {
 		while (profileEdit) Sleep(500);
-
 		Sleep(500);
 
 		for (int i = 0; i < gameProfiles.size();i++) {
-			while (gameProfiles[i].isOpen()) {
-				//Set profile
-				memcpy(&ptrCurrentTriggerProfile, &gameProfiles[i].gameTriggerProfile, 8);
-				for (int j = 0; j < ARRAYSIZE(buttonMapping); j++) buttonMapping[j] = gameProfiles[i].buttonMapping[j];
-				gameProfileSet = true;
+			if (gameProfiles[i].isOpen()) {
+				bool tempRumbleEnabled = rumbleEnabled;
+				setProfile(x360Controller, gameProfiles[i]);
 
-				x360Controller.RGB[0].Index = 0;
-				x360Controller.RGB[0].colors[0] = gameProfiles[i].Lightbar.colors[0];
-				x360Controller.RGB[0].colors[1] = gameProfiles[i].Lightbar.colors[1];
-				x360Controller.RGB[0].colors[2] = gameProfiles[i].Lightbar.colors[2];
+				while (gameProfiles[i].isOpen()) {
+					getRumble(x360Controller, gameProfiles[i].rumbleButton);
 
-				if (gameProfiles[i].rumbleTriggers) {
-					ptrCurrentTriggerProfile[1] += (int)rumble[0] >> 4;
-					ptrCurrentTriggerProfile[2] += (int)rumble[1] >> 4;
-					if ((int)rumble[0] >= 230) ptrCurrentTriggerProfile[3] = 220; //Safeguard so triggers don't rattle to much damaging them
+					if (gameProfiles[i].rumbleTriggers) {
+						memcpy(&ptrCurrentTriggerProfile, &gameProfiles[i].gameTriggerProfile, 8);
+						ptrCurrentTriggerProfile[1] += ((rumble[0] >> 4) * rumbleEnabled + (bool)buttonMapping[19] * (profileRumble >> 4));
+						ptrCurrentTriggerProfile[2] += ((rumble[1] >> 4) * rumbleEnabled + (bool)buttonMapping[19] * (profileRumble >> 4));
+						if ((int)rumble[0] >= 230 || (int)profileRumble >= 230) ptrCurrentTriggerProfile[3] = 220; //Safeguard so triggers don't rattle to much damaging them
+					}
+					Sleep(5);
 				}
-				
-				Sleep(20);
-				for (Macros macro : gameProfiles[i].gameMacros) checkMacro(macro, x360Controller);
-
 			}
+			profileRumble = 0;
+			rumbleEnabled = tempRumbleEnabled;
 			gameProfileSet = false;
 		}
 	}
@@ -90,7 +139,7 @@ void profileEditor(bool& profileEdit,gameProfile& currentProfile, controller& x3
 
 	if (triggerMaker) (triggerEditor(triggerMaker, currentProfile.gameTriggerProfile,currentProfile.rumbleTriggers));
 	if (profileMacroOpen) (macroMenu(profileMacroOpen,currentProfile.gameMacros, x360Controller));
-	if (buttonRemapper) (buttonMappingEditor(buttonRemapper,currentProfile.buttonMapping));
+	if (buttonRemapper) (buttonMappingEditor(buttonRemapper,currentProfile.buttonMapping,currentProfile.rumbleButton));
 
 
 	if(ImGui::Begin("Profile Editor",&profileEdit)) {

@@ -162,6 +162,8 @@ void sendDualShock4OutputReport(controller& x360Controller) {
 	extern bool lightbarOpen;
 	extern bool profileEdit;
 	extern bool rumbleEnabled;
+	extern int buttonMapping[20];
+	extern UCHAR profileRumble;
 
 	while (true) {
 		Sleep(4);
@@ -172,9 +174,8 @@ void sendDualShock4OutputReport(controller& x360Controller) {
 		
 		outputHID[3 - x360Controller.hidOffset * 2] = 0x07;
 		outputHID[4 - x360Controller.hidOffset * 2] = 0x04;
-
-		outputHID[6 - x360Controller.hidOffset * 2] = rumble[0] * rumbleEnabled; //Low Rumble
-		outputHID[7 - x360Controller.hidOffset * 2] = rumble[1] * rumbleEnabled; //High Rumble
+		outputHID[6 - x360Controller.hidOffset * 2] = rumble[0] * rumbleEnabled + buttonMapping[19] * profileRumble; //Low Rumble
+		outputHID[7 - x360Controller.hidOffset * 2] = rumble[1] * rumbleEnabled + buttonMapping[19] * profileRumble; //High Rumble
 
 		switch (x360Controller.batteryLevel + lightbarOpen + gameProfileSet + profileEdit) { //Chooses Lightbar Profile, if any of those editors are open then it breaks and sets itself to the currently being edited profile
 		case 0: x360Controller.RGB[0].Index = 1; break;

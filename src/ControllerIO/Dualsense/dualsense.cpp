@@ -31,6 +31,8 @@ void extern inline sendDualsenseOutputReport(controller& x360Controller) {
 	extern bool lightbarOpen;
 	extern bool profileEdit;
 	extern bool rumbleEnabled;
+	extern int buttonMapping[20];
+	extern UCHAR profileRumble;
 
 	while (true) {
 		Sleep(4);
@@ -44,8 +46,8 @@ void extern inline sendDualsenseOutputReport(controller& x360Controller) {
 		outputHID[1 + x360Controller.hidOffset] = 0x03 | 0x04 | 0x08;
 		outputHID[2 + x360Controller.hidOffset] = 0x55;
 
-		outputHID[3 + x360Controller.hidOffset] = rumble[0] * rumbleEnabled; //Low Rumble
-		outputHID[4 + x360Controller.hidOffset] = rumble[1] * rumbleEnabled; //High Rumble
+		outputHID[3 + x360Controller.hidOffset] = rumble[0] * rumbleEnabled + buttonMapping[19] * profileRumble; //Low Rumble
+		outputHID[4 + x360Controller.hidOffset] = rumble[1] * rumbleEnabled + buttonMapping[19] * profileRumble; //High Rumble
 
 		adaptiveTriggersProfile(x360Controller.hidOffset, x360Controller.shortTriggers);
 

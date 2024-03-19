@@ -113,8 +113,6 @@ void triggerEditor(bool& makerOpen, unsigned char* trigger,bool& rumbleTriggers)
 		else
 			rumbleTriggers = false;
 
-		
-
 		//Changed SliderInt Datatype so it displays the values properly
 		ImGui::SliderInt("##2", (int*)&trigger[1], 0, 255);
 		ImGui::SliderInt("##3", (int*)&trigger[2], 0, 255);

@@ -38,7 +38,7 @@ public:
 						   0, // Button Sensitive Rumble
 	}; 
 
-	short int rumbleButton[10]{ 0 };
+	int rumbleButton[10]{ 0 };
 
 	unsigned char gameTriggerProfile[8]{};
 	bool rumbleTriggers = 0;

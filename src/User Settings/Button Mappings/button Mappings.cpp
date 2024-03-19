@@ -1,5 +1,6 @@
 #include "button Mappings.h"
 #include <map>
+#include <format>
 
 static std::map<int, const char*> xboxButtons = {
 	{0x0000,"None"},
@@ -36,12 +37,12 @@ static const char* psButtons[10]{
 	"Options       ",
 	"L3            ",
 	"R3            ",
-
 };
 
 static const int xboxButtonsKeys[11]{ 0x0000,0x4000,0x1000,0x2000,0x8000,0x0100,0x0200,0x0020,0x0010,0x0040,0x0080 };
+#define sumProfileRumble rumbleButton[0] + rumbleButton[1] + rumbleButton[2] + rumbleButton[3] + rumbleButton[4] + rumbleButton[5] + rumbleButton[6] + rumbleButton[7] + rumbleButton[8] + rumbleButton[9]
 
-void buttonMappingEditor(bool& makerOpen, int* buttonProfile) {
+void buttonMappingEditor(bool& makerOpen, int* buttonProfile,int* rumbleButton) {
 	extern int buttonMapping[20];
 
 	extern bool gameProfileSet;
@@ -79,8 +80,19 @@ void buttonMappingEditor(bool& makerOpen, int* buttonProfile) {
 		if (ImGui::RadioButton("Start/Select on Touchpad", buttonProfile[11]))
 			buttonProfile[11] = 1 * (buttonProfile[11] <= 0);
 
-		//if (ImGui::RadioButton("Button Sensitive Rumble", buttonProfile[19]))
-			//buttonProfile[19] = 1 * (buttonProfile[19] <= 0);
+		if (ImGui::RadioButton("Button Sensitive Rumble", buttonProfile[19]))
+			buttonProfile[19] = 1 * (buttonProfile[19] <= 0);
+
+		if (buttonMapping[19]) {
+			ImGui::Text(std::format("Current value:{}", sumProfileRumble).c_str());
+			for (short int i = 0; i < IM_ARRAYSIZE(psButtons); i++) {
+				ImGui::PushID(&buttonProfile[i-1]);
+				ImGui::SliderInt(psButtons[i], &rumbleButton[i], 0, 255);
+				if (sumProfileRumble > 255) rumbleButton[i] = 255 - (sumProfileRumble - rumbleButton[i]);
+				ImGui::PopID();
+			}
+		}
+
 
 		buttonProfile[12] = buttonProfile[12] * (buttonProfile[11] <= 0); //If Start/Select on touch is activated then the binding on the touchbutton is resetted
 	}

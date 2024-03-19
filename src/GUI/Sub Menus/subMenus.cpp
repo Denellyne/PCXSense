@@ -6,6 +6,8 @@ extern bool rumbleEnabled = true;
 
 void rumleTestWindow(bool& rumbleWindow) {
     static int motor1{}, motor2{};
+    extern bool tempRumbleEnabled;
+
 
     if (ImGui::Begin("Rumble Test##2", &rumbleWindow)) {
 
@@ -15,8 +17,10 @@ void rumleTestWindow(bool& rumbleWindow) {
         rumble[0] = motor1;
         rumble[1] = motor2;
 
-        if(ImGui::RadioButton("Enable Rumble" ,rumbleEnabled))
+        if (ImGui::RadioButton("Enable Rumble", rumbleEnabled)) {
             rumbleEnabled = !rumbleEnabled;
+            tempRumbleEnabled = rumbleEnabled;
+        }
 
         ImGui::End();
     }
