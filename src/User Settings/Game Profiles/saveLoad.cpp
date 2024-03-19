@@ -52,6 +52,8 @@ void saveProfiles(const std::vector<gameProfile> gameProfiles) {
 		if (saveButtonMapping.is_open()) {
 			for (int i = 0; i < ARRAYSIZE(profile.buttonMapping); i++)
 				saveButtonMapping << profile.buttonMapping[i] << '\n';
+			for(int i = 0;i < ARRAYSIZE(profile.rumbleButton);i++)
+				saveButtonMapping << profile.rumbleButton[i] << '\n';
 
 			saveButtonMapping.close();
 		}
@@ -136,10 +138,16 @@ void inline writeProfiles(std::string dirEntry, gameProfile& currentProfile) {
 	std::ifstream loadButtonMapping(std::format("{}/mapping.txt", dirEntry));
 	if (loadButtonMapping.is_open()) {
 		int buttonMappingTemp[20]{};
+		int buttonRumble[10]{};
 		for (int i = 0; i < ARRAYSIZE(currentProfile.buttonMapping); i++)
 			loadButtonMapping >> buttonMappingTemp[i];
 		for (int i = 0; i < ARRAYSIZE(currentProfile.buttonMapping); i++)
 			currentProfile.buttonMapping[i] = buttonMappingTemp[i];
+
+		for (int i = 0; i < ARRAYSIZE(currentProfile.rumbleButton); i++)
+			loadButtonMapping >> buttonRumble[i];
+		for (int i = 0; i < ARRAYSIZE(currentProfile.rumbleButton); i++)
+			currentProfile.rumbleButton[i] = buttonRumble[i];
 		
 		loadButtonMapping.close();
 	}

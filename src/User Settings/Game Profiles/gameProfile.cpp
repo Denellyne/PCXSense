@@ -2,7 +2,6 @@
 #include <format>
 #include <string>
 #include <thread>
-#include <iostream>
 #include "GUI\Functions\Misc\functionality.h"
 #include "User Settings/Macros/macro.h"
 #include "User Settings/Adaptive Triggers/Adaptive Triggers.h"

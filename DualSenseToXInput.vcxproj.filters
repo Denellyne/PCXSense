@@ -55,6 +55,9 @@
     <Filter Include="Source Files\Backend\Debug">
       <UniqueIdentifier>{ea1ba039-592b-47ec-934f-e7f6e2324a80}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Backend\Controller\Device Hiding">
+      <UniqueIdentifier>{76d53dae-9561-43c6-9aac-7b3a0432cf01}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Backend\User Startup Settings">
       <UniqueIdentifier>{79f1ab08-ba27-459e-b1c9-445fedf8395e}</UniqueIdentifier>
     </Filter>
@@ -81,9 +84,6 @@
     </Filter>
     <Filter Include="Source Files\Backend\User Startup Settings\Updater">
       <UniqueIdentifier>{c3b8648b-b856-4100-98c6-2da8a56e79d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Backend\Controller\Device Hiding">
-      <UniqueIdentifier>{76d53dae-9561-43c6-9aac-7b3a0432cf01}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
