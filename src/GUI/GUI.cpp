@@ -201,9 +201,9 @@ void inline topBar(const GLuint* Images, const float& displaySizeX,const float* 
         ImGui::SameLine(30);
         ImGui::Text("Game Profiles");
 
-        if (ImGui::Selectable("##Device Hiding")) hideDevice();
-        ImGui::SameLine(30);
-        ImGui::Text("Hide current device");
+     //   if (ImGui::Selectable("##Device Hiding")) hideDevice();
+     //   ImGui::SameLine(30);
+     //   ImGui::Text("Hide current device");
 
         if (ImGui::Selectable("##Macros"))  macroOpen = true; //Macro Editor
         ImGui::SameLine(30);
