@@ -13,8 +13,8 @@ void autoUpdater() {
     system("curl https://github.com/Denellyne/PCXSense/releases/download/Latest/Version.txt -o Version.txt -L");
 
     std::ifstream checkVersion("Version.txt");
-    char gitVersion[16];
-    checkVersion.getline(gitVersion, 16);
+    char gitVersion[32];
+    checkVersion.getline(gitVersion, 32);
     checkVersion.close();
     DeleteFile(L"Version.txt");
 
