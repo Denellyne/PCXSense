@@ -82,10 +82,9 @@ void inline static asyncCheckMacro(const std::vector<Macros>& gameMacros, const 
 void inline static setProfile(controller& x360Controller,const gameProfile& gameProfile) {
 	extern bool rumbleEnabled;
 
-	if (gameProfile.buttonMapping[19]) {
-		std::thread(asyncCheckMacro, std::ref(gameProfile.gameMacros), std::ref(x360Controller)).detach();
+	if (gameProfile.buttonMapping[19]) 
 		rumbleEnabled = false;
-	}
+	
 	gameProfileSet = true;
 
 	//Set profile
@@ -109,6 +108,7 @@ void asyncGameProfile(std::vector<gameProfile>& gameProfiles, controller& x360Co
 			if (gameProfiles[i].isOpen()) {
 				bool tempRumbleEnabled = rumbleEnabled;
 				setProfile(x360Controller, gameProfiles[i]);
+				std::thread(asyncCheckMacro, std::ref(gameProfiles[i].gameMacros), std::ref(x360Controller)).detach();
 
 				while (gameProfiles[i].isOpen()) {
 					getRumble(x360Controller, gameProfiles[i].rumbleButton);

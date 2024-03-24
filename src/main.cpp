@@ -1,5 +1,5 @@
 #include "main.h"
-extern std::string Version = "PCXSenseBeta0.9";
+extern std::string Version = "PCXSenseBeta0.9.1";
 
 extern void (*getInputs)(controller& x360Controller) = &getDualsenseInput;
 extern std::string currentDirectory{};
