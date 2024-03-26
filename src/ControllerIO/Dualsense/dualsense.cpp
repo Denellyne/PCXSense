@@ -35,6 +35,7 @@ void extern inline sendDualsenseOutputReport(controller& x360Controller) {
 	extern UCHAR profileRumble;
 
 	while (true) {
+
 		Sleep(4);
 
 		ZeroMemory(outputHID, 547);
@@ -78,7 +79,8 @@ void extern inline sendDualsenseOutputReport(controller& x360Controller) {
 		}
 
 		//Send Output Report
-		
+		if (x360Controller.threadStop) return;
+
 		if (x360Controller.hidOffset) {
 			outputHID[0] = 0x31; // BT Report ID
 

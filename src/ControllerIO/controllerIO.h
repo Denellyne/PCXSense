@@ -5,6 +5,8 @@
 #include "ViGEm/Client.h"
 #include <hidapi.h>
 #include <vector>
+#include <mutex>
+
 
 #ifdef _DEBUG
 #define EXPERIMENTAL true
