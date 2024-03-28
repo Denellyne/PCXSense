@@ -2,7 +2,7 @@
 #include "Functions\Misc\functionality.h"
 #include "Sub Menus\subMenus.h"
 #include "User Settings/Lightbar/Lightbar.h"
-#include "ControllerIO/Device Hiding/deviceHiding.h"
+//#include "ControllerIO/Device Hiding/deviceHiding.h"
 #include "Startup/startup.h"
 #include <conio.h>
 

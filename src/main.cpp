@@ -1,5 +1,5 @@
 #include "main.h"
-extern std::string Version = "PCXSenseBeta.0.9.2";
+extern std::string Version = "PCXSenseBeta.0.9.3";
 
 extern void (*getInputs)(controller& x360Controller) = &getDualsenseInput;
 extern std::string currentDirectory{};
@@ -86,7 +86,7 @@ int main(int argc,char* argv[]) {
 
 	vigem_target_x360_register_notification(x360Controller.client, x360Controller.emulateX360, &getRumble, ptrController);
 	//vigem_target_x360_register_notification(x360Controller2.client, x360Controller2.emulateX360, &getRumble, ptrController2);
-	hideDevice();
+	//hideDevice();
 	isControllerConnected(x360Controller);
 	while (true) {
 		XInputGetState(0, &x360Controller.ControllerState);
