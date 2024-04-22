@@ -15,7 +15,7 @@ static std::map<int, const char*> triggerModes = {
 		{0x2 | 0x20 | 0x04,"Pulse Complete Mode"},
 };
 
-static const short int triggerModeKeys[9] = { 
+static constexpr short int triggerModeKeys[9] = { 
 												0x0, //Off
 												0x1, //Rigid
 												0x2, //Pulse

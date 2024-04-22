@@ -39,7 +39,7 @@ static const char* psButtons[10]{
 	"R3            ",
 };
 
-static const int xboxButtonsKeys[11]{ 0x0000,0x4000,0x1000,0x2000,0x8000,0x0100,0x0200,0x0020,0x0010,0x0040,0x0080 };
+static constexpr int xboxButtonsKeys[11]{ 0x0000,0x4000,0x1000,0x2000,0x8000,0x0100,0x0200,0x0020,0x0010,0x0040,0x0080 };
 #define sumProfileRumble rumbleButton[0] + rumbleButton[1] + rumbleButton[2] + rumbleButton[3] + rumbleButton[4] + rumbleButton[5] + rumbleButton[6] + rumbleButton[7] + rumbleButton[8] + rumbleButton[9]
 
 void buttonMappingEditor(bool& makerOpen, int* buttonProfile,int* rumbleButton) {

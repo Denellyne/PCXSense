@@ -42,7 +42,7 @@ void lightbarEditor(bool& lightbarOpen,RGB* RGB) {
 
 	std::string modifier;
 
-	const static std::string batteryLevel[] = {"0%%:  ","12%%: ","27%%: ","37%%: ","50%%: ",
+	constexpr static std::string batteryLevel[] = {"0%%:  ","12%%: ","27%%: ","37%%: ","50%%: ",
 											   "62%%: ","75%%: ","87%%: ","100%%:" };
 
 	static bool isOpen[9]{};

@@ -20,7 +20,7 @@ extern bool tempRumbleEnabled{ false };
 #define sumProfileRumble gameProfiles[i].rumbleButton[0] + gameProfiles[i].rumbleButton[1] + gameProfiles[i].rumbleButton[2] + gameProfiles[i].rumbleButton[3] + gameProfiles[i].rumbleButton[4] + gameProfiles[i].rumbleButton[5] + gameProfiles[i].rumbleButton[6] + gameProfiles[i].rumbleButton[7] + gameProfiles[i].rumbleButton[8] + gameProfiles[i].rumbleButton[9]
 
 BOOL inline static CALLBACK FindWindowBySubstr(HWND hwnd, LPARAM substring){
-	const DWORD TITLE_SIZE = 1024;
+	constexpr DWORD TITLE_SIZE = 1024;
 	TCHAR windowTitle[TITLE_SIZE];
 
 	if (GetWindowText(hwnd, windowTitle, TITLE_SIZE))
