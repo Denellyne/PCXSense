@@ -60,31 +60,25 @@ void saveProfiles(const std::vector<gameProfile> gameProfiles) {
 
 	}
 }
-
 void inline writeProfiles(std::string dirEntry, gameProfile& currentProfile) {
 
 	//Write strings and TriggerProfile
 
 	std::ifstream writeStrings(std::format("{}/profile.txt", dirEntry));
 	if (writeStrings.is_open()) {
-		std::string profileName{};
-		std::string appName{};
 		int trigger[9]{};
 		RGB Lightbar{};
 
-		while (writeStrings.good()) {
-			std::getline(writeStrings, profileName, '\n');
-			memcpy(&currentProfile.profileName[0], &profileName[0], profileName.length());
+		if (writeStrings.good()) {
+			std::getline(writeStrings, currentProfile.profileName, '\n');
 
 			//It just works if I add this idk
-
 			writeStrings.ignore();
 			writeStrings.unget();
-			//
-			std::getline(writeStrings, appName, '\n');
+			std::getline(writeStrings, currentProfile.appNameLiteral, '\n');
 
-			currentProfile.appName = std::wstring(&appName[0], &appName[appName.length()]);
-			currentProfile.appNameLiteral = appName;
+			currentProfile.appName = std::wstring(&currentProfile.appNameLiteral[0], 
+									 &currentProfile.appNameLiteral[currentProfile.appNameLiteral.length()]);
 
 
 			for (short int i = 0; i < 9; i++) writeStrings >> trigger[i];

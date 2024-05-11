@@ -5,7 +5,6 @@
 #include <filesystem>
 #include "User Settings/Macros/macro.h"
 
-
 extern unsigned char ptrCurrentTriggerProfile[8];
 extern bool profileOpen;
 
