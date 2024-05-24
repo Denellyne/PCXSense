@@ -262,6 +262,16 @@ void inline getDualsenseInput(controller& x360Controller) {
 }
 
 void inline adaptiveTriggersProfile(bool& hidOffset, int& shortTriggers) {
+	
+	if (gameProfileSet) {
+		shortTriggers = 0;
+		memcpy(&outputHID[11 + hidOffset], &ptrCurrentTriggerProfile, 7);
+		memcpy(&outputHID[22 + hidOffset], &ptrCurrentTriggerProfile, 7);
+		outputHID[20 + hidOffset] = ptrCurrentTriggerProfile[7];
+		outputHID[31 + hidOffset] = ptrCurrentTriggerProfile[7];
+		return;
+	}
+	
 	HWND foregroundWindow = GetForegroundWindow();
 
 	emulator = 1 * (FindWindowBySubstr(foregroundWindow, (LPARAM)L"yuzu")) + 2 * (FindWindowBySubstr(foregroundWindow, (LPARAM)L"Cemu")) + 3 * (FindWindowBySubstr(foregroundWindow, (LPARAM)L"Dolphin"));

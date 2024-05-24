@@ -85,6 +85,9 @@
     <Filter Include="Source Files\Backend\User Startup Settings\Updater">
       <UniqueIdentifier>{c3b8648b-b856-4100-98c6-2da8a56e79d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Backend\Controller\Controller IO\Gyro">
+      <UniqueIdentifier>{8a2c0cb3-d1aa-4213-ae80-db060bf2a906}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -164,6 +167,9 @@
     </ClCompile>
     <ClCompile Include="src\ControllerIO\Device Hiding\deviceHiding.cpp">
       <Filter>Source Files\Backend\Controller\Device Hiding</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ControllerIO\Gyro\gyro.cpp">
+      <Filter>Source Files\Backend\Controller\Controller IO\Gyro</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -268,6 +274,9 @@
     </ClInclude>
     <ClInclude Include="src\ControllerIO\Device Hiding\deviceHiding.h">
       <Filter>Source Files\Backend\Controller\Device Hiding</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ControllerIO\Gyro\gyro.h">
+      <Filter>Source Files\Backend\Controller\Controller IO\Gyro</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

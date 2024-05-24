@@ -1,9 +1,9 @@
 #include "main.h"
-extern std::string Version = "PCXSenseBeta.0.9.3";
+extern std::string Version = "PCXSenseBeta.0.9.4";
 
 extern void (*getInputs)(controller& x360Controller) = &getDualsenseInput;
 extern std::string currentDirectory{};
-
+extern bool gyroEnabled;
 //void inline secondcontroller(controller& secondcontroller) {
 //	secondcontroller.client = vigem_alloc();
 //	if (secondcontroller.client == null) {
@@ -72,7 +72,8 @@ int main(int argc,char* argv[]) {
 	//Start async threads
 	std::thread(GUI, std::ref(x360Controller),std::ref(Macro),std::ref(gameProfiles), startMinimized(argv[1])).detach();
 	std::thread(asyncMacro, std::ref(x360Controller),std::ref(Macro)).detach();
-	std::thread(asyncGameProfile,std::ref(gameProfiles),std::ref(x360Controller)).detach();
+	std::thread(asyncGameProfile, std::ref(gameProfiles), std::ref(x360Controller)).detach();
+	std::thread(gyroController,std::ref(x360Controller)).detach();
 	//std::thread(secondController,std::ref(x360Controller2)).detach();
 
 #if _DEBUG

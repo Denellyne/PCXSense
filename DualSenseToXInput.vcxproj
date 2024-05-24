@@ -350,6 +350,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
     <ClCompile Include="src\ControllerIO\Device Hiding\deviceHiding.cpp" />
     <ClCompile Include="src\ControllerIO\Dualsense\dualsense.cpp" />
     <ClCompile Include="src\ControllerIO\Dualshock4\dualshock4.cpp" />
+    <ClCompile Include="src\ControllerIO\Gyro\gyro.cpp" />
     <ClCompile Include="src\GUI\Functions\Misc\functionality.cpp" />
     <ClCompile Include="src\GUI\GUI.cpp" />
     <ClCompile Include="src\GUI\Sub Menus\subMenus.cpp" />
@@ -385,6 +386,7 @@ xcopy "$(SolutionDir)\images" "$(TargetDir)\images" /y /i
     <ClInclude Include="src\ControllerIO\Device Hiding\deviceHiding.h" />
     <ClInclude Include="src\ControllerIO\Dualsense\dualsense.h" />
     <ClInclude Include="src\ControllerIO\Dualshock4\dualshock4.h" />
+    <ClInclude Include="src\ControllerIO\Gyro\gyro.h" />
     <ClInclude Include="src\GUI\Functions\Misc\functionality.h" />
     <ClInclude Include="src\GUI\GUI.h" />
     <ClInclude Include="src\GUI\include.h" />
