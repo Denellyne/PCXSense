@@ -80,9 +80,9 @@ Multiple Controller Emulation
 
 ## Roadmap
 
-### Launch at startup - Bluetooth disconnect - Device Hiding
+### Bluetooth disconnect - Device Hiding
 
-### Gyro Support - Citra Toutchpad - Start/Select ToutchPad Option
+### Gyro Support - Citra Toutchpad 
 
 ### Theme Switcher - DirectInput Mode
 
